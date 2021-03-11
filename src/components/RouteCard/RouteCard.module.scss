@@ -1,0 +1,29 @@
+@import '../../styles/base.scss';
+
+$card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
+
+.routeCard {
+    width: 500px;
+    height: 300px;
+    box-shadow: $card-shadow;
+    border-radius: 20px;
+    border: 1px solid #eee;
+    padding: 20px;   
+}
+
+.routeTitle {
+    font-weight: bold;
+    margin: 0;
+    font-size: 40px;
+}
+
+.topRow {
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.tphChartContainer {
+    height: 60px;
+    margin: 10px 0;
+}
