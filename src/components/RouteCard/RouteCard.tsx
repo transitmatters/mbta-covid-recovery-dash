@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { TiCancel } from "react-icons/ti";
 import { Pie, ResponsivePie } from "@nivo/pie";
 import { ResponsiveLine } from "@nivo/line";
 import { linearGradientDef } from "@nivo/core";
@@ -93,6 +94,14 @@ const RouteCard = (props: Props) => {
             </div>
             {renderTphChart("baseline")}
             {renderTphChart("covid")}
+            {routeData.serviceRegimes.covid.weekday.cancelled && (
+                <>
+                    <TiCancel className={styles.cancellationIcon} />
+                    <div className={styles.cancellationLayer}>
+                        <div className={styles.cancellationText}>Canceled</div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
