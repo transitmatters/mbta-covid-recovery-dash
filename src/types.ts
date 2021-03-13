@@ -11,10 +11,14 @@ export type TripsPerHour = readonly number[] & { length: 24 };
 export type ServiceLevels = {
     cancelled?: boolean;
     tripsPerHour: TripsPerHour;
+    meanWaitTime: number;
+    totalTrips: number;
+    crowdingFactor?: number;
 };
 
 export type RouteData = {
     title: string;
+    subtitle?: string;
     routeKind: RouteKind;
     serviceFraction: number;
     serviceRegimes: Record<ServiceRegime, Record<ServiceDay, ServiceLevels>>;
