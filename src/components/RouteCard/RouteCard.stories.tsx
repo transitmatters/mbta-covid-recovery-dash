@@ -13,6 +13,7 @@ export default {
 
 const data77: RouteData = {
     title: "71",
+    id: "route-71",
     subtitle: "Watertown Square - Harvard Station",
     routeKind: "bus" as const,
     serviceFraction: 0.81,

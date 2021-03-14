@@ -5,6 +5,7 @@ import { Pie } from "@nivo/pie";
 
 import { RouteData, ServiceDay } from "types";
 import { routeColors } from "colors";
+import { TabPicker } from "components";
 
 import Metrics from "./Metrics";
 import styles from "./RouteCard.module.scss";
@@ -16,6 +17,12 @@ type Props = {
 };
 
 const fakeDataForPie = [{ value: 1 }, { value: 0 }];
+
+const serviceDayItems = [
+    { value: "weekday", label: "Weekdays" },
+    { value: "saturday", label: "Saturday" },
+    { value: "sunday", label: "Sunday" },
+];
 
 const getHighestTphValue = (routeData: RouteData) => {
     let max = 0;
@@ -30,13 +37,14 @@ const getHighestTphValue = (routeData: RouteData) => {
 const RouteCard = (props: Props) => {
     const { routeData } = props;
     const {
-        title,
-        subtitle,
+        id,
+        ridership,
         routeKind,
+        service,
         serviceFraction,
         serviceRegimes,
-        ridership,
-        service,
+        subtitle,
+        title,
     } = routeData;
     const color = routeColors[routeKind];
     const [serviceDay] = useState<ServiceDay>("weekday");
@@ -94,6 +102,14 @@ const RouteCard = (props: Props) => {
         <div className={styles.routeCard}>
             {renderTitleGrid()}
             {/* {renderSectionLabel("Daily service levels")} */}
+            <TabPicker
+                className={styles.tabs}
+                value={serviceDay}
+                items={serviceDayItems}
+                onSelectValue={(v) => {}}
+                baseId={id}
+                aria-label="Select day of service"
+            />
             <TphChart
                 tph={serviceRegimes.baseline[serviceDay].tripsPerHour}
                 highestTph={highestTph}

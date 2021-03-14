@@ -49,7 +49,6 @@ const ServiceRidershipChart = (props: Props) => {
     const { ridershipColor, serviceColor, ridership, service } = props;
     const ridershipPercentage = useMemo(() => normalizeToPercent(ridership), [ridership]);
     const servicePercentage = useMemo(() => normalizeToPercent(service), [service]);
-    console.log("RP", ridershipPercentage);
 
     const renderTooltip = (item: any) => {
         const {
@@ -82,7 +81,7 @@ const ServiceRidershipChart = (props: Props) => {
                     { match: { id: "Daily riders" }, id: "gradient" },
                     { match: { id: "Daily trips" }, id: "emptyGradient" },
                 ]}
-                margin={{ top: 5, right: 0, bottom: 10, left: 40 }}
+                margin={{ top: 5, right: 0, bottom: 10, left: 30 }}
                 tooltip={renderTooltip}
                 enableArea
                 enablePoints={false}

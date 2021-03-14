@@ -1,7 +1,7 @@
 export type Time = number;
 
 export type RouteKind = "red" | "green" | "orange" | "blue" | "silver" | "regional-rail" | "bus";
-export type ServiceDay = "weekday" | "weekend";
+export type ServiceDay = "weekday" | "saturday" | "sunday";
 export type ServiceRegime = "baseline" | "covid";
 
 export type TripsPerHour = readonly number[] & { length: 24 };
@@ -17,6 +17,7 @@ export type ServiceLevels = {
 };
 
 export type RouteData = {
+    id: string;
     title: string;
     subtitle?: string;
     ridership: TimeSeries<string>;
