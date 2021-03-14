@@ -50,11 +50,11 @@ const RouteCard = (props: Props) => {
     const [serviceDay] = useState<ServiceDay>("weekday");
     const highestTph = useMemo(() => getHighestTphValue(routeData), [routeData]);
 
-    const renderSectionLabel = (title: string) => {
+    const renderSectionLabel = (title: string, rightElement: React.ReactNode = null) => {
         return (
             <h3 className={styles.sectionLabel}>
                 <div className="label">{title}</div>
-                <div className="rule" />
+                {rightElement}
             </h3>
         );
     };
@@ -98,18 +98,21 @@ const RouteCard = (props: Props) => {
         return null;
     };
 
+    const tabs = (
+        <TabPicker
+            className={styles.tabs}
+            value={serviceDay}
+            items={serviceDayItems}
+            onSelectValue={(v) => {}}
+            baseId={id}
+            aria-label="Select day of service"
+        />
+    );
+
     return (
         <div className={styles.routeCard}>
             {renderTitleGrid()}
-            {/* {renderSectionLabel("Daily service levels")} */}
-            <TabPicker
-                className={styles.tabs}
-                value={serviceDay}
-                items={serviceDayItems}
-                onSelectValue={(v) => {}}
-                baseId={id}
-                aria-label="Select day of service"
-            />
+            {renderSectionLabel("Daily service levels:", tabs)}
             <TphChart
                 tph={serviceRegimes.baseline[serviceDay].tripsPerHour}
                 highestTph={highestTph}
@@ -123,6 +126,7 @@ const RouteCard = (props: Props) => {
                 year="2021"
             />
             <Metrics serviceRegimes={serviceRegimes} serviceDay={serviceDay} />
+            {renderSectionLabel("Ridership versus service levels:")}
             <ServiceRidershipChart
                 ridership={ridership}
                 service={service}
