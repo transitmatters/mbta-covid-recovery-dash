@@ -59,6 +59,9 @@ $card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
     font-weight: bold;
     margin: 0;
     font-size: 40px;
+    &:global(.long) {
+        font-size: 28px;
+    }
 }
 
 .subtitle {
@@ -78,6 +81,7 @@ $card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
 }
 
 .metrics {
+    margin: 10px 0;
     display: flex;
     justify-content: space-between;
 }
@@ -86,12 +90,12 @@ $card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
     display: flex;
     align-items: center;
     :global(.number) {
-        font-size: 32px;
+        font-size: 34px;
     }
     :global(.label) {
         text-transform: uppercase;
         margin-left: 5px;
-        font-size: 11px;
+        font-size: 12px;
     }
     &:global(.good) {
         :global(.number) {
@@ -108,10 +112,9 @@ $card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
 .sectionLabel {
     display: flex;
     align-items: center;
-    margin: 10px 0;
-    color: #aaa;
+    margin: 15px 0;
     :global(.label) {
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 300;
         font-style: italic;
     }
@@ -125,5 +128,13 @@ $card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
 }
 
 .serviceAndRidershipChartContainer {
-    height: 100px;
+    height: 150px;
+}
+
+.tooltip {
+    font-size: 12px;
+    padding: 4px 8px;
+    background: white;
+    border-radius: 100px;
+    box-shadow: $card-shadow;
 }

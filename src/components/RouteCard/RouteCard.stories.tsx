@@ -1,6 +1,7 @@
 import React from "react";
-import { highTph, lowTph } from "storydata/tripsPerHour";
 
+import { createTestTimeSeries } from "storydata/timeSeries";
+import { highTph, lowTph } from "storydata/tripsPerHour";
 import { RouteData } from "types";
 
 import RouteCard from "./RouteCard";
@@ -15,6 +16,8 @@ const data77: RouteData = {
     subtitle: "Watertown Square - Harvard Station",
     routeKind: "bus" as const,
     serviceFraction: 0.81,
+    ridership: createTestTimeSeries(),
+    service: createTestTimeSeries({ baseline: 60, amplitude: 30, period: 900 }),
     serviceRegimes: {
         covid: {
             weekday: {
@@ -37,9 +40,6 @@ const data77: RouteData = {
 export const Default = () => {
     return (
         <>
-            <RouteCard routeData={data77} />
-            <RouteCard routeData={data77} />
-            <RouteCard routeData={data77} />
             <RouteCard routeData={data77} />
         </>
     );
