@@ -21,7 +21,7 @@ const Metrics = (props: Props) => {
     const waitTimeGood = waitTimeDifferential <= 0;
     const totalTripsDifferential = baseline.totalTrips - covid.totalTrips;
     const totalTripsNumberString = Math.abs(totalTripsDifferential).toString();
-    const totalTripsVerb = totalTripsDifferential < 0 ? "Added" : "Dropped";
+    const totalTripsVerb = totalTripsDifferential < 0 ? "Added" : "Cut";
     const totalTripsGood = totalTripsDifferential <= 0;
     const crowdingFactor = covid.crowdingFactor!;
     const crowdingPercentage = Math.round(100 * crowdingFactor - 100);
@@ -35,9 +35,9 @@ const Metrics = (props: Props) => {
                 <div className="number">{totalTripsNumberString}</div>
                 <div className="label">
                     <>
-                        Trips
+                        Daily
                         <br />
-                        {totalTripsVerb}
+                        Trips {totalTripsVerb}
                     </>
                 </div>
             </div>
