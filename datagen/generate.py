@@ -85,11 +85,10 @@ def get_service_level_history(unsorted_route_entries: List[ServiceLevelsEntry]):
             )
     return date_ranges
 
+
 def generate_data_file():
     histories_by_route_id = {}
-    feeds_and_service_levels = load_feeds_and_service_levels_from_archive(
-        date_from_string("2020611")
-    )
+    feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
     entries, route_ids = get_service_level_entries_and_route_ids(feeds_and_service_levels)
     for route_id in route_ids:
         histories_by_route_id[route_id] = get_service_level_history(entries[route_id])
