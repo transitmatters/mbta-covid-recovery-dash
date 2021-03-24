@@ -21,7 +21,7 @@ const hackStylesToSupportNonPureDeclarations = (config) => {
     return config;
 };
 
-const assetPrefix = process.env.BUILD_GH_PAGES === "true" ? "/mbta-covid-recovery-dash/" : null;
+const assetPrefix = process.env.BUILD_GH_PAGES === "true" ? "./" : null;
 
 module.exports = {
     webpack: (config) => {
