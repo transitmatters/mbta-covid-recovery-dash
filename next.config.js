@@ -25,4 +25,7 @@ module.exports = {
     webpack: (config) => {
         return hackStylesToSupportNonPureDeclarations(config);
     },
+    typescript: {
+        ignoreBuildErrors: true,
+    },
 };
