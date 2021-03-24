@@ -2,10 +2,12 @@ import React, { useEffect, useMemo, useRef } from "react";
 import Chart, { ChartDataSets } from "chart.js";
 import Color from "chartjs-color";
 import pattern from "patternomaly";
+import memoize from "fast-memoize";
 
 import { RouteData } from "types";
 
 import styles from "./RouteCard.module.scss";
+import { format } from "path";
 
 type Props = {
     ridershipHistory: RouteData["ridershipHistory"];
@@ -19,17 +21,22 @@ const normalizeToPercent = (timeSeries: number[]) => {
     return timeSeries.map((n) => n / firstValue);
 };
 
-const getChartLabels = (startDate: Date) => {
-    const formatter = new Intl.DateTimeFormat("en-US");
-    const now = Date.now();
-    const labels: string[] = [];
-    let time = startDate.valueOf();
-    do {
-        labels.push(formatter.format(time));
-        time += 86400 * 1000;
-    } while (time <= now);
-    return labels;
-};
+const getChartLabels = memoize(
+    (startDate: Date) => {
+        const formatter = new Intl.DateTimeFormat("en-US");
+        const now = Date.now();
+        const labels: string[] = [];
+        let time = startDate.valueOf();
+        do {
+            let dateString = formatter.format(time);
+            dateString = dateString.slice(0, -4) + dateString.slice(-2);
+            labels.push(dateString);
+            time += 86400 * 1000;
+        } while (time <= now);
+        return labels;
+    },
+    { serializer: (d) => d.valueOf().toString() }
+);
 
 const ServiceRidershipChart = (props: Props) => {
     const { color, serviceHistory, ridershipHistory, startDate } = props;
@@ -76,10 +83,14 @@ const ServiceRidershipChart = (props: Props) => {
             },
             options: {
                 maintainAspectRatio: false,
-                animation: {
-                    duration: 0,
-                },
+                animation: { duration: 0 },
                 scales: {
+                    xAxes: [
+                        {
+                            gridLines: { display: false },
+                            ticks: { maxTicksLimit: 15 },
+                        },
+                    ],
                     yAxes: [
                         {
                             ticks: {
@@ -87,20 +98,17 @@ const ServiceRidershipChart = (props: Props) => {
                                 stepSize: 0.2,
                                 callback: (p) => Math.round(100 * p).toString() + "%",
                             },
+                            gridLines: { display: false },
                         },
                     ],
                 },
                 elements: {
-                    point: {
-                        radius: 0,
-                    },
-                    line: {
-                        tension: 0,
-                    },
+                    point: { radius: 0 },
+                    line: { tension: 0 },
                 },
                 legend: {
                     position: "top",
-                    align: "start",
+                    align: "end",
                     labels: {
                         boxWidth: 15,
                     },

@@ -1,5 +1,4 @@
-import React, { useEffect, useMemo, useRef } from "react";
-import pattern from "patternomaly";
+import React, { useEffect, useRef } from "react";
 import Chart from "chart.js";
 import Color from "chartjs-color";
 
@@ -23,67 +22,65 @@ const TphChart = (props: Props) => {
 
     useEffect(() => {
         const ctx = canvasRef.current!.getContext("2d");
-        const baselineColor = Color(color).desaturate(0.6).alpha(0.25).rgbString();
-        const currentColor = Color(color).alpha(0.5).rgbString();
+        const currentColor = Color(color).alpha(0.4).rgbString();
         const chart = new Chart(ctx, {
             type: "line",
             data: {
                 labels: lineTickValues,
                 datasets: [
                     {
-                        label: "Pre-covid trips per hour",
+                        label: "Pre-COVID trips per hour",
                         data: baselineTph as any,
                         steppedLine: true,
-                        borderColor: "rgba(0,0,0,0)",
-                        backgroundColor: pattern.draw(
-                            "diagonal-right-left",
-                            baselineColor,
-                            "white",
-                            5
-                        ),
+                        borderColor: color,
+                        borderWidth: 2,
+                        backgroundColor: "rgba(0,0,0,0)",
                     },
                     {
                         label: "Current trips per hour",
                         data: currentTph as any,
                         steppedLine: true,
+                        borderWidth: 2,
                         borderColor: "rgba(0,0,0,0)",
-                        backgroundColor: pattern.draw("diagonal", currentColor, color, 5),
+                        backgroundColor: currentColor,
                     },
                 ],
             },
             options: {
                 maintainAspectRatio: false,
-                animation: {
-                    duration: 0,
-                },
+                animation: { duration: 0 },
                 legend: {
                     position: "top",
-                    align: "start",
-                    labels: {
-                        boxWidth: 15,
-                    },
+                    align: "end",
+                    labels: { boxWidth: 15 },
                 },
                 scales: {
-                    xAxes: [{ gridLines: { display: false } }],
+                    xAxes: [
+                        {
+                            gridLines: { display: false },
+                            ticks: {
+                                maxTicksLimit: 12,
+                                maxRotation: 0,
+                            },
+                        },
+                    ],
                     yAxes: [
                         {
-                            gridLines: {
-                                display: false,
-                            },
+                            gridLines: { display: false },
                             ticks: {
-                                display: false,
+                                maxTicksLimit: 4,
                                 suggestedMax: highestTph,
                             },
                         },
                     ],
                 },
+                tooltips: {
+                    mode: "index",
+                    intersect: false,
+                },
                 elements: {
-                    line: {
-                        tension: 0,
-                    },
-                    point: {
-                        radius: 0,
-                    },
+                    line: { tension: 0 },
+                    point: { radius: 0 },
                 },
             },
         });

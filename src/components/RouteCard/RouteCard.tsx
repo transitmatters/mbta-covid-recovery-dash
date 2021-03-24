@@ -65,25 +65,16 @@ const RouteCard = (props: Props) => {
         return (
             <div className={styles.titleGrid}>
                 <div className={styles.titleAndSubtitle}>
-                    <h2 className={classNames(styles.title, title.length > 6 && "long")}>
-                        {title}
-                    </h2>
+                    <h2 className={styles.title}>{title}</h2>
                     <div className={styles.subtitle}>{subtitle}</div>
                 </div>
             </div>
         );
     };
 
-    const renderCancellationLayer = () => {
+    const renderCancellationText = () => {
         if (serviceRegimes.current.weekday.cancelled) {
-            return (
-                <>
-                    <TiCancel className={styles.cancellationIcon} />
-                    <div className={styles.cancellationLayer}>
-                        <div className={styles.cancellationText}>Canceled</div>
-                    </div>
-                </>
-            );
+            return <div className={styles.cancellationText}>Canceled</div>;
         }
         return null;
     };
@@ -101,8 +92,9 @@ const RouteCard = (props: Props) => {
 
     return (
         <div className={styles.routeCard}>
+            {/* {renderCancellationText()} */}
             {renderTitleGrid()}
-            {renderSectionLabel("Daily service levels:", tabs)}
+            {renderSectionLabel("Daily service levels", tabs)}
             <TphChart
                 baselineTph={serviceRegimes.baseline[serviceDay].tripsPerHour}
                 currentTph={serviceRegimes.current[serviceDay].tripsPerHour}
@@ -110,14 +102,13 @@ const RouteCard = (props: Props) => {
                 highestTph={highestTph}
             />
             {/* <Metrics serviceRegimes={serviceRegimes} serviceDay={serviceDay} /> */}
-            {renderSectionLabel("Ridership versus service levels:")}
+            {renderSectionLabel("Ridership and frequency")}
             <ServiceRidershipChart
                 startDate={startDate}
                 ridershipHistory={ridershipHistory}
                 serviceHistory={serviceHistory}
                 color={color}
             />
-            {renderCancellationLayer()}
         </div>
     );
 };
