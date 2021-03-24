@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p $PORT",
     "storybook": "start-storybook -p 3001 -c .storybook",
-    "build-static": "next build && BUILD_GH_PAGES=true next export -o docs"
+    "build-static": "BUILD_GH_PAGES=true next build && next export -o docs"
   },
   "dependencies": {
     "@nivo/core": "^0.67.0",
