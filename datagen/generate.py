@@ -3,20 +3,34 @@ from dataclasses import dataclass
 from datetime import datetime, date, timedelta
 import json
 
-from config import START_DATE, TIME_ZONE, OUTPUT_FILE
+from config import START_DATE, TIME_ZONE, OUTPUT_FILE, PRE_COVID_DATE, RECENT_SERVICE_CUTS_DATE
 
 from gtfs.archive import load_feeds_and_service_levels_from_archive, GtfsFeed
 from gtfs.time import date_from_string, date_to_string
 from gtfs.util import bucket_by, get_date_ranges_of_same_value
+from ridership.source import RidershipSource
+from ridership.timeseries import get_ridership_time_series_by_id
 
 
 @dataclass
 class ServiceLevelsEntry:
     route_id: str
     service_levels: List[int]
+    exception_dates: List[date]
     start_date: date
     end_date: date
     feed: GtfsFeed
+
+
+def get_route_kind(route_id: str):
+    lower_id = route_id.lower()
+    if lower_id in ("red", "orange", "blue", "silver"):
+        return lower_id
+    if lower_id.startswith("green-"):
+        return lower_id
+    if lower_id.startswith("cr-"):
+        return "regional-rail"
+    return "bus"
 
 
 def get_weekday_service_levels_history(feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]):
@@ -44,56 +58,131 @@ def get_service_level_entries_and_route_ids(feeds_and_service_levels: List[Tuple
     entries = []
     all_route_ids = set()
     for feed, service_levels in feeds_and_service_levels:
-        for route_id, service_level_date_ranges in service_levels.items():
+        for route_id, route_entry in service_levels.items():
             all_route_ids.add(route_id)
-            for service_levels in service_level_date_ranges:
+            service_level_history = route_entry["history"]
+            exception_dates = list(map(date_from_string, route_entry["exceptionDates"]))
+            for service_levels in service_level_history:
                 entry = ServiceLevelsEntry(
                     route_id=route_id,
                     service_levels=service_levels["serviceLevels"],
                     start_date=date_from_string(service_levels["startDate"]),
                     end_date=date_from_string(service_levels["endDate"]),
+                    exception_dates=exception_dates,
                     feed=feed,
                 )
                 entries.append(entry)
     return bucket_by(entries, lambda e: e.route_id), all_route_ids
 
 
-def get_service_level_history(unsorted_route_entries: List[ServiceLevelsEntry]):
-    route_entries = sorted(unsorted_route_entries, key=lambda e: e.start_date, reverse=True)
-    date = START_DATE
-    today = datetime.now(TIME_ZONE).date()
+def get_service_levels_entry_for_date(entries: List[ServiceLevelsEntry], date: date):
+    matching_entries = [e for e in entries if e.start_date <= date <= e.end_date]
+    if len(matching_entries) > 0:
+        return max(matching_entries, key=lambda e: e.feed.start_date)
+    return None
+
+
+def get_service_level_history(entries: List[ServiceLevelsEntry], start_date: date, end_date: date):
     levels_by_date = {}
-    while date <= today:
-        matching_entries = [e for e in route_entries if e.start_date <= date and date <= e.end_date]
-        if len(matching_entries) > 0:
-            latest_entry = max(matching_entries, key=lambda e: e.feed.start_date)
-            levels_by_date[date] = round(sum(latest_entry.service_levels))
-        else:
-            levels_by_date[date] = 0
+    date = start_date
+    while date <= end_date:
+        entry = get_service_levels_entry_for_date(entries, date)
+        levels_by_date[date] = round(sum(entry.service_levels)) if entry else 0
         date += timedelta(days=1)
-    date_ranges = []
+    values = []
     for (min_date, max_date), value in get_date_ranges_of_same_value(levels_by_date):
-        if value == 0 and len(date_ranges) > 0 and (max_date - min_date) <= timedelta(days=2):
-            date_ranges[-1]["endDate"] = date_to_string(max_date)
-        else:
-            date_ranges.append(
-                {
-                    "startDate": date_to_string(min_date),
-                    "endDate": date_to_string(max_date),
-                    "trips": value,
-                }
-            )
-    return date_ranges
+        range_length_days = 1 + (max_date - min_date).days
+        is_weekend = range_length_days <= 2 and all(
+            (d.weekday() in (5, 6) for d in (min_date, max_date))
+        )
+        fill_hole = value == 0 and range_length_days <= 5
+        value_to_append = values[-1] if len(values) and (fill_hole or is_weekend) else value
+        values += range_length_days * [value_to_append]
+    return values
+
+
+def get_exemplar_service_levels_for_lookback_date(
+    entries: List[ServiceLevelsEntry],
+    start_lookback_date: date,
+    matching_days_of_week: List[int],
+):
+    date = start_lookback_date
+    while date >= START_DATE:
+        entry = get_service_levels_entry_for_date(entries, date)
+        if entry and not date in entry.exception_dates and date.weekday() in matching_days_of_week:
+            return entry.service_levels
+        date -= timedelta(days=1)
+    return None
+
+
+def service_is_cancelled(
+    entries: List[ServiceLevelsEntry],
+    start_lookback_date: date,
+    matching_days_of_week: List[int],
+):
+    most_recent_matching_date = start_lookback_date
+    while most_recent_matching_date.weekday() not in matching_days_of_week:
+        most_recent_matching_date -= timedelta(days=1)
+    entry = get_service_levels_entry_for_date(entries, most_recent_matching_date)
+    return entry is None
+
+
+def get_service_levels_summary_dict(
+    entries: List[ServiceLevelsEntry],
+    start_lookback_date: date,
+    matching_days_of_week: List[int],
+):
+    if service_is_cancelled(entries, start_lookback_date, matching_days_of_week):
+        return {"cancelled": True, "tripsPerHour": None, "totalTrips": 0}
+    trips_per_hour = get_exemplar_service_levels_for_lookback_date(
+        entries,
+        start_lookback_date,
+        matching_days_of_week,
+    )
+    total_trips = round(sum(trips_per_hour)) if trips_per_hour else 0
+    return {"cancelled": False, "tripsPerHour": trips_per_hour, "totalTrips": total_trips}
+
+
+def get_service_regime_dict(entries: List[ServiceLevelsEntry], start_lookback_date: date):
+    return {
+        "weekday": get_service_levels_summary_dict(entries, start_lookback_date, list(range(0, 5))),
+        "saturday": get_service_levels_summary_dict(entries, start_lookback_date, [5]),
+        "sunday": get_service_levels_summary_dict(entries, start_lookback_date, [6]),
+    }
 
 
 def generate_data_file():
-    histories_by_route_id = {}
+    today = datetime.now(TIME_ZONE).date()
+    ridership_source = RidershipSource(download_date=date(2021, 3, 23))
+    data_by_route_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
     entries, route_ids = get_service_level_entries_and_route_ids(feeds_and_service_levels)
+    ridership_time_series = get_ridership_time_series_by_id(ridership_source, START_DATE, today)
     for route_id in route_ids:
-        histories_by_route_id[route_id] = get_service_level_history(entries[route_id])
+        entries_for_route_id = entries[route_id]
+        data_by_route_id[route_id] = {
+            "id": route_id,
+            "startDate": START_DATE.strftime("%Y-%m-%d"),
+            "routeKind": get_route_kind(route_id),
+            "ridershipHistory": ridership_time_series.get(route_id),
+            "serviceHistory": get_service_level_history(entries_for_route_id, START_DATE, today),
+            "serviceRegimes": {
+                "baseline": get_service_regime_dict(
+                    entries_for_route_id,
+                    PRE_COVID_DATE,
+                ),
+                "before-recent-service-cuts": get_service_regime_dict(
+                    entries_for_route_id,
+                    RECENT_SERVICE_CUTS_DATE,
+                ),
+                "current": get_service_regime_dict(
+                    entries_for_route_id,
+                    today,
+                ),
+            },
+        }
     with open(OUTPUT_FILE, "w") as file:
-        file.write(json.dumps(histories_by_route_id))
+        file.write(json.dumps(data_by_route_id))
 
 
 if __name__ == "__main__":

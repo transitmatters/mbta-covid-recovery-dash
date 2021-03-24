@@ -37,6 +37,8 @@ report.*.json
 datagen/gtfs/.data/**/data.zip
 datagen/gtfs/.data/**/feed
 datagen/gtfs/.data/**/trip_summaries.pickle
+datagen/ridership/.data/**/*.csv
+datagen/ridership/.data/**/*.xlsx
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

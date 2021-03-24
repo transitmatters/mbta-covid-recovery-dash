@@ -13,7 +13,7 @@ type Props = {
     tph: TripsPerHour;
     highestTph: number;
     color: string;
-    year: string;
+    label: string;
 };
 
 const linearGradient = linearGradientDef("gradient", [
@@ -21,9 +21,15 @@ const linearGradient = linearGradientDef("gradient", [
     { offset: 100, color: "inherit", opacity: 0 },
 ]);
 
+const emptyTph: TripsPerHour = Array(24).fill(0) as TripsPerHour;
+
 const TphChart = (props: Props) => {
-    const { color, year, tph, highestTph } = props;
-    const timeSeries = useMemo(() => getTimeSeriesForTph(tph), [tph]);
+    const { color, label, tph, highestTph } = props;
+    const timeSeries = useMemo(() => getTimeSeriesForTph(tph || emptyTph), [tph]);
+
+    if (!timeSeries) {
+        return null;
+    }
 
     const renderTooltip = (item) => {
         const {
@@ -42,7 +48,7 @@ const TphChart = (props: Props) => {
     return (
         <div className={styles.tphChartContainer}>
             <div style={{ color: color }} className={styles.tphChartLabel}>
-                {year}
+                {label}
             </div>
             <ResponsiveLine
                 data={[{ id: "service", data: timeSeries }]}

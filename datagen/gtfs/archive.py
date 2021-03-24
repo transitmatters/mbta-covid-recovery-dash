@@ -100,6 +100,7 @@ def get_trip_summaries(feed: GtfsFeed):
 def get_service_levels_json(feed: GtfsFeed):
     target_path = feed.service_levels_json_path
     if not path.exists(target_path):
+        print(f"Generating service_levels.json for {feed.url}")
         trip_summaries = get_trip_summaries(feed)
         service_levels_json = compute_service_levels_json(trip_summaries)
         with open(target_path, "w") as file:

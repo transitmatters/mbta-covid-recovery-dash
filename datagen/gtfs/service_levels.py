@@ -15,6 +15,11 @@ def service_runs_on_date(service: Service, date: date):
     )
 
 
+def get_exception_date_strings_for_services(services: List[Service]):
+    dates = [date_to_string(date) for service in services for date in service.exception_dates]
+    return sorted(set(dates))
+
+
 def bucket_trips_by_hour(trips: List[TripSummary]):
     by_time_of_day = [0] * 24
     for trip in trips:
@@ -45,7 +50,10 @@ def summarize_trips_by_date(route_id: str, trips: List[TripSummary]):
             "serviceLevels": value,
         }
         reduced_summary.append(summary_dict)
-    return reduced_summary
+    return {
+        "history": reduced_summary,
+        "exceptionDates": get_exception_date_strings_for_services(services),
+    }
 
 
 def compute_service_levels_json(trips: List[TripSummary]):

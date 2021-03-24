@@ -12,23 +12,32 @@ type Props = {
 
 const Metrics = (props: Props) => {
     const { serviceRegimes, serviceDay } = props;
-    const baseline = serviceRegimes.baseline[serviceDay];
-    const covid = serviceRegimes.covid[serviceDay];
-    const waitTimeDifferential = covid.meanWaitTime - baseline.meanWaitTime;
-    const waitTimeDifferentialString =
-        waitTimeDifferential > 0 ? `+${waitTimeDifferential}` : waitTimeDifferential.toString();
-    const waitTimeDesc = waitTimeDifferential > 0 ? "longer" : "shorter";
-    const waitTimeGood = waitTimeDifferential <= 0;
-    const totalTripsDifferential = baseline.totalTrips - covid.totalTrips;
-    const totalTripsNumberString = Math.abs(totalTripsDifferential).toString();
-    const totalTripsVerb = totalTripsDifferential < 0 ? "Added" : "Cut";
-    const totalTripsGood = totalTripsDifferential <= 0;
-    const crowdingFactor = covid.crowdingFactor!;
-    const crowdingPercentage = Math.round(100 * crowdingFactor - 100);
-    const crowdingPercentageDesc = crowdingPercentage > 0 ? "more" : "less";
-    const crowdingPercentageString =
-        crowdingPercentage > 0 ? `+${crowdingPercentage}%` : `${crowdingPercentage}%`;
-    const crowdingPercentageGood = crowdingPercentage <= 0;
+    // const baseline = serviceRegimes.baseline[serviceDay];
+    // const covid = serviceRegimes.covid[serviceDay];
+    // const waitTimeDifferential = covid.meanWaitTime - baseline.meanWaitTime;
+    // const waitTimeDifferentialString =
+    //     waitTimeDifferential > 0 ? `+${waitTimeDifferential}` : waitTimeDifferential.toString();
+    // const waitTimeDesc = waitTimeDifferential > 0 ? "longer" : "shorter";
+    // const waitTimeGood = waitTimeDifferential <= 0;
+    // const totalTripsDifferential = baseline.totalTrips - covid.totalTrips;
+    // const totalTripsNumberString = Math.abs(totalTripsDifferential).toString();
+    // const totalTripsVerb = totalTripsDifferential < 0 ? "Added" : "Cut";
+    // const totalTripsGood = totalTripsDifferential <= 0;
+    // const crowdingFactor = covid.crowdingFactor!;
+    // const crowdingPercentage = Math.round(100 * crowdingFactor - 100);
+    // const crowdingPercentageDesc = crowdingPercentage > 0 ? "more" : "less";
+    // const crowdingPercentageString =
+    //     crowdingPercentage > 0 ? `+${crowdingPercentage}%` : `${crowdingPercentage}%`;
+    // const crowdingPercentageGood = crowdingPercentage <= 0;
+    const totalTripsGood = false;
+    const totalTripsNumberString = "X";
+    const totalTripsVerb = "cut";
+    const waitTimeGood = false;
+    const waitTimeDifferentialString = "+Y";
+    const waitTimeDesc = "longer";
+    const crowdingPercentageGood = false;
+    const crowdingPercentageDesc = "more";
+    const crowdingPercentageString = "Z%";
     return (
         <div className={styles.metrics}>
             <div className={classNames(styles.metric, totalTripsGood ? "good" : "bad")}>

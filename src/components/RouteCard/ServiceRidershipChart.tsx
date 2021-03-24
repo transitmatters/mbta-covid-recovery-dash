@@ -2,15 +2,16 @@ import React, { useMemo } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { linearGradientDef } from "@nivo/core";
 
-import { RouteData, TimeSeries, TripsPerHour } from "types";
+import { RouteData, TimeSeries } from "types";
 
 import styles from "./RouteCard.module.scss";
 
 type Props = {
-    ridership: RouteData["ridership"];
-    service: RouteData["service"];
+    ridershipHistory: RouteData["ridershipHistory"];
+    serviceHistory: RouteData["serviceHistory"];
     ridershipColor: string;
     serviceColor: string;
+    startDate: Date;
 };
 
 const linearGradient = linearGradientDef("gradient", [
@@ -36,19 +37,41 @@ const theme = {
 
 const percentTickValues = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
+const getDateTimeSeriesForHistory = (
+    history: number[],
+    startDate: Date
+): TimeSeries<string, number> => {
+    const currentDate = new Date(startDate);
+    const series: TimeSeries<string, number> = [];
+    history.forEach((value) => {
+        series.push({
+            x: currentDate.toLocaleDateString("en-CA"),
+            y: value,
+        });
+        currentDate.setDate(currentDate.getDate() + 1);
+    });
+    return series;
+};
+
 const normalizeToPercent = <X extends any>(timeSeries: TimeSeries<X, number>) => {
-    const highestValue = timeSeries.reduce((max, next) => Math.max(max, next.y), -Infinity);
+    const firstValue = timeSeries[0].y;
     return timeSeries.map((entry) => ({
         ...entry,
-        y: entry.y / highestValue,
+        y: entry.y / firstValue,
         properties: { value: entry.y },
     }));
 };
 
 const ServiceRidershipChart = (props: Props) => {
-    const { ridershipColor, serviceColor, ridership, service } = props;
-    const ridershipPercentage = useMemo(() => normalizeToPercent(ridership), [ridership]);
-    const servicePercentage = useMemo(() => normalizeToPercent(service), [service]);
+    const { ridershipColor, serviceColor, serviceHistory, ridershipHistory, startDate } = props;
+    const ridershipPercentage = useMemo(
+        () => normalizeToPercent(getDateTimeSeriesForHistory(ridershipHistory, startDate)),
+        [ridershipHistory]
+    );
+    const servicePercentage = useMemo(
+        () => normalizeToPercent(getDateTimeSeriesForHistory(serviceHistory, startDate)),
+        [serviceHistory]
+    );
 
     const renderTooltip = (item: any) => {
         const {
@@ -71,15 +94,15 @@ const ServiceRidershipChart = (props: Props) => {
             <ResponsiveLine
                 // eslint-disable-next-line react/prop-types
                 data={[
-                    { id: "Daily riders", data: ridershipPercentage },
-                    { id: "Daily trips", data: servicePercentage },
+                    { id: "Weekday riders", data: ridershipPercentage },
+                    { id: "Weekday trips", data: servicePercentage },
                 ]}
                 colors={[ridershipColor, serviceColor]}
                 theme={theme}
                 defs={[linearGradient, emptyGradient]}
                 fill={[
-                    { match: { id: "Daily riders" }, id: "gradient" },
-                    { match: { id: "Daily trips" }, id: "emptyGradient" },
+                    { match: { id: "Weekday riders" }, id: "gradient" },
+                    { match: { id: "Weekday trips" }, id: "emptyGradient" },
                 ]}
                 margin={{ top: 5, right: 0, bottom: 10, left: 30 }}
                 tooltip={renderTooltip}
@@ -104,12 +127,12 @@ const ServiceRidershipChart = (props: Props) => {
                 }}
                 legends={[
                     {
-                        anchor: "top-right",
-                        direction: "column",
+                        anchor: "bottom-left",
+                        direction: "row",
                         justify: false,
                         translateX: 0,
                         translateY: 0,
-                        itemsSpacing: 0,
+                        itemsSpacing: 20,
                         itemDirection: "left-to-right",
                         itemWidth: 80,
                         itemHeight: 20,

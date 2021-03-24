@@ -17,22 +17,21 @@ const data77: RouteData = {
     subtitle: "Watertown Square - Harvard Station",
     routeKind: "bus" as const,
     serviceFraction: 0.81,
-    ridership: createTestTimeSeries(),
-    service: createTestTimeSeries({ baseline: 60, amplitude: 30, period: 900 }),
+    ridershipHistory: createTestTimeSeries(),
+    serviceHistory: createTestTimeSeries({ baseline: 60, amplitude: 30, period: 900 }),
     serviceRegimes: {
         covid: {
             weekday: {
+                cancelled: false,
                 tripsPerHour: lowTph,
                 totalTrips: 48,
-                meanWaitTime: 17,
-                crowdingFactor: 1.15,
             },
         },
         baseline: {
             weekday: {
+                cancelled: false,
                 tripsPerHour: highTph,
                 totalTrips: 66,
-                meanWaitTime: 9,
             },
         },
     },

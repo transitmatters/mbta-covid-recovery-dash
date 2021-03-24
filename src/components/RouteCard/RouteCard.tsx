@@ -1,10 +1,9 @@
 import React, { useMemo, useState } from "react";
 import classNames from "classnames";
-import { TiCancel } from "react-icons/ti";
 import { Pie } from "@nivo/pie";
 
 import { RouteData, ServiceDay } from "types";
-import { routeColors } from "colors";
+import { routeColors } from "../../colors";
 import { TabPicker } from "components";
 
 import Metrics from "./Metrics";
@@ -26,10 +25,14 @@ const serviceDayItems = [
 
 const getHighestTphValue = (routeData: RouteData) => {
     let max = 0;
-    Object.values(routeData.serviceRegimes).forEach((regime) => {
-        Object.values(regime).forEach((serviceLevel) => {
-            max = Math.max(max, ...serviceLevel.tripsPerHour);
-        });
+    Object.entries(routeData.serviceRegimes).forEach(([key, regime]) => {
+        if (key === "baseline" || key === "current") {
+            Object.values(regime).forEach((serviceLevel) => {
+                if (serviceLevel.tripsPerHour) {
+                    max = Math.max(max, ...serviceLevel.tripsPerHour);
+                }
+            });
+        }
     });
     return max;
 };
@@ -38,17 +41,20 @@ const RouteCard = (props: Props) => {
     const { routeData } = props;
     const {
         id,
-        ridership,
+        ridershipHistory,
         routeKind,
-        service,
+        serviceHistory,
         serviceFraction,
         serviceRegimes,
         subtitle,
-        title,
+        startDate: startDateString,
     } = routeData;
+
     const color = routeColors[routeKind];
-    const [serviceDay] = useState<ServiceDay>("weekday");
+    const [serviceDay, setServiceDay] = useState<ServiceDay>("weekday");
     const highestTph = useMemo(() => getHighestTphValue(routeData), [routeData]);
+    const startDate = useMemo(() => new Date(startDateString), [startDateString]);
+    const title = id;
 
     const renderSectionLabel = (title: string, rightElement: React.ReactNode = null) => {
         return (
@@ -84,27 +90,13 @@ const RouteCard = (props: Props) => {
         );
     };
 
-    const renderCancellationLayer = () => {
-        if (routeData.serviceRegimes.covid.weekday.cancelled) {
-            return (
-                <>
-                    <TiCancel className={styles.cancellationIcon} />
-                    <div className={styles.cancellationLayer}>
-                        <div className={styles.cancellationText}>Canceled</div>
-                    </div>
-                </>
-            );
-        }
-        return null;
-    };
-
     const tabs = (
         <TabPicker
             className={styles.tabs}
             value={serviceDay}
             items={serviceDayItems}
-            onSelectValue={(v) => {}}
-            baseId={id}
+            onSelectValue={(d) => setServiceDay(d as any)}
+            baseId={`route-day-selector-${id}`}
             aria-label="Select day of service"
         />
     );
@@ -117,23 +109,23 @@ const RouteCard = (props: Props) => {
                 tph={serviceRegimes.baseline[serviceDay].tripsPerHour}
                 highestTph={highestTph}
                 color="#bbb"
-                year="2019"
+                label="Pre-COVID"
             />
             <TphChart
-                tph={serviceRegimes.covid[serviceDay].tripsPerHour}
+                tph={serviceRegimes.current[serviceDay].tripsPerHour}
                 highestTph={highestTph}
                 color={color}
-                year="2021"
+                label="Now"
             />
             <Metrics serviceRegimes={serviceRegimes} serviceDay={serviceDay} />
             {renderSectionLabel("Ridership versus service levels:")}
             <ServiceRidershipChart
-                ridership={ridership}
-                service={service}
+                startDate={startDate}
+                ridershipHistory={ridershipHistory}
+                serviceHistory={serviceHistory}
                 ridershipColor={color}
                 serviceColor="tomato"
             />
-            {renderCancellationLayer()}
         </div>
     );
 };
