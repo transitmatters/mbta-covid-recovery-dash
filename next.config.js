@@ -28,4 +28,5 @@ module.exports = {
     typescript: {
         ignoreBuildErrors: true,
     },
+    assetPrefix: "/mbta-covid-recovery-dash/",
 };
