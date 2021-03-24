@@ -1,146 +1,128 @@
-import React, { useMemo } from "react";
-import { ResponsiveLine } from "@nivo/line";
-import { linearGradientDef } from "@nivo/core";
+import React, { useEffect, useMemo, useRef } from "react";
+import Chart, { ChartDataSets } from "chart.js";
+import Color from "chartjs-color";
+import pattern from "patternomaly";
 
-import { RouteData, TimeSeries } from "types";
+import { RouteData } from "types";
 
 import styles from "./RouteCard.module.scss";
 
 type Props = {
     ridershipHistory: RouteData["ridershipHistory"];
     serviceHistory: RouteData["serviceHistory"];
-    ridershipColor: string;
-    serviceColor: string;
+    color: string;
     startDate: Date;
 };
 
-const linearGradient = linearGradientDef("gradient", [
-    { offset: 0, color: "inherit" },
-    { offset: 100, color: "inherit", opacity: 0 },
-]);
-
-const emptyGradient = linearGradientDef("emptyGradient", [
-    { offset: 0, color: "inherit", opacity: 0 },
-    { offset: 100, color: "inherit", opacity: 0 },
-]);
-
-const theme = {
-    axis: {
-        ticks: {
-            text: {
-                fontSize: 10,
-                transform: "translateX(-2px) translateY(2px)",
-            },
-        },
-    },
+const normalizeToPercent = (timeSeries: number[]) => {
+    const firstValue = timeSeries[0];
+    return timeSeries.map((n) => n / firstValue);
 };
 
-const percentTickValues = [0, 0.2, 0.4, 0.6, 0.8, 1];
-
-const getDateTimeSeriesForHistory = (
-    history: number[],
-    startDate: Date
-): TimeSeries<string, number> => {
-    const currentDate = new Date(startDate);
-    const series: TimeSeries<string, number> = [];
-    history.forEach((value) => {
-        series.push({
-            x: currentDate.toLocaleDateString("en-CA"),
-            y: value,
-        });
-        currentDate.setDate(currentDate.getDate() + 1);
-    });
-    return series;
-};
-
-const normalizeToPercent = <X extends any>(timeSeries: TimeSeries<X, number>) => {
-    const firstValue = timeSeries[0].y;
-    return timeSeries.map((entry) => ({
-        ...entry,
-        y: entry.y / firstValue,
-        properties: { value: entry.y },
-    }));
+const getChartLabels = (startDate: Date) => {
+    const formatter = new Intl.DateTimeFormat("en-US");
+    const now = Date.now();
+    const labels: string[] = [];
+    let time = startDate.valueOf();
+    do {
+        labels.push(formatter.format(time));
+        time += 86400 * 1000;
+    } while (time <= now);
+    return labels;
 };
 
 const ServiceRidershipChart = (props: Props) => {
-    const { ridershipColor, serviceColor, serviceHistory, ridershipHistory, startDate } = props;
+    const { color, serviceHistory, ridershipHistory, startDate } = props;
+    const canvasRef = useRef<null | HTMLCanvasElement>(null);
+
     const ridershipPercentage = useMemo(
-        () => normalizeToPercent(getDateTimeSeriesForHistory(ridershipHistory, startDate)),
+        () => ridershipHistory && normalizeToPercent(ridershipHistory),
         [ridershipHistory]
     );
-    const servicePercentage = useMemo(
-        () => normalizeToPercent(getDateTimeSeriesForHistory(serviceHistory, startDate)),
-        [serviceHistory]
-    );
+    const servicePercentage = useMemo(() => serviceHistory && normalizeToPercent(serviceHistory), [
+        serviceHistory,
+    ]);
+    const labels = useMemo(() => getChartLabels(startDate), [startDate]);
 
-    const renderTooltip = (item: any) => {
-        const {
-            point: {
-                data: {
-                    properties: { value },
-                },
-                serieId,
+    useEffect(() => {
+        const alphaColor = Color(color).alpha(0.8).rgbString();
+        const ctx = canvasRef.current!.getContext("2d");
+
+        const datasets: (ChartDataSets & { actual: number[]; unit: string })[] = [
+            ridershipPercentage && {
+                label: "Ridership",
+                actual: ridershipHistory,
+                unit: "weekday passengers",
+                data: ridershipPercentage,
+                borderColor: color,
+                backgroundColor: alphaColor,
+                borderWidth: 2,
             },
-        } = item;
-        return (
-            <div className={styles.tooltip}>
-                <b>{value}</b> {serieId.toLowerCase()}
-            </div>
-        );
-    };
+            {
+                label: "Frequency",
+                actual: serviceHistory,
+                unit: "weekday trips",
+                data: servicePercentage,
+                borderColor: alphaColor,
+                backgroundColor: pattern.draw("diagonal", "rgba(0,0,0,0)", color, 5),
+                borderWidth: 2,
+            },
+        ].filter((x) => x);
+        const chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels,
+                datasets,
+            },
+            options: {
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0,
+                },
+                scales: {
+                    yAxes: [
+                        {
+                            ticks: {
+                                beginAtZero: true,
+                                stepSize: 0.2,
+                                callback: (p) => Math.round(100 * p).toString() + "%",
+                            },
+                        },
+                    ],
+                },
+                elements: {
+                    point: {
+                        radius: 0,
+                    },
+                    line: {
+                        tension: 0,
+                    },
+                },
+                legend: {
+                    position: "top",
+                    align: "start",
+                    labels: {
+                        boxWidth: 15,
+                    },
+                },
+                tooltips: {
+                    mode: "index",
+                    intersect: false,
+                    callbacks: {
+                        label: ({ datasetIndex, index }) => {
+                            const { label, actual, unit } = datasets[datasetIndex];
+                            return `${label}: ${actual[index]} ${unit}`;
+                        },
+                    },
+                },
+            },
+        });
+        return () => chart.destroy();
+    }, [ridershipPercentage, servicePercentage]);
 
     return (
         <div className={styles.serviceAndRidershipChartContainer}>
-            <ResponsiveLine
-                // eslint-disable-next-line react/prop-types
-                data={[
-                    { id: "Weekday riders", data: ridershipPercentage },
-                    { id: "Weekday trips", data: servicePercentage },
-                ]}
-                colors={[ridershipColor, serviceColor]}
-                theme={theme}
-                defs={[linearGradient, emptyGradient]}
-                fill={[
-                    { match: { id: "Weekday riders" }, id: "gradient" },
-                    { match: { id: "Weekday trips" }, id: "emptyGradient" },
-                ]}
-                margin={{ top: 5, right: 0, bottom: 10, left: 30 }}
-                tooltip={renderTooltip}
-                enableArea
-                enablePoints={false}
-                useMesh
-                xScale={{
-                    type: "time",
-                    format: "%Y-%m-%d",
-                    precision: "day",
-                }}
-                axisLeft={{
-                    format: "2>-.0p",
-                    tickValues: percentTickValues,
-                    tickSize: 0,
-                }}
-                axisBottom={{
-                    tickSize: 0,
-                    format: "%-m/%y",
-                    tickValues: "every 1 months",
-                    legend: true,
-                }}
-                legends={[
-                    {
-                        anchor: "bottom-left",
-                        direction: "row",
-                        justify: false,
-                        translateX: 0,
-                        translateY: 0,
-                        itemsSpacing: 20,
-                        itemDirection: "left-to-right",
-                        itemWidth: 80,
-                        itemHeight: 20,
-                        symbolShape: "circle",
-                        symbolSize: 10,
-                    },
-                ]}
-            />
+            <canvas className={styles.serviceAndRidershipChart} ref={canvasRef} />
         </div>
     );
 };

@@ -11,27 +11,15 @@ type Props = {
 
 const PATH_TO_DATA = path.join(process.cwd(), "data.json");
 
-const TEST_ROUTE_IDS = [
-    "Red",
-    "Blue",
-    "Orange",
-    "1",
-    "71",
-    "10",
-    "15",
-    "57",
-    "22",
-    "23",
-    "47",
-    "66",
-    "28",
-    "39",
-    "66",
-    "55",
-];
-
-const testFilter = (r) => TEST_ROUTE_IDS.includes(r.id);
-const okFilter = (r) => r.routeHistory && r.serviceHistory;
+const garbageFilter = ({ id, ridershipHistory }: RouteData) => {
+    if (id.startsWith("Boat") || id.startsWith("Shuttle")) {
+        return false;
+    }
+    if (id.startsWith("CR-")) {
+        return true;
+    }
+    return !!ridershipHistory;
+};
 
 export async function getStaticProps() {
     const dataContents = fs.readFileSync(PATH_TO_DATA).toString();
@@ -43,7 +31,7 @@ export async function getStaticProps() {
 
 const App = (props: Props) => {
     const { data } = props;
-    return <RouteGrid data={data} filter={testFilter} />;
+    return <RouteGrid data={data} filter={garbageFilter} />;
 };
 
 export default App;

@@ -1,13 +1,14 @@
 @import '../../styles/base.scss';
 
-$card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
+$card-shadow: 0px 5px 3px 0px rgba(black, 0.03);
 
 .routeCard {
     color: #222;
     position: relative;
+    border: 1px solid black;
     box-shadow: $card-shadow;
-    border-radius: 20px;
-    border: 1px solid #eee;
+    border-radius: 4px;
+    border: 2px solid #ddd;
     padding: 20px;
     overflow: hidden;
 }
@@ -24,7 +25,7 @@ $card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
     background: linear-gradient(
         -45deg,
         rgba(255, 255, 255, 1) 0%,
-        rgba(255, 255, 255, 0.9) 30%,
+        rgba(255, 255, 255, 0.9) 10%,
         rgba(255, 255, 255, 0.5) 100%
     );
 }
@@ -70,7 +71,7 @@ $card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
 
 .tphChartContainer {
     position: relative;
-    height: 60px;
+    height: 120px;
 }
 
 .tphChartLabel {
@@ -128,7 +129,12 @@ $card-shadow: 0px 5px 10px 0px rgba(black, 0.05);
 }
 
 .serviceAndRidershipChartContainer {
-    height: 150px;
+    height: 200px;
+    position: relative;
+}
+
+.serviceAndRidershipChart {
+
 }
 
 .tooltip {

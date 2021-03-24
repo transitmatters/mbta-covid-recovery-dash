@@ -8,8 +8,4 @@ export const routeColors: Record<RouteKind, string> = {
     silver: "#666",
     bus: "#ffc72c",
     "regional-rail": "#742573",
-    "green-b": "#00843d",
-    "green-c": "#00843d",
-    "green-d": "#00843d",
-    "green-e": "#00843d",
 };

@@ -1,35 +1,94 @@
-import React, { useMemo } from "react";
-import { ResponsiveLine } from "@nivo/line";
-import { linearGradientDef } from "@nivo/core";
+import React, { useEffect, useMemo, useRef } from "react";
+import pattern from "patternomaly";
+import Chart from "chart.js";
+import Color from "chartjs-color";
 
 import { TripsPerHour } from "types";
-import { getHourlyTickValues, getTimeSeriesForTph, stringify12Hour } from "time";
+import { getHourlyTickValues } from "time";
 
 import styles from "./RouteCard.module.scss";
 
-const lineTickValues = getHourlyTickValues(2);
+const lineTickValues = getHourlyTickValues(1);
 
 type Props = {
-    tph: TripsPerHour;
+    baselineTph: TripsPerHour;
+    currentTph: TripsPerHour;
     highestTph: number;
     color: string;
-    label: string;
 };
 
-const linearGradient = linearGradientDef("gradient", [
-    { offset: 0, color: "inherit" },
-    { offset: 100, color: "inherit", opacity: 0 },
-]);
-
-const emptyTph: TripsPerHour = Array(24).fill(0) as TripsPerHour;
-
 const TphChart = (props: Props) => {
-    const { color, label, tph, highestTph } = props;
-    const timeSeries = useMemo(() => getTimeSeriesForTph(tph || emptyTph), [tph]);
+    const { color, baselineTph, currentTph, highestTph } = props;
+    const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-    if (!timeSeries) {
-        return null;
-    }
+    useEffect(() => {
+        const ctx = canvasRef.current!.getContext("2d");
+        const baselineColor = Color(color).desaturate(0.6).alpha(0.25).rgbString();
+        const currentColor = Color(color).alpha(0.5).rgbString();
+        const chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: lineTickValues,
+                datasets: [
+                    {
+                        label: "Pre-covid trips per hour",
+                        data: baselineTph as any,
+                        steppedLine: true,
+                        borderColor: "rgba(0,0,0,0)",
+                        backgroundColor: pattern.draw(
+                            "diagonal-right-left",
+                            baselineColor,
+                            "white",
+                            5
+                        ),
+                    },
+                    {
+                        label: "Current trips per hour",
+                        data: currentTph as any,
+                        steppedLine: true,
+                        borderColor: "rgba(0,0,0,0)",
+                        backgroundColor: pattern.draw("diagonal", currentColor, color, 5),
+                    },
+                ],
+            },
+            options: {
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 0,
+                },
+                legend: {
+                    position: "top",
+                    align: "start",
+                    labels: {
+                        boxWidth: 15,
+                    },
+                },
+                scales: {
+                    xAxes: [{ gridLines: { display: false } }],
+                    yAxes: [
+                        {
+                            gridLines: {
+                                display: false,
+                            },
+                            ticks: {
+                                display: false,
+                                suggestedMax: highestTph,
+                            },
+                        },
+                    ],
+                },
+                elements: {
+                    line: {
+                        tension: 0,
+                    },
+                    point: {
+                        radius: 0,
+                    },
+                },
+            },
+        });
+        return () => chart.destroy();
+    }, [baselineTph, currentTph]);
 
     const renderTooltip = (item) => {
         const {
@@ -47,35 +106,7 @@ const TphChart = (props: Props) => {
 
     return (
         <div className={styles.tphChartContainer}>
-            <div style={{ color: color }} className={styles.tphChartLabel}>
-                {label}
-            </div>
-            <ResponsiveLine
-                data={[{ id: "service", data: timeSeries }]}
-                yFormat={stringify12Hour}
-                yScale={{ type: "linear", min: 0, max: highestTph }}
-                curve="step"
-                colors={[color]}
-                enablePoints={false}
-                enableGridY={false}
-                enableGridX={false}
-                enableCrosshair={false}
-                animate={false}
-                tooltip={renderTooltip}
-                enableArea
-                useMesh
-                areaOpacity={0.2}
-                margin={{ top: 5, right: 0, bottom: 20, left: 0 }}
-                defs={[linearGradient]}
-                fill={[{ match: "*", id: "gradient" }]}
-                axisLeft={{ tickValues: [] }}
-                axisBottom={{
-                    tickValues: lineTickValues,
-                    tickPadding: 5,
-                    tickSize: 0,
-                    tickRotation: 0,
-                }}
-            />
+            <canvas ref={canvasRef} />
         </div>
     );
 };
