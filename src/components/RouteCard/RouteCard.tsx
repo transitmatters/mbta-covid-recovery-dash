@@ -52,6 +52,10 @@ const RouteCard = (props: Props) => {
     const startDate = useMemo(() => new Date(startDateString), [startDateString]);
     const title = id;
 
+    const ridershipAndFrequencyLabel = ridershipHistory
+        ? "Ridership and frequency"
+        : "Frequency (ridership data not available)";
+
     const renderSectionLabel = (title: string, rightElement: React.ReactNode = null) => {
         return (
             <h3 className={styles.sectionLabel}>
@@ -102,7 +106,7 @@ const RouteCard = (props: Props) => {
                 highestTph={highestTph}
             />
             {/* <Metrics serviceRegimes={serviceRegimes} serviceDay={serviceDay} /> */}
-            {renderSectionLabel("Ridership and frequency")}
+            {renderSectionLabel(ridershipAndFrequencyLabel)}
             <ServiceRidershipChart
                 startDate={startDate}
                 ridershipHistory={ridershipHistory}

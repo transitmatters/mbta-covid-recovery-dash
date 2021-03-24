@@ -9,10 +9,27 @@ import styles from "./RouteGrid.module.scss";
 type Props = {
     data: Record<string, RouteData>;
     filter?: (r: RouteData) => boolean;
+    sortKey?: (r: RouteData) => string | number;
 };
 
 const pagination = 12;
 const defaultFilter = (x) => !!x;
+
+const colorLines = ["red", "green", "blue", "orange", "silver"];
+const keyBusRoutes = [1, 15, 22, 23, 28, 32, 39, 57, 66, 71, 73, 77, 111, 116, 117].map((x) =>
+    x.toString()
+);
+
+const defaultSortKey = (r: RouteData) => {
+    if (colorLines.includes(r.id.toLowerCase())) {
+        return 0;
+    } else if (keyBusRoutes.includes(r.id)) {
+        return 1;
+    } else if (r.id.startsWith("CR-")) {
+        return 2;
+    }
+    return 3;
+};
 
 const getDocumentElement = () => {
     if (typeof document !== "undefined") {
@@ -22,16 +39,22 @@ const getDocumentElement = () => {
 };
 
 const RouteGrid = (props: Props) => {
-    const { data, filter = defaultFilter } = props;
+    const { data, filter = defaultFilter, sortKey = defaultSortKey } = props;
     const [limit, setLimit] = useState(pagination);
 
-    const availableItems = useMemo(() => Object.values(data).filter(filter), [data, filter]);
+    const availableItems = useMemo(
+        () =>
+            Object.values(data)
+                .filter(filter)
+                .sort((a, b) => (sortKey(a) > sortKey(b) ? 1 : -1)),
+        [data, filter]
+    );
     const shownItems = useMemo(() => availableItems.slice(0, limit), [availableItems, limit]);
 
     useInfiniteScroll({
         element: getDocumentElement(),
         enabled: limit < availableItems.length,
-        scrollTolerance: 1000,
+        scrollTolerance: 300,
         onRequestMoreItems: () => setLimit((l) => l + pagination),
     });
 

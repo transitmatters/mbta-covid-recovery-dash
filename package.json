@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p $PORT",
-    "storybook": "start-storybook -p 3001 -c .storybook"
+    "storybook": "start-storybook -p 3001 -c .storybook",
+    "build-static": "next build && next export"
   },
   "dependencies": {
     "@nivo/core": "^0.67.0",

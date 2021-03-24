@@ -23,28 +23,31 @@ const TphChart = (props: Props) => {
     useEffect(() => {
         const ctx = canvasRef.current!.getContext("2d");
         const currentColor = Color(color).alpha(0.4).rgbString();
+
+        const datasets = [
+            {
+                label: "Pre-COVID trips per hour",
+                data: baselineTph as any,
+                steppedLine: true,
+                borderColor: color,
+                borderWidth: 2,
+                backgroundColor: "rgba(0,0,0,0)",
+            },
+            {
+                label: "Current trips per hour",
+                data: currentTph as any,
+                steppedLine: true,
+                borderWidth: 2,
+                borderColor: "rgba(0,0,0,0)",
+                backgroundColor: currentColor,
+            },
+        ];
+
         const chart = new Chart(ctx, {
             type: "line",
             data: {
                 labels: lineTickValues,
-                datasets: [
-                    {
-                        label: "Pre-COVID trips per hour",
-                        data: baselineTph as any,
-                        steppedLine: true,
-                        borderColor: color,
-                        borderWidth: 2,
-                        backgroundColor: "rgba(0,0,0,0)",
-                    },
-                    {
-                        label: "Current trips per hour",
-                        data: currentTph as any,
-                        steppedLine: true,
-                        borderWidth: 2,
-                        borderColor: "rgba(0,0,0,0)",
-                        backgroundColor: currentColor,
-                    },
-                ],
+                datasets,
             },
             options: {
                 maintainAspectRatio: false,
@@ -77,6 +80,12 @@ const TphChart = (props: Props) => {
                 tooltips: {
                     mode: "index",
                     intersect: false,
+                    callbacks: {
+                        label: ({ datasetIndex, index }) => {
+                            const { label, data } = datasets[datasetIndex];
+                            return `${label}: ${data[index]} (each direction)`;
+                        },
+                    },
                 },
                 elements: {
                     line: { tension: 0 },
@@ -86,20 +95,6 @@ const TphChart = (props: Props) => {
         });
         return () => chart.destroy();
     }, [baselineTph, currentTph]);
-
-    const renderTooltip = (item) => {
-        const {
-            point: {
-                data: { x: time, y: trips },
-            },
-        } = item;
-        const tripsPlural = trips === 1 ? "trip" : "trips";
-        return (
-            <div className={styles.tooltip}>
-                <b>{time}:</b> {trips} {tripsPlural}/hour
-            </div>
-        );
-    };
 
     return (
         <div className={styles.tphChartContainer}>

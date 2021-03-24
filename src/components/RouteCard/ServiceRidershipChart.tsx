@@ -68,7 +68,7 @@ const ServiceRidershipChart = (props: Props) => {
             {
                 label: "Frequency",
                 actual: serviceHistory,
-                unit: "weekday trips",
+                unit: "weekday trips (each direction)",
                 data: servicePercentage,
                 borderColor: alphaColor,
                 backgroundColor: pattern.draw("diagonal", "rgba(0,0,0,0)", color, 5),
@@ -96,7 +96,8 @@ const ServiceRidershipChart = (props: Props) => {
                             ticks: {
                                 beginAtZero: true,
                                 stepSize: 0.2,
-                                callback: (p) => Math.round(100 * p).toString() + "%",
+                                maxTicksLimit: 6,
+                                callback: (p: number) => Math.round(100 * p).toString() + "%",
                             },
                             gridLines: { display: false },
                         },
