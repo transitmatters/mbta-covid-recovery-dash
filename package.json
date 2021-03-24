@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p $PORT",
     "storybook": "start-storybook -p 3001 -c .storybook",
-    "build-static": "BUILD_GH_PAGES=true next build && next export -o docs"
+    "build-static": "BUILD_GH_PAGES=true next build && next export -o docs && touch ./docs/.nojekyll"
   },
   "dependencies": {
     "@nivo/core": "^0.67.0",
