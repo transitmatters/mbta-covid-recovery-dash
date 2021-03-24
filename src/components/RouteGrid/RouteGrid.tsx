@@ -38,17 +38,26 @@ const getDocumentElement = () => {
     return null;
 };
 
+const sortOnKey = (data: RouteData[], sortKey: Props["sortKey"]) => {
+    return data.sort((a, b) => {
+        const ka = sortKey(a);
+        const kb = sortKey(b);
+        if (ka === kb) {
+            return 0;
+        } else {
+            return ka > kb ? 1 : -1;
+        }
+    });
+};
+
 const RouteGrid = (props: Props) => {
     const { data, filter = defaultFilter, sortKey = defaultSortKey } = props;
     const [limit, setLimit] = useState(pagination);
 
-    const availableItems = useMemo(
-        () =>
-            Object.values(data)
-                .filter(filter)
-                .sort((a, b) => (sortKey(a) > sortKey(b) ? 1 : -1)),
-        [data, filter]
-    );
+    const availableItems = useMemo(() => sortOnKey(Object.values(data).filter(filter), sortKey), [
+        data,
+        filter,
+    ]);
     const shownItems = useMemo(() => availableItems.slice(0, limit), [availableItems, limit]);
 
     useInfiniteScroll({
