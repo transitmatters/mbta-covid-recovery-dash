@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import React from "react";
+import Head from "next/head";
 
 import { RouteGrid } from "components";
 import { RouteData } from "types";
@@ -31,7 +32,14 @@ export async function getStaticProps() {
 
 const App = (props: Props) => {
     const { data } = props;
-    return <RouteGrid data={data} filter={garbageFilter} />;
+    return (
+        <>
+            <Head>
+                <title>MBTA Covid Recovery Dashboard</title>
+            </Head>
+            <RouteGrid data={data} filter={garbageFilter} />
+        </>
+    );
 };
 
 export default App;

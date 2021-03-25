@@ -82,6 +82,7 @@ def extract_gtfs_zip(feed: GtfsFeed):
 
 
 def get_trip_summaries(feed: GtfsFeed):
+    extract_gtfs_zip(feed)
     pickle_path = feed.trip_summaries_pickle_path
     if path.exists(pickle_path):
         with open(pickle_path, "rb") as file:

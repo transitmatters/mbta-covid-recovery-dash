@@ -2,10 +2,11 @@ import React, { useMemo, useState } from "react";
 import classNames from "classnames";
 import { TiCancel } from "react-icons/ti";
 
-import { RouteData, ServiceDay } from "types";
-import { routeColors } from "../../colors";
+import { RouteData, ServiceDay, ServiceLevels } from "types";
 import { TabPicker } from "components";
 
+import { routeColors } from "./colors";
+import { routeTitles } from "./titles";
 import styles from "./RouteCard.module.scss";
 import TphChart from "./TphChart";
 import ServiceRidershipChart from "./ServiceRidershipChart";
@@ -34,6 +35,20 @@ const getHighestTphValue = (routeData: RouteData) => {
     return max;
 };
 
+const getServiceFraction = (
+    numerator: Record<ServiceDay, ServiceLevels>,
+    denominator: Record<ServiceDay, ServiceLevels>
+) => {
+    return (
+        (numerator.weekday.totalTrips +
+            numerator.saturday.totalTrips +
+            numerator.sunday.totalTrips) /
+        (denominator.weekday.totalTrips +
+            denominator.saturday.totalTrips +
+            denominator.sunday.totalTrips)
+    );
+};
+
 const RouteCard = (props: Props) => {
     const { routeData } = props;
     const {
@@ -42,7 +57,6 @@ const RouteCard = (props: Props) => {
         routeKind,
         serviceHistory,
         serviceRegimes,
-        subtitle,
         startDate: startDateString,
     } = routeData;
 
@@ -50,7 +64,7 @@ const RouteCard = (props: Props) => {
     const [serviceDay, setServiceDay] = useState<ServiceDay>("weekday");
     const highestTph = useMemo(() => getHighestTphValue(routeData), [routeData]);
     const startDate = useMemo(() => new Date(startDateString), [startDateString]);
-    const title = id;
+    const title = routeTitles[id] || id;
 
     const ridershipAndFrequencyLabel = ridershipHistory
         ? "Ridership and frequency"
@@ -65,22 +79,32 @@ const RouteCard = (props: Props) => {
         );
     };
 
-    const renderTitleGrid = () => {
-        return (
-            <div className={styles.titleGrid}>
-                <div className={styles.titleAndSubtitle}>
-                    <h2 className={styles.title}>{title}</h2>
-                    <div className={styles.subtitle}>{subtitle}</div>
+    const renderStatusBadge = () => {
+        const { current, baseline } = serviceRegimes;
+        if (current.weekday.cancelled) {
+            return (
+                <div className={classNames(styles.statusBadge, "bad")}>
+                    <TiCancel size={20} />
+                    Canceled
                 </div>
-            </div>
-        );
+            );
+        } else if (current.saturday.totalTrips === 0 && baseline.saturday.totalTrips > 0) {
+            return (
+                <div className={classNames(styles.statusBadge, "warning")}>
+                    <TiCancel size={20} />
+                    Weekends
+                </div>
+            );
+        }
     };
 
-    const renderCancellationText = () => {
-        if (serviceRegimes.current.weekday.cancelled) {
-            return <div className={styles.cancellationText}>Canceled</div>;
-        }
-        return null;
+    const renderTopRow = () => {
+        return (
+            <div className={styles.topRow}>
+                <h2 className={styles.title}>{title}</h2>
+                {renderStatusBadge()}
+            </div>
+        );
     };
 
     const tabs = (
@@ -97,7 +121,7 @@ const RouteCard = (props: Props) => {
     return (
         <div className={styles.routeCard}>
             {/* {renderCancellationText()} */}
-            {renderTitleGrid()}
+            {renderTopRow()}
             {renderSectionLabel("Daily service levels", tabs)}
             <TphChart
                 baselineTph={serviceRegimes.baseline[serviceDay].tripsPerHour}

@@ -68,10 +68,16 @@ const RouteGrid = (props: Props) => {
     });
 
     return (
-        <div className={styles.routeGrid}>
-            {shownItems.map((item) => (
-                <RouteCard routeData={item} key={item.id} />
-            ))}
+        <div className={styles.routeGridWrapper}>
+            <h1 className={styles.header}>
+                MBTA Covid Recovery Dashboard
+                <div className={styles.alphaTag}>Alpha</div>
+            </h1>
+            <div className={styles.routeGrid}>
+                {shownItems.map((item) => (
+                    <RouteCard routeData={item} key={item.id} />
+                ))}
+            </div>
         </div>
     );
 };

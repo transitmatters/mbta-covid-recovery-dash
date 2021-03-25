@@ -24,9 +24,7 @@ class ServiceLevelsEntry:
 
 def get_route_kind(route_id: str):
     lower_id = route_id.lower()
-    if lower_id in ("red", "orange", "blue", "silver"):
-        return lower_id
-    if lower_id.startswith("green-"):
+    if lower_id in ("red", "orange", "blue", "silver", "green"):
         return lower_id
     if lower_id.startswith("cr-"):
         return "regional-rail"

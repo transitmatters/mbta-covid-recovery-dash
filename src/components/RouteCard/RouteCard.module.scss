@@ -38,13 +38,9 @@ $card-shadow: 0px 5px 3px 0px rgba(black, 0.03);
     opacity: 0.2;
 }
 
-.titleGrid {
+.topRow {
     display: flex;
     justify-content: space-between;
-}
-
-.titleAndSubtitle {
-    display: flex;
     align-items: center;
 }
 
@@ -54,8 +50,23 @@ $card-shadow: 0px 5px 3px 0px rgba(black, 0.03);
     font-size: 28px;
 }
 
-.subtitle {
-    margin-left: 5px;
+.statusBadge {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    border-radius: 4px;
+    padding: 5px 10px;
+    &:global(.bad) {
+        color: white;
+        background: $bad;
+    }
+    &:global(.warning) {
+        color: white;
+        background: $warning;
+    }
+    > svg {
+        margin-right: 4px;
+    }
 }
 
 .tphChartContainer {
@@ -120,9 +131,6 @@ $card-shadow: 0px 5px 3px 0px rgba(black, 0.03);
 .serviceAndRidershipChartContainer {
     height: 200px;
     position: relative;
-}
-
-.serviceAndRidershipChart {
 }
 
 .tooltip {

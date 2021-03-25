@@ -1,5 +1,25 @@
-.routeGrid {
+.routeGridWrapper {
     padding: 40px;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+}
+
+.alphaTag {
+    display: inline-block;
+    font-size: 12px;
+    padding: 4px 8px;
+    margin-left: 5px;
+    background: black;
+    color: white;
+    border-radius: 4px;
+    height: 100%;
+    transform: rotate(-10deg);
+}
+
+.routeGrid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     column-gap: 20px;
