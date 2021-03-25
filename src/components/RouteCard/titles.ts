@@ -17,4 +17,4 @@ export const routeTitles = {
     "CR-Newburyport": "Newburyport/Rockport Line",
     "CR-Providence": "Providence/Stoughton Line",
     "CR-Foxboro": "Foxboro Event Service",
-};
+} as const;

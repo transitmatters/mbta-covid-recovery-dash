@@ -1,12 +1,11 @@
 @import '../../styles/base.scss';
 
-$card-shadow: 0px 5px 3px 0px rgba(black, 0.03);
 
 .routeCard {
     color: #222;
     position: relative;
     border: 1px solid black;
-    box-shadow: $card-shadow;
+    box-shadow: $global-shadow;
     border-radius: 4px;
     border: 2px solid #ddd;
     padding: 20px;
@@ -131,15 +130,6 @@ $card-shadow: 0px 5px 3px 0px rgba(black, 0.03);
 .serviceAndRidershipChartContainer {
     height: 200px;
     position: relative;
-}
-
-.tooltip {
-    font-size: 12px;
-    padding: 4px 8px;
-    background: white;
-    border-radius: 100px;
-    box-shadow: $card-shadow;
-    border: 1px solid #ddd;
 }
 
 .tabs {

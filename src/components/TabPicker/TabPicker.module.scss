@@ -9,10 +9,14 @@
     border-radius: 4px;
     cursor: pointer;
     user-select: none;
+    margin-right: 2px;
     &[aria-selected='true'] {
         background: currentColor;
         & > span {
             color: white;
         }
+    }
+    &:not([aria-selected='true']):hover {
+        background: #eee;
     }
 }
