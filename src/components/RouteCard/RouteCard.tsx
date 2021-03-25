@@ -67,8 +67,8 @@ const RouteCard = (props: Props) => {
     const title = routeTitles[id] || id;
 
     const ridershipAndFrequencyLabel = ridershipHistory
-        ? "Ridership and frequency"
-        : "Frequency (ridership data not available)";
+        ? "Weekday ridership and frequency"
+        : "Weekday frequency (ridership data not available)";
 
     const renderSectionLabel = (title: string, rightElement: React.ReactNode = null) => {
         return (
