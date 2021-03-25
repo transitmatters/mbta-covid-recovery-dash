@@ -122,7 +122,7 @@ const RouteCard = (props: Props) => {
         <div className={styles.routeCard}>
             {/* {renderCancellationText()} */}
             {renderTopRow()}
-            {renderSectionLabel("Service levels", tabs)}
+            {renderSectionLabel("Daily service levels", tabs)}
             <TphChart
                 baselineTph={serviceRegimes.baseline[serviceDay].tripsPerHour}
                 currentTph={serviceRegimes.current[serviceDay].tripsPerHour}
