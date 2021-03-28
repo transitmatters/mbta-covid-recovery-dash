@@ -8,6 +8,7 @@ from gtfs.models import (
     Transfer,
     Trip,
     Service,
+    ServiceExceptionDate,
     Route,
     RoutePattern,
 )
@@ -32,12 +33,18 @@ def get_shapes_by_id(shapes):
     return res
 
 
-def get_exception_dates_for_service_id(service_id, calendar_date_dicts):
+def get_service_exception_dates_for_service_id(service_id, calendar_date_dicts):
     dates = []
     for date_dict in calendar_date_dicts:
         if date_dict["service_id"] == service_id:
             exception_date = date_from_string(date_dict["date"])
-            dates.append(exception_date)
+            exception_type = date_dict["exception_type"]
+            service_exception_date = ServiceExceptionDate(
+                date=exception_date,
+                service_id=service_id,
+                exception_type=exception_type,
+            )
+            dates.append(service_exception_date)
     return dates
 
 
@@ -57,7 +64,7 @@ def link_services(calendar_dicts, calendar_attribute_dicts, calendar_date_dicts)
                 schedule_typicality=int(attribute_dict["service_schedule_typicality"]),
                 start_date=date_from_string(calendar_dict["start_date"]),
                 end_date=date_from_string(calendar_dict["end_date"]),
-                exception_dates=get_exception_dates_for_service_id(
+                exception_dates=get_service_exception_dates_for_service_id(
                     service_id,
                     calendar_date_dicts,
                 ),

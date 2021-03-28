@@ -1,7 +1,7 @@
 from typing import List, Dict
 from datetime import date, timedelta
 
-from gtfs.models import Service
+from gtfs.models import Service, ServiceExceptionType
 from gtfs.trips import TripSummary
 from gtfs.util import bucket_by, get_date_ranges_of_same_value
 from gtfs.time import date_to_string, DAYS_OF_WEEK
@@ -19,8 +19,13 @@ def normalize_route_id(route_id: str):
 def service_runs_on_date(service: Service, date: date):
     return (
         service.start_date <= date <= service.end_date
-        and date not in service.exception_dates
         and DAYS_OF_WEEK[date.weekday()] in service.days
+        and not any(
+            (
+                ed.date == date and ed.exception_type == ServiceExceptionType.REMOVED
+                for ed in service.exception_dates
+            )
+        )
     )
 
 

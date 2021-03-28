@@ -19,6 +19,18 @@ class VehicleType:
     FERRY = "4"
 
 
+class ServiceExceptionType:
+    ADDED = "1"
+    REMOVED = "2"
+
+
+@dataclass
+class ServiceExceptionDate(object):
+    date: datetime.date
+    service_id: str
+    exception_type: str
+
+
 @dataclass(frozen=True)
 class Service(object):
     id: str
@@ -29,7 +41,7 @@ class Service(object):
     schedule_typicality: int
     start_date: datetime.date
     end_date: datetime.date
-    exception_dates: List[datetime.date]
+    exception_dates: List[ServiceExceptionDate]
 
     def __hash__(self):
         return hash(self.id)
