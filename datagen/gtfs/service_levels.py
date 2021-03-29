@@ -30,7 +30,11 @@ def service_runs_on_date(service: Service, date: date):
 
 
 def get_exception_date_strings_for_services(services: List[Service]):
-    dates = [date_to_string(date) for service in services for date in service.exception_dates]
+    dates = [
+        date_to_string(exception_date.date)
+        for service in services
+        for exception_date in service.exception_dates
+    ]
     return sorted(set(dates))
 
 
