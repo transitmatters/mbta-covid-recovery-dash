@@ -178,7 +178,7 @@ def summarize_service(numerator_regime_dict, denominator_regime_dict):
 
 def generate_data_file():
     today = datetime.now(TIME_ZONE).date()
-    ridership_source = RidershipSource(download_date=date(2021, 3, 23))
+    ridership_source = RidershipSource(download_date=date(2021, 3, 30))
     data_by_route_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
     entries, route_ids = get_service_level_entries_and_route_ids(feeds_and_service_levels)
