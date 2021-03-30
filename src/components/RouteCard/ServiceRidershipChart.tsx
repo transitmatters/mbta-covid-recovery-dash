@@ -7,7 +7,6 @@ import memoize from "fast-memoize";
 import { RouteData } from "types";
 
 import styles from "./RouteCard.module.scss";
-import { format } from "path";
 
 type Props = {
     ridershipHistory: RouteData["ridershipHistory"];

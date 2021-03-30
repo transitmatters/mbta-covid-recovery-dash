@@ -2,11 +2,11 @@ import React, { useMemo, useState } from "react";
 import classNames from "classnames";
 import { TiCancel } from "react-icons/ti";
 
-import { RouteData, ServiceDay, ServiceLevels } from "types";
+import { RouteData, ServiceDay } from "types";
 import { TabPicker } from "components";
+import { routeTitles } from "titles";
 
 import { routeColors } from "./colors";
-import { routeTitles } from "./titles";
 import styles from "./RouteCard.module.scss";
 import TphChart from "./TphChart";
 import ServiceRidershipChart from "./ServiceRidershipChart";
@@ -33,20 +33,6 @@ const getHighestTphValue = (routeData: RouteData) => {
         }
     });
     return max;
-};
-
-const getServiceFraction = (
-    numerator: Record<ServiceDay, ServiceLevels>,
-    denominator: Record<ServiceDay, ServiceLevels>
-) => {
-    return (
-        (numerator.weekday.totalTrips +
-            numerator.saturday.totalTrips +
-            numerator.sunday.totalTrips) /
-        (denominator.weekday.totalTrips +
-            denominator.saturday.totalTrips +
-            denominator.sunday.totalTrips)
-    );
 };
 
 const RouteCard = (props: Props) => {
@@ -120,7 +106,6 @@ const RouteCard = (props: Props) => {
 
     return (
         <div className={styles.routeCard}>
-            {/* {renderCancellationText()} */}
             {renderTopRow()}
             {renderSectionLabel("Daily service levels", tabs)}
             <TphChart
@@ -129,7 +114,6 @@ const RouteCard = (props: Props) => {
                 color={color}
                 highestTph={highestTph}
             />
-            {/* <Metrics serviceRegimes={serviceRegimes} serviceDay={serviceDay} /> */}
             {renderSectionLabel(ridershipAndFrequencyLabel)}
             <ServiceRidershipChart
                 startDate={startDate}

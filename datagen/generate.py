@@ -76,6 +76,15 @@ def get_service_level_entries_and_route_ids(feeds_and_service_levels: List[Tuple
 def get_service_levels_entry_for_date(entries: List[ServiceLevelsEntry], date: date):
     matching_entries = [e for e in entries if e.start_date <= date <= e.end_date]
     if len(matching_entries) > 0:
+        # if matching_entries[0].route_id == "24" and date.year == 2020 and date.month < 8:
+        #     print(f"==== {date_to_string(date)} ====")
+        #     for me in matching_entries:
+        #         print(
+        #             date_to_string(me.start_date),
+        #             date_to_string(me.end_date),
+        #             sum(me.service_levels),
+        #             me.feed.url,
+        #         )
         return max(matching_entries, key=lambda e: e.feed.start_date)
     return None
 
@@ -149,34 +158,56 @@ def get_service_regime_dict(entries: List[ServiceLevelsEntry], start_lookback_da
     }
 
 
+def count_total_trips(regime_dict):
+    return (
+        regime_dict["weekday"]["totalTrips"]
+        + regime_dict["saturday"]["totalTrips"]
+        + regime_dict["sunday"]["totalTrips"]
+    )
+
+
+def summarize_service(numerator_regime_dict, denominator_regime_dict):
+    numerator_total_trips = count_total_trips(numerator_regime_dict)
+    denominator_total_trips = count_total_trips(denominator_regime_dict)
+    try:
+        total_trips_fraction = numerator_total_trips / denominator_total_trips
+    except ZeroDivisionError:
+        total_trips_fraction = 0
+    return numerator_total_trips, total_trips_fraction
+
+
 def generate_data_file():
     today = datetime.now(TIME_ZONE).date()
     ridership_source = RidershipSource(download_date=date(2021, 3, 23))
     data_by_route_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
     entries, route_ids = get_service_level_entries_and_route_ids(feeds_and_service_levels)
-    ridership_time_series = get_ridership_time_series_by_id(ridership_source, START_DATE, today)
+    ridership_time_series_by_route_id = get_ridership_time_series_by_id(
+        ridership_source,
+        START_DATE,
+        today,
+    )
     for route_id in route_ids:
         entries_for_route_id = entries[route_id]
+        ridership_time_series = ridership_time_series_by_route_id.get(route_id)
+        service_time_series = get_service_level_history(entries_for_route_id, START_DATE, today)
+        baseline_service_regime = get_service_regime_dict(entries_for_route_id, PRE_COVID_DATE)
+        current_service_regime = get_service_regime_dict(entries_for_route_id, today)
+        total_trips, service_fraction = summarize_service(
+            current_service_regime,
+            baseline_service_regime,
+        )
         data_by_route_id[route_id] = {
             "id": route_id,
             "startDate": START_DATE.strftime("%Y-%m-%d"),
             "routeKind": get_route_kind(route_id),
-            "ridershipHistory": ridership_time_series.get(route_id),
-            "serviceHistory": get_service_level_history(entries_for_route_id, START_DATE, today),
+            "ridershipHistory": ridership_time_series,
+            "serviceHistory": service_time_series,
+            "serviceFraction": service_fraction,
+            "totalTrips": total_trips,
             "serviceRegimes": {
-                "baseline": get_service_regime_dict(
-                    entries_for_route_id,
-                    PRE_COVID_DATE,
-                ),
-                "before-recent-service-cuts": get_service_regime_dict(
-                    entries_for_route_id,
-                    RECENT_SERVICE_CUTS_DATE,
-                ),
-                "current": get_service_regime_dict(
-                    entries_for_route_id,
-                    today,
-                ),
+                "baseline": baseline_service_regime,
+                "current": current_service_regime,
             },
         }
     with open(OUTPUT_FILE, "w") as file:

@@ -1,4 +1,4 @@
-import { Time, TimeSeries, TripsPerHour } from "types";
+import { Time } from "types";
 
 export const MINUTE = 60;
 export const HOUR = 60 * MINUTE;
@@ -39,16 +39,6 @@ export const stringify12Hour = (time: Time) => {
     const hours = Math.floor(time / HOUR);
     const isPM = hours >= 12 && hours < 24;
     return `${hours > 12 ? hours - 12 : hours === 0 ? 12 : hours} ${isPM ? "PM" : "AM"}`;
-};
-
-export const getTimeSeriesForTph = (tph: TripsPerHour) => {
-    const series: TimeSeries<string> = [];
-    for (let i = 0; i < 24; i++) {
-        const x = stringify12Hour(i * HOUR);
-        const y = tph[i];
-        series.push({ x, y });
-    }
-    return series;
 };
 
 export const getHourlyTickValues = (

@@ -1,38 +1,24 @@
 import React, { useMemo, useState } from "react";
+import classNames from "classnames";
 
 import { RouteCard } from "components";
 import { RouteData } from "types";
-import { routeTitles } from "components/RouteCard/titles";
+import { routeTitles } from "titles";
 
 import { useInfiniteScroll } from "./useInfiniteScroll";
+import { sortFunctions, Sort, SortFn } from "./sorting";
+
 import styles from "./RouteGrid.module.scss";
 
 type Props = {
     data: Record<string, RouteData>;
     filter?: (r: RouteData) => boolean;
-    sortKey?: (r: RouteData) => string | number;
 };
 
 type RouteKindOption = "all" | "bus" | "rapid-transit" | "regional-rail";
 
 const pagination = 12;
 const defaultFilter = (x) => !!x;
-
-const colorLines = ["red", "green", "blue", "orange", "silver"];
-const keyBusRoutes = [1, 15, 22, 23, 28, 32, 39, 57, 66, 71, 73, 77, 111, 116, 117].map((x) =>
-    x.toString()
-);
-
-const defaultSortKey = (r: RouteData) => {
-    if (colorLines.includes(r.id.toLowerCase())) {
-        return 0;
-    } else if (keyBusRoutes.includes(r.id)) {
-        return 1;
-    } else if (r.id.startsWith("CR-")) {
-        return 2;
-    }
-    return 3;
-};
 
 const getDocumentElement = () => {
     if (typeof document !== "undefined") {
@@ -41,10 +27,10 @@ const getDocumentElement = () => {
     return null;
 };
 
-const sortOnKey = (data: RouteData[], sortKey: Props["sortKey"]) => {
+const sortOnKey = (data: RouteData[], sortFn: SortFn) => {
     return data.sort((a, b) => {
-        const ka = sortKey(a);
-        const kb = sortKey(b);
+        const ka = sortFn(a);
+        const kb = sortFn(b);
         if (ka === kb) {
             return 0;
         } else {
@@ -71,9 +57,10 @@ const matchesRouteKindOption = (routeData: RouteData, option: RouteKindOption) =
 };
 
 const RouteGrid = (props: Props) => {
-    const { data, filter = defaultFilter, sortKey = defaultSortKey } = props;
+    const { data, filter = defaultFilter } = props;
     const [limit, setLimit] = useState(pagination);
     const [query, setQuery] = useState("");
+    const [sort, setSort] = useState<Sort | "">("");
     const [kindOption, setKindOption] = useState<RouteKindOption>("all");
 
     const availableItems = useMemo(() => {
@@ -84,9 +71,9 @@ const RouteGrid = (props: Props) => {
                     matchesQuery(routeData, query) &&
                     matchesRouteKindOption(routeData, kindOption)
             ),
-            sortKey
+            sortFunctions[sort || "kind"]
         );
-    }, [data, filter, query, kindOption]);
+    }, [data, filter, query, kindOption, sort]);
     const shownItems = useMemo(() => availableItems.slice(0, limit), [availableItems, limit]);
 
     useInfiniteScroll({
@@ -102,14 +89,53 @@ const RouteGrid = (props: Props) => {
                 className={styles.select}
                 value={kindOption}
                 onChange={(e) => {
-                    setKindOption(e.target.value as RouteKindOption);
+                    const nextKindOption = e.target.value as RouteKindOption;
+                    setKindOption(nextKindOption);
                     setLimit(pagination);
+                    if (nextKindOption === "regional-rail") {
+                        setSort("highestServiceFraction");
+                    }
                 }}
             >
                 <option value="all">All routes</option>
                 <option value="bus">Bus</option>
                 <option value="rapid-transit">Rapid transit</option>
                 <option value="regional-rail">Commuter rail</option>
+            </select>
+        );
+    };
+
+    const renderSortDropdown = () => {
+        const disableRidership = kindOption === "regional-rail";
+        return (
+            <select
+                className={classNames(styles.select, sort === "kind" && "default")}
+                value={sort}
+                onChange={(e) => {
+                    setSort(e.target.value as Sort);
+                    setLimit(pagination);
+                }}
+            >
+                <option value="" disabled>
+                    Sort by...
+                </option>
+                <option value="kind">Service kind</option>
+                <option value="highestServiceFraction">Improved service</option>
+                <option value="lowestServiceFraction">Reduced service</option>
+                <option value="lowestTotalTrips">Lowest frequency</option>
+                <option value="highestTotalTrips">Highest frequency</option>
+                <option value="highestRidershipFraction" disabled={disableRidership}>
+                    Ridership retained
+                </option>
+                <option value="lowestRidershipFraction" disabled={disableRidership}>
+                    Ridership lost
+                </option>
+                <option value="lowestTotalRidership" disabled={disableRidership}>
+                    Least ridership
+                </option>
+                <option value="highestTotalRidership" disabled={disableRidership}>
+                    Most ridership
+                </option>
             </select>
         );
     };
@@ -131,6 +157,7 @@ const RouteGrid = (props: Props) => {
                     }}
                 />
                 {renderRouteKindDropdown()}
+                {renderSortDropdown()}
             </div>
             <div className={styles.routeGrid}>
                 {shownItems.map((item) => (
