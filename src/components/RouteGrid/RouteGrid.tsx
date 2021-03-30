@@ -120,15 +120,15 @@ const RouteGrid = (props: Props) => {
                     Sort by...
                 </option>
                 <option value="kind">Service kind</option>
-                <option value="highestServiceFraction">Improved service</option>
-                <option value="lowestServiceFraction">Reduced service</option>
-                <option value="lowestTotalTrips">Lowest frequency</option>
-                <option value="highestTotalTrips">Highest frequency</option>
-                <option value="highestRidershipFraction" disabled={disableRidership}>
-                    Ridership retained
-                </option>
+                <option value="highestServiceFraction">Least service cut</option>
+                <option value="lowestServiceFraction">Most service cut</option>
+                <option value="lowestTotalTrips">Least service</option>
+                <option value="highestTotalTrips">Most service</option>
                 <option value="lowestRidershipFraction" disabled={disableRidership}>
-                    Ridership lost
+                    Least ridership retained
+                </option>
+                <option value="highestRidershipFraction" disabled={disableRidership}>
+                    Most ridership retained
                 </option>
                 <option value="lowestTotalRidership" disabled={disableRidership}>
                     Least ridership
