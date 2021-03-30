@@ -56,6 +56,15 @@ const matchesRouteKindOption = (routeData: RouteData, option: RouteKindOption) =
     return routeKind !== "regional-rail" && routeKind !== "bus";
 };
 
+const isRidershipSort = (sort: "" | Sort) => {
+    return (
+        sort === "lowestRidershipFraction" ||
+        sort === "highestRidershipFraction" ||
+        sort === "lowestTotalRidership" ||
+        sort === "highestTotalRidership"
+    );
+};
+
 const RouteGrid = (props: Props) => {
     const { data, filter = defaultFilter } = props;
     const [limit, setLimit] = useState(pagination);
@@ -92,7 +101,7 @@ const RouteGrid = (props: Props) => {
                     const nextKindOption = e.target.value as RouteKindOption;
                     setKindOption(nextKindOption);
                     setLimit(pagination);
-                    if (nextKindOption === "regional-rail") {
+                    if (nextKindOption === "regional-rail" && isRidershipSort(sort)) {
                         setSort("highestServiceFraction");
                     }
                 }}
