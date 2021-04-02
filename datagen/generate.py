@@ -76,15 +76,6 @@ def get_service_level_entries_and_route_ids(feeds_and_service_levels: List[Tuple
 def get_service_levels_entry_for_date(entries: List[ServiceLevelsEntry], date: date):
     matching_entries = [e for e in entries if e.start_date <= date <= e.end_date]
     if len(matching_entries) > 0:
-        # if matching_entries[0].route_id == "24" and date.year == 2020 and date.month < 8:
-        #     print(f"==== {date_to_string(date)} ====")
-        #     for me in matching_entries:
-        #         print(
-        #             date_to_string(me.start_date),
-        #             date_to_string(me.end_date),
-        #             sum(me.service_levels),
-        #             me.feed.url,
-        #         )
         return max(matching_entries, key=lambda e: e.feed.start_date)
     return None
 
