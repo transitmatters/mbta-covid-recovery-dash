@@ -7,6 +7,7 @@ from gtfs.models import (
     Network,
     Transfer,
     Trip,
+    Line,
     Service,
     ServiceExceptionDate,
     Route,
@@ -30,6 +31,24 @@ def get_shapes_by_id(shapes):
         res[shape_id] = [
             (lat, lon) for (lat, lon, _) in sorted(res[shape_id], key=lambda entry: entry[2])
         ]
+    return res
+
+
+def get_lines_by_id(line_dicts):
+    res = {}
+    for line_dict in line_dicts:
+        line_id = line_dict["line_id"]
+        line = Line(
+            id=line_id,
+            short_name=line_dict["line_short_name"],
+            long_name=line_dict["line_long_name"],
+            desc=line_dict["line_desc"],
+            url=line_dict["line_url"],
+            color=line_dict["line_color"],
+            text_color=line_dict["line_text_color"],
+            sort_order=line_dict["line_sort_order"],
+        )
+        res[line_id] = line
     return res
 
 
@@ -174,11 +193,15 @@ def link_transfers(stop, all_stops, transfer_dicts_for_from_stop_id):
             stop.add_transfer(transfer)
 
 
-def link_routes(route_dicts, route_pattern_dicts):
+def link_routes(route_dicts, route_pattern_dicts, lines_by_id):
     routes = []
     for route_dict in route_dicts:
         route_id = route_dict["route_id"]
-        route = Route(id=route_id, long_name=route_dict["route_long_name"])
+        route = Route(
+            id=route_id,
+            long_name=route_dict["route_long_name"],
+            line=lines_by_id.get(route_dict["line_id"]),
+        )
         matching_route_patterns = [
             route_pattern_dict
             for route_pattern_dict in route_pattern_dicts
@@ -214,6 +237,7 @@ def build_network_from_gtfs(loader: GtfsLoader):
     trip_dicts = loader.load_trips()
     route_dicts = loader.load_routes()
     route_pattern_dicts = loader.load_route_patterns()
+    line_dicts = loader.load_lines()
     shapes = loader.load_shapes()
     print("Loaded entities")
     # Now do the linking...
@@ -221,7 +245,8 @@ def build_network_from_gtfs(loader: GtfsLoader):
     print("Linking services...")
     services_by_id = link_services(calendar_dicts, calendar_attribute_dicts, calendar_date_dicts)
     print("Linking routes...")
-    routes_by_id = link_routes(route_dicts, route_pattern_dicts)
+    lines_by_id = get_lines_by_id(line_dicts)
+    routes_by_id = link_routes(route_dicts, route_pattern_dicts, lines_by_id)
     print("Linking trips...")
     shapes_by_id = get_shapes_by_id(shapes)
     trips_by_id = link_trips(trip_dicts, services_by_id, shapes_by_id)
@@ -251,4 +276,5 @@ def build_network_from_gtfs(loader: GtfsLoader):
         shapes_by_id=shapes_by_id,
         routes_by_id=routes_by_id,
         services_by_id=services_by_id,
+        lines_by_id=lines_by_id,
     )

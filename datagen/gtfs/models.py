@@ -160,6 +160,7 @@ class Network(object):
     shapes_by_id: Dict[str, List[Tuple[float, float]]]
     routes_by_id: Dict[str, "Route"]
     services_by_id: Dict[str, "Service"]
+    lines_by_id: Dict[str, "Line"]
 
     def add_station(self, station: Station):
         existing_station_by_id = self.stations_by_id.get(station.id)
@@ -187,10 +188,23 @@ class RoutePattern(object):
 
 
 @dataclass
+class Line(object):
+    id: str
+    short_name: str
+    long_name: str
+    desc: str
+    url: str
+    color: str
+    text_color: str
+    sort_order: str
+
+
+@dataclass
 class Route(object):
     id: str
     long_name: str
     representative_trip: Trip = None
+    line: Line = None
     route_patterns: List[RoutePattern] = field(default_factory=list)
 
     def add_route_pattern(self, pattern: RoutePattern):

@@ -50,10 +50,32 @@ def create_time_series_from_entries(
     return series
 
 
-def get_ridership_time_series_by_id(source: RidershipSource, start_date: date, end_date: date):
+def get_ridership_time_series_by_adhoc_label(
+    source: RidershipSource,
+    start_date: date,
+    end_date: date,
+):
     res = {}
     ridership_dict = get_ridership_json(source)
-    for route_id, entries_json in ridership_dict.items():
+    for label, entries_json in ridership_dict.items():
         entries = [create_ridership_entry_from_dict(e) for e in entries_json]
-        res[route_id] = create_time_series_from_entries(entries, start_date, end_date)
+        res[label] = create_time_series_from_entries(entries, start_date, end_date)
     return res
+
+
+_adhoc_labels_map = {
+    "741": "SL1",
+    "741": "SL2",
+    "743": "SL3",
+    "751": "SL4",
+    "749": "SL5",
+    "746": "SLW",
+    "Green-B": "Green",
+    "Green-C": "Green",
+    "Green-D": "Green",
+    "Green-E": "Green",
+}
+
+
+def map_route_id_to_adhoc_label(route_id: str):
+    return _adhoc_labels_map.get(route_id) or route_id

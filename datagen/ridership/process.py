@@ -7,10 +7,6 @@ from pandas.tseries.holiday import USFederalHolidayCalendar
 from ridership.source import RidershipSource
 
 
-def get_normalized_route_key(route_name: str):
-    return route_name.split(" ")[0].capitalize()
-
-
 def format_subway_data(path_to_csv_file: str):
     # read data, convert to datetime
     df = pd.read_csv(path_to_csv_file)
@@ -38,7 +34,9 @@ def format_subway_data(path_to_csv_file: str):
 
     # limit data to just peak, merge back dates
     final = df[df["peak"] == "peak"]
-    final = final.groupby(["year", "week", "route_or_line"])["validations"].mean().round().reset_index()
+    final = (
+        final.groupby(["year", "week", "route_or_line"])["validations"].mean().round().reset_index()
+    )
 
     final = final.merge(dates, on=["week", "year"], how="left")
 
@@ -56,7 +54,7 @@ def format_subway_data(path_to_csv_file: str):
             .rename(columns={"servicedate": "date", "validations": "riders"})
             .to_dict(orient="records")
         )
-        output[get_normalized_route_key(route)] = dictdata
+        output[route] = dictdata
 
     return output
 

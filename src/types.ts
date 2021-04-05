@@ -1,6 +1,6 @@
 export type Time = number;
 
-export type RouteKind = "red" | "green" | "orange" | "blue" | "silver" | "regional-rail" | "bus";
+export type LineKind = "red" | "green" | "orange" | "blue" | "silver" | "regional-rail" | "bus";
 
 export type ServiceDay = "weekday" | "saturday" | "sunday";
 export type ServiceRegime = "baseline" | "current";
@@ -13,13 +13,16 @@ export type ServiceLevels = {
     totalTrips: number;
 };
 
-export type RouteData = {
+export type LineData = {
     id: string;
+    shortName: string;
+    longName: string;
     startDate: string;
     totalTrips: number;
     serviceFraction: number;
+    routeIds: string[];
     ridershipHistory: null | number[];
     serviceHistory: number[];
-    routeKind: RouteKind;
+    lineKind: LineKind;
     serviceRegimes: Record<ServiceRegime, Record<ServiceDay, ServiceLevels>>;
 };

@@ -3,24 +3,14 @@ import path from "path";
 import React from "react";
 import Head from "next/head";
 
-import { RouteGrid } from "components";
-import { RouteData } from "types";
+import { LineGrid } from "components";
+import { LineData } from "types";
 
 type Props = {
-    data: Record<string, RouteData>;
+    data: Record<string, LineData>;
 };
 
 const PATH_TO_DATA = path.join(process.cwd(), "data.json");
-
-const garbageFilter = ({ id, ridershipHistory }: RouteData) => {
-    if (id.startsWith("Boat") || id.startsWith("Shuttle")) {
-        return false;
-    }
-    if (id.startsWith("CR-")) {
-        return true;
-    }
-    return !!ridershipHistory;
-};
 
 export async function getStaticProps() {
     const dataContents = fs.readFileSync(PATH_TO_DATA).toString();
@@ -37,7 +27,7 @@ const App = (props: Props) => {
             <Head>
                 <title>MBTA Covid Recovery Dashboard</title>
             </Head>
-            <RouteGrid data={data} filter={garbageFilter} />
+            <LineGrid data={data} />
         </>
     );
 };

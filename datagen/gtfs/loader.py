@@ -30,3 +30,4 @@ class GtfsLoader:
         self.load_routes = self._loader_by_file_name("routes")
         self.load_route_patterns = self._loader_by_file_name("route_patterns")
         self.load_shapes = self._loader_by_file_name("shapes")
+        self.load_lines = self._loader_by_file_name("lines")

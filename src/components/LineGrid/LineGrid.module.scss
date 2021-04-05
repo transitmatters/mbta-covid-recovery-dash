@@ -1,0 +1,117 @@
+@import '../../styles/base.scss';
+
+@mixin mobile {
+    @media screen and (max-width: 1000px) {
+        @content;
+    }
+}
+
+.lineGridWrapper {
+    padding: 40px;
+    padding-top: 20px;
+    @include mobile {
+        padding: 20px;
+    }
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    @include mobile {
+        font-size: 20px;
+    }
+}
+
+.alphaTag {
+    display: inline-block;
+    font-size: 0.5em;
+    padding: 0.2em 0.6em;
+    margin-left: 5px;
+    background: black;
+    color: white;
+    border-radius: 4px;
+    height: 100%;
+    transform: rotate(-10deg);
+}
+
+.lineGrid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    column-gap: 20px;
+    row-gap: 20px;
+    &:global(.grid) {
+        @media screen {
+            @media (min-width: 1000px) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            @media (min-width: 1400px) {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            @media (min-width: 1800px) {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+    }
+}
+
+.controls {
+    background: white;
+    display: flex;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    z-index: 1;
+    @media screen and (min-width: 601px) {
+        > :not(:last-child) {
+            margin-right: 10px;
+        }
+    }
+    @media screen and (max-width: 600px) {
+        flex-direction: column;
+        justify-content: flex-start;
+        > * {
+            width: 100%;
+            max-width: 100% !important;
+            margin-right: 0;
+            &:not(:last-child) {
+                margin-bottom: 10px;
+            }
+        }
+    }
+}
+
+@mixin control {
+    height: 32px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    box-shadow: $global-shadow;
+}
+
+.filter {
+    @include control;
+    max-width: 300px;
+    min-width: 0;
+    flex-grow: 1;
+    font-size: 18px;
+    padding: 8px;
+}
+
+.select {
+    @include control;
+    appearance: menulist;
+    font-size: 14px;
+    display: flex;
+    &.default {
+        font-style: italic;
+    }
+}
+
+.displaySelect {
+    @media screen and (max-width: 999px) {
+        display: none;
+    }
+}

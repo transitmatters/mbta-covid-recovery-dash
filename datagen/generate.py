@@ -9,12 +9,18 @@ from gtfs.archive import load_feeds_and_service_levels_from_archive, GtfsFeed
 from gtfs.time import date_from_string, date_to_string
 from gtfs.util import bucket_by, get_date_ranges_of_same_value
 from ridership.source import RidershipSource
-from ridership.timeseries import get_ridership_time_series_by_id
+from ridership.timeseries import (
+    get_ridership_time_series_by_adhoc_label,
+    map_route_id_to_adhoc_label,
+)
 
 
 @dataclass
 class ServiceLevelsEntry:
-    route_id: str
+    line_id: str
+    line_short_name: str
+    line_long_name: str
+    route_ids: List[str]
     service_levels: List[int]
     exception_dates: List[date]
     start_date: date
@@ -22,20 +28,21 @@ class ServiceLevelsEntry:
     feed: GtfsFeed
 
 
-def get_route_kind(route_id: str):
-    lower_id = route_id.lower()
-    if lower_id in ("red", "orange", "blue", "silver", "green"):
-        return lower_id
-    if lower_id.startswith("cr-"):
+def get_line_kind(route_ids: List[str], line_id: str):
+    if any((r for r in route_ids if r.lower().startswith("cr-"))):
         return "regional-rail"
+    if line_id.startswith("line-SL"):
+        return "silver"
+    if line_id in ("line-Red", "line-Orange", "line-Blue", "line-Green"):
+        return line_id.split("-")[1].lower()
     return "bus"
 
 
 def get_weekday_service_levels_history(feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]):
     histories = {}
     for (feed, service_levels) in feeds_and_service_levels:
-        for route_id, service_dates in service_levels.items():
-            history = histories.setdefault(route_id, [])
+        for line_id, service_dates in service_levels.items():
+            history = histories.setdefault(line_id, [])
             weekday_service = service_dates["Weekday"]
             if len(weekday_service) > 0:
                 for service_levels in weekday_service:
@@ -52,17 +59,23 @@ def get_weekday_service_levels_history(feeds_and_service_levels: List[Tuple[Gtfs
     return histories
 
 
-def get_service_level_entries_and_route_ids(feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]):
+def get_service_level_entries_and_line_ids(feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]):
     entries = []
-    all_route_ids = set()
+    all_line_ids = set()
     for feed, service_levels in feeds_and_service_levels:
-        for route_id, route_entry in service_levels.items():
-            all_route_ids.add(route_id)
-            service_level_history = route_entry["history"]
-            exception_dates = list(map(date_from_string, route_entry["exceptionDates"]))
+        for line_id, line_entry in service_levels.items():
+            all_line_ids.add(line_id)
+            service_level_history = line_entry["history"]
+            line_long_name = line_entry["longName"]
+            line_short_name = line_entry["shortName"]
+            route_ids = line_entry["routeIds"]
+            exception_dates = list(map(date_from_string, line_entry["exceptionDates"]))
             for service_levels in service_level_history:
                 entry = ServiceLevelsEntry(
-                    route_id=route_id,
+                    line_id=line_id,
+                    line_short_name=line_short_name,
+                    line_long_name=line_long_name,
+                    route_ids=route_ids,
                     service_levels=service_levels["serviceLevels"],
                     start_date=date_from_string(service_levels["startDate"]),
                     end_date=date_from_string(service_levels["endDate"]),
@@ -70,7 +83,7 @@ def get_service_level_entries_and_route_ids(feeds_and_service_levels: List[Tuple
                     feed=feed,
                 )
                 entries.append(entry)
-    return bucket_by(entries, lambda e: e.route_id), all_route_ids
+    return bucket_by(entries, lambda e: e.line_id), all_line_ids
 
 
 def get_service_levels_entry_for_date(entries: List[ServiceLevelsEntry], date: date):
@@ -80,7 +93,11 @@ def get_service_levels_entry_for_date(entries: List[ServiceLevelsEntry], date: d
     return None
 
 
-def get_service_level_history(entries: List[ServiceLevelsEntry], start_date: date, end_date: date):
+def get_service_level_history(
+    entries: List[ServiceLevelsEntry],
+    start_date: date,
+    end_date: date,
+):
     levels_by_date = {}
     date = start_date
     while date <= end_date:
@@ -167,31 +184,57 @@ def summarize_service(numerator_regime_dict, denominator_regime_dict):
     return numerator_total_trips, total_trips_fraction
 
 
+def get_merged_ridership_time_series(
+    route_ids: List[str],
+    ridership_time_series_by_label: Dict[str, List],
+):
+
+    labels = set((map_route_id_to_adhoc_label(route_id) for route_id in route_ids))
+    matching_time_series = [
+        ridership_time_series_by_label.get(label)
+        for label in labels
+        if label in ridership_time_series_by_label
+    ]
+    if len(matching_time_series) == 0:
+        return None
+    merged_time_series = [0] * len(matching_time_series[0])
+    for ts in matching_time_series:
+        for idx, value in enumerate(ts):
+            merged_time_series[idx] += value
+    return merged_time_series
+
+
 def generate_data_file():
     today = datetime.now(TIME_ZONE).date()
     ridership_source = RidershipSource(download_date=date(2021, 3, 30))
-    data_by_route_id = {}
+    data_by_line_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
-    entries, route_ids = get_service_level_entries_and_route_ids(feeds_and_service_levels)
-    ridership_time_series_by_route_id = get_ridership_time_series_by_id(
+    entries, line_ids = get_service_level_entries_and_line_ids(feeds_and_service_levels)
+    ridership_time_series_by_label = get_ridership_time_series_by_adhoc_label(
         ridership_source,
         START_DATE,
         today,
     )
-    for route_id in route_ids:
-        entries_for_route_id = entries[route_id]
-        ridership_time_series = ridership_time_series_by_route_id.get(route_id)
-        service_time_series = get_service_level_history(entries_for_route_id, START_DATE, today)
-        baseline_service_regime = get_service_regime_dict(entries_for_route_id, PRE_COVID_DATE)
-        current_service_regime = get_service_regime_dict(entries_for_route_id, today)
+    for line_id in line_ids:
+        entries_for_line_id = entries[line_id]
+        exemplar_entry = entries_for_line_id[-1]
+        ridership_time_series = get_merged_ridership_time_series(
+            exemplar_entry.route_ids, ridership_time_series_by_label
+        )
+        service_time_series = get_service_level_history(entries_for_line_id, START_DATE, today)
+        baseline_service_regime = get_service_regime_dict(entries_for_line_id, PRE_COVID_DATE)
+        current_service_regime = get_service_regime_dict(entries_for_line_id, today)
         total_trips, service_fraction = summarize_service(
             current_service_regime,
             baseline_service_regime,
         )
-        data_by_route_id[route_id] = {
-            "id": route_id,
+        data_by_line_id[line_id] = {
+            "id": line_id,
+            "shortName": exemplar_entry.line_short_name,
+            "longName": exemplar_entry.line_long_name,
+            "routeIds": exemplar_entry.route_ids,
             "startDate": START_DATE.strftime("%Y-%m-%d"),
-            "routeKind": get_route_kind(route_id),
+            "lineKind": get_line_kind(exemplar_entry.route_ids, line_id),
             "ridershipHistory": ridership_time_series,
             "serviceHistory": service_time_series,
             "serviceFraction": service_fraction,
@@ -202,7 +245,7 @@ def generate_data_file():
             },
         }
     with open(OUTPUT_FILE, "w") as file:
-        file.write(json.dumps(data_by_route_id))
+        file.write(json.dumps(data_by_line_id))
 
 
 if __name__ == "__main__":
