@@ -70,10 +70,13 @@ _adhoc_labels_map = {
     "751": "SL4",
     "749": "SL5",
     "746": "SLW",
-    "Green-B": "Green",
-    "Green-C": "Green",
-    "Green-D": "Green",
-    "Green-E": "Green",
+    "Green-B": "Green Line",
+    "Green-C": "Green Line",
+    "Green-D": "Green Line",
+    "Green-E": "Green Line",
+    "Blue": "Blue Line",
+    "Orange": "Orange Line",
+    "Red": "Red Line",
 }
 
 

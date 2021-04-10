@@ -206,7 +206,7 @@ def get_merged_ridership_time_series(
 
 def generate_data_file():
     today = datetime.now(TIME_ZONE).date()
-    ridership_source = RidershipSource(download_date=date(2021, 3, 30))
+    ridership_source = RidershipSource(download_date=date(2021, 4, 6))
     data_by_line_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
     entries, line_ids = get_service_level_entries_and_line_ids(feeds_and_service_levels)
