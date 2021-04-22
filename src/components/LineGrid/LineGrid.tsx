@@ -171,7 +171,7 @@ const LineGrid = (props: Props) => {
         <>
             <div className={styles.header}>
                 <a href="https://transitmatters.org">
-                    <img src="/logo.svg" className={styles.logo} height="20" />
+                    <img src="./logo.svg" className={styles.logo} height="20" />
                 </a>
                 <h1>MBTA Covid Recovery Dashboard</h1>
                 <div className={styles.links}>
