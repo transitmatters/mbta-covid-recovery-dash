@@ -3,12 +3,12 @@ from dataclasses import dataclass
 from datetime import datetime, date, timedelta
 import json
 
-from config import START_DATE, TIME_ZONE, OUTPUT_FILE, PRE_COVID_DATE, RECENT_SERVICE_CUTS_DATE
+from config import START_DATE, TIME_ZONE, OUTPUT_FILE, PRE_COVID_DATE
 
 from gtfs.archive import load_feeds_and_service_levels_from_archive, GtfsFeed
 from gtfs.time import date_from_string, date_to_string
 from gtfs.util import bucket_by, get_date_ranges_of_same_value
-from ridership.source import RidershipSource
+from ridership.source import get_latest_ridership_source
 from ridership.timeseries import (
     get_ridership_time_series_by_adhoc_label,
     map_route_id_to_adhoc_label,
@@ -206,7 +206,7 @@ def get_merged_ridership_time_series(
 
 def generate_data_file():
     today = datetime.now(TIME_ZONE).date()
-    ridership_source = RidershipSource(download_date=date(2021, 4, 13))
+    ridership_source = get_latest_ridership_source()
     data_by_line_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
     entries, line_ids = get_service_level_entries_and_line_ids(feeds_and_service_levels)

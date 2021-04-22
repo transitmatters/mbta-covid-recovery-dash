@@ -10,7 +10,7 @@ import json
 import requests
 from tqdm import tqdm
 
-from config import ARCHIVE_URL, GTFS_DATA_PATH, START_DATE
+from config import GTFS_ARCHIVE_URL, GTFS_DATA_PATH, START_DATE
 from gtfs.loader import GtfsLoader
 from gtfs.network import build_network_from_gtfs
 from gtfs.trips import get_trip_summaries_for_network
@@ -112,7 +112,7 @@ def get_service_levels_json(feed: GtfsFeed):
 
 def load_feeds_from_archive(load_start_date: date):
     feeds = []
-    req = requests.get(ARCHIVE_URL)
+    req = requests.get(GTFS_ARCHIVE_URL)
     lines = req.text.splitlines()
     reader = DictReader(lines, delimiter=",")
     for entry in reader:
