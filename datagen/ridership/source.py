@@ -13,7 +13,7 @@ from config import (
     RIDERSHIP_BUS_XLSX_REGEX,
     RIDERSHIP_SUBWAY_CSV_REGEX,
 )
-from secrets import BOX_CLIENT_ID, BOX_ACCESS_TOKEN
+from secrets import BOX_ACCESS_TOKEN
 
 
 @dataclass
