@@ -1,15 +1,20 @@
 @import '../../styles/base.scss';
 
-
 .lineCard {
     color: #222;
     position: relative;
     border: 1px solid black;
     box-shadow: $global-shadow;
     border-radius: 4px;
-    border: 2px solid #ddd;
+    border: 1px solid #ddd;
     padding: 20px;
     overflow: hidden;
+    @include mobile {
+        border: none;
+        border-radius: 0;
+        border-bottom: 2px solid #ddd;
+        padding: 15px;
+    }
 }
 
 .cancellationText {

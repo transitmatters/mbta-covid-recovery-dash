@@ -63,7 +63,6 @@ const TphChart = (props: Props) => {
                             gridLines: { display: false },
                             ticks: {
                                 maxTicksLimit: 12,
-                                maxRotation: 0,
                             },
                         },
                     ],

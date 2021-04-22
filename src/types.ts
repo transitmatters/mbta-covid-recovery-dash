@@ -1,6 +1,14 @@
 export type Time = number;
 
-export type LineKind = "red" | "green" | "orange" | "blue" | "silver" | "regional-rail" | "bus";
+export type LineKind =
+    | "red"
+    | "green"
+    | "orange"
+    | "blue"
+    | "silver"
+    | "regional-rail"
+    | "bus"
+    | "boat";
 
 export type ServiceDay = "weekday" | "saturday" | "sunday";
 export type ServiceRegime = "baseline" | "current";

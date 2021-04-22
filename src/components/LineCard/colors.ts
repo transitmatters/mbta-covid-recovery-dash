@@ -7,5 +7,6 @@ export const lineKindColors: Record<LineKind, string> = {
     blue: "#003da5",
     silver: "#666",
     bus: "#ffc72c",
+    boat: "#1da2d8",
     "regional-rail": "#742573",
 };

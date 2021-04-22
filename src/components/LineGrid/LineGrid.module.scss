@@ -1,45 +1,11 @@
 @import '../../styles/base.scss';
 
-@mixin mobile {
-    @media screen and (max-width: 1000px) {
-        @content;
-    }
-}
-
-.lineGridWrapper {
-    padding: 40px;
-    padding-top: 20px;
-    @include mobile {
-        padding: 20px;
-    }
-}
-
-.header {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    @include mobile {
-        font-size: 20px;
-    }
-}
-
-.alphaTag {
-    display: inline-block;
-    font-size: 0.5em;
-    padding: 0.2em 0.6em;
-    margin-left: 5px;
-    background: black;
-    color: white;
-    border-radius: 4px;
-    height: 100%;
-    transform: rotate(-10deg);
-}
-
 .lineGrid {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     column-gap: 20px;
     row-gap: 20px;
+    padding: 20px;
     &:global(.grid) {
         @media screen {
             @media (min-width: 1000px) {
@@ -53,18 +19,84 @@
             }
         }
     }
+    @include mobile {
+        padding: 0;
+    }
+}
+
+@mixin header-like {
+    background: #363636;
+    color: white;
+    padding: 10px;
+}
+
+.header {
+    @include header-like;
+    padding-bottom: 0;
+    display: flex;
+    align-items: center;
+
+    @include mobile {
+        flex-direction: column;
+    }
+
+    > a {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    h1 {
+        font-weight: 300;
+        font-style: italic;
+        margin: 0;
+        margin-left: 10px;
+        font-size: 22px;
+        transform: translateY(1px);
+
+        @media (max-width: 1000px) {
+            font-size: 18px;
+        }
+
+        @include mobile {
+            font-size: 20px;
+            margin-left: 0;
+            margin-top: 10px;
+            transform: none;
+            text-align: center;
+        }
+    }
+}
+
+.links {
+    display: flex;
+    margin-left: auto;
+    margin-right: 10px;
+    font-size: 14px;
+    a {
+        color: inherit;
+        text-decoration: none;
+        &:hover {
+            text-decoration: underline;
+        }
+        &:not(:last-child)::after {
+            content: '|';
+            margin: 0 10px;
+        }
+    }
+    @include mobile {
+        margin: 0;
+        margin-top: 5px;
+    }
 }
 
 .controls {
-    background: white;
+    @include header-like;
     display: flex;
     align-items: center;
+    z-index: 1;
     position: sticky;
     top: 0;
-    padding: 10px 0;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ccc;
-    z-index: 1;
+    box-shadow: $global-shadow;
     @media screen and (min-width: 601px) {
         > :not(:last-child) {
             margin-right: 10px;
@@ -86,9 +118,14 @@
 
 @mixin control {
     height: 32px;
+    color: white;
     box-sizing: border-box;
+    appearance: none;
+    background: rgba(white, 0.2);
     border: 1px solid #ccc;
     box-shadow: $global-shadow;
+    border-radius: 2px;
+    padding: 0 6px;
 }
 
 .filter {
@@ -96,18 +133,28 @@
     max-width: 300px;
     min-width: 0;
     flex-grow: 1;
-    font-size: 18px;
+    font-size: 16px;
     padding: 8px;
+    &::placeholder {
+        color: rgba(white, 0.6);
+    }
 }
 
 .select {
     @include control;
-    appearance: menulist;
     font-size: 14px;
     display: flex;
+    min-width: 100px;
     &.default {
         font-style: italic;
     }
+    option {
+        color: initial;
+    }
+    background-image: url('/arrow.svg');
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 3px;
 }
 
 .displaySelect {

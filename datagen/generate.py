@@ -3,10 +3,10 @@ from dataclasses import dataclass
 from datetime import datetime, date, timedelta
 import json
 
-from config import START_DATE, TIME_ZONE, OUTPUT_FILE, PRE_COVID_DATE
+from config import START_DATE, TIME_ZONE, OUTPUT_FILE, PRE_COVID_DATE, IGNORE_LINE_IDS
 
 from gtfs.archive import load_feeds_and_service_levels_from_archive, GtfsFeed
-from gtfs.time import date_from_string, date_to_string
+from gtfs.time import date_from_string
 from gtfs.util import bucket_by, get_date_ranges_of_same_value
 from ridership.source import get_latest_ridership_source
 from ridership.timeseries import (
@@ -29,6 +29,8 @@ class ServiceLevelsEntry:
 
 
 def get_line_kind(route_ids: List[str], line_id: str):
+    if line_id.startswith("line-Boat"):
+        return "boat"
     if any((r for r in route_ids if r.lower().startswith("cr-"))):
         return "regional-rail"
     if line_id.startswith("line-SL"):
@@ -216,6 +218,8 @@ def generate_data_file():
         today,
     )
     for line_id in line_ids:
+        if line_id in IGNORE_LINE_IDS:
+            continue
         entries_for_line_id = entries[line_id]
         exemplar_entry = entries_for_line_id[-1]
         ridership_time_series = get_merged_ridership_time_series(

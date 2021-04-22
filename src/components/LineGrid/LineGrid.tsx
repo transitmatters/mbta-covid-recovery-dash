@@ -14,7 +14,7 @@ type Props = {
     filter?: (r: LineData) => boolean;
 };
 
-type LineKindOption = "all" | "bus" | "rapid-transit" | "regional-rail";
+type LineKindOption = "all" | "bus" | "rapid-transit" | "regional-rail" | "boat";
 type DisplayOption = "grid" | "rows";
 
 const pagination = 12;
@@ -54,10 +54,10 @@ const matchesLineKindOption = (lineData: LineData, option: LineKindOption) => {
     if (option === "all") {
         return true;
     }
-    if (option === "regional-rail" || option === "bus") {
+    if (option === "regional-rail" || option === "bus" || option === "boat") {
         return lineKind === option;
     }
-    return lineKind !== "regional-rail" && lineKind !== "bus";
+    return lineKind !== "regional-rail" && lineKind !== "bus" && lineKind !== "boat"; // Sorry
 };
 
 const isRidershipSort = (sort: "" | Sort) => {
@@ -106,7 +106,10 @@ const LineGrid = (props: Props) => {
                     const nextKindOption = e.target.value as LineKindOption;
                     setKindOption(nextKindOption);
                     setLimit(pagination);
-                    if (nextKindOption === "regional-rail" && isRidershipSort(sort)) {
+                    if (
+                        (nextKindOption === "regional-rail" || nextKindOption === "boat") &&
+                        isRidershipSort(sort)
+                    ) {
                         setSort("highestServiceFraction");
                     }
                 }}
@@ -115,6 +118,7 @@ const LineGrid = (props: Props) => {
                 <option value="bus">Bus</option>
                 <option value="rapid-transit">Rapid transit</option>
                 <option value="regional-rail">Commuter rail</option>
+                <option value="boat">Ferry</option>
             </select>
         );
     };
@@ -138,18 +142,14 @@ const LineGrid = (props: Props) => {
                 <option value="lowestServiceFraction">Most service cut</option>
                 <option value="lowestTotalTrips">Least service</option>
                 <option value="highestTotalTrips">Most service</option>
-                <option value="lowestRidershipFraction" disabled={disableRidership}>
-                    Least ridership retained
-                </option>
-                <option value="highestRidershipFraction" disabled={disableRidership}>
-                    Most ridership retained
-                </option>
-                <option value="lowestTotalRidership" disabled={disableRidership}>
-                    Least ridership
-                </option>
-                <option value="highestTotalRidership" disabled={disableRidership}>
-                    Most ridership
-                </option>
+                {!disableRidership && (
+                    <>
+                        <option value="lowestRidershipFraction">Least ridership retained</option>
+                        <option value="highestRidershipFraction">Most ridership retained</option>
+                        <option value="lowestTotalRidership">Least ridership</option>
+                        <option value="highestTotalRidership">Most ridership</option>
+                    </>
+                )}
             </select>
         );
     };
@@ -168,11 +168,19 @@ const LineGrid = (props: Props) => {
     };
 
     return (
-        <div className={styles.lineGridWrapper}>
-            <h1 className={styles.header}>
-                MBTA Covid Recovery Dashboard
-                <div className={styles.alphaTag}>Alpha</div>
-            </h1>
+        <>
+            <div className={styles.header}>
+                <a href="https://transitmatters.org">
+                    <img src="/logo.svg" className={styles.logo} height="20" />
+                </a>
+                <h1>MBTA Covid Recovery Dashboard</h1>
+                <div className={styles.links}>
+                    <a href="https://github.com/transitmatters/mbta-covid-recovery-dash">Source</a>
+                    <a href="mailto:labs@transitmatters.org?subject=Covid Dashboard Feedback">
+                        Send feedback
+                    </a>
+                </div>
+            </div>
             <div className={styles.controls}>
                 <input
                     placeholder="Filter lines"
@@ -183,16 +191,16 @@ const LineGrid = (props: Props) => {
                         setLimit(pagination);
                     }}
                 />
+                {renderDisplayDropdown()}
                 {renderLineKindDropdown()}
                 {renderSortDropdown()}
-                {renderDisplayDropdown()}
             </div>
             <div className={classNames(styles.lineGrid, display)}>
                 {shownItems.map((item) => (
                     <LineCard lineData={item} key={item.id} />
                 ))}
             </div>
-        </div>
+        </>
     );
 };
 
