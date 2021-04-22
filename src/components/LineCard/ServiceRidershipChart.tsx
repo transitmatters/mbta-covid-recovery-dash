@@ -67,7 +67,7 @@ const ServiceRidershipChart = (props: Props) => {
             {
                 label: "Frequency",
                 actual: serviceHistory,
-                unit: "weekday trips (each direction)",
+                unit: "weekday trips per direction",
                 data: servicePercentage,
                 borderColor: alphaColor,
                 backgroundColor: pattern.draw("diagonal", "rgba(0,0,0,0)", color, 5),
@@ -117,9 +117,10 @@ const ServiceRidershipChart = (props: Props) => {
                     mode: "index",
                     intersect: false,
                     callbacks: {
-                        label: ({ datasetIndex, index }) => {
+                        label: ({ datasetIndex, index, value }) => {
                             const { label, actual, unit } = datasets[datasetIndex];
-                            return `${label}: ${actual[index]} ${unit}`;
+                            const valuePercent = Math.round(parseFloat(value) * 100);
+                            return `${label}: ${actual[index]} ${unit} (${valuePercent}%)`;
                         },
                     },
                 },
