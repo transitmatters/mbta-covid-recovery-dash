@@ -43,7 +43,7 @@ export const stringify12Hour = (time: Time) => {
 
 export const getHourlyTickValues = (
     periodHours: number,
-    start: number = 2,
+    start: number = 0,
     end: number = 24,
     offset: number = 0
 ) => {
