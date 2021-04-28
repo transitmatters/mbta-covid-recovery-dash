@@ -26,6 +26,12 @@ const App = (props: Props) => {
         <>
             <Head>
                 <title>MBTA Covid Recovery Dashboard</title>
+                <meta name="author" content="TransitMatters" />
+                <meta
+                    name="description"
+                    content="Data on MBTA ridership and service levels throughout the COVID-19 pandemic"
+                />
+                <link rel="icon" type="image/png" href="./favicon.png" />
             </Head>
             <LineGrid data={data} />
         </>

@@ -190,7 +190,6 @@ def get_merged_ridership_time_series(
     route_ids: List[str],
     ridership_time_series_by_label: Dict[str, List],
 ):
-
     labels = set((map_route_id_to_adhoc_label(route_id) for route_id in route_ids))
     matching_time_series = [
         ridership_time_series_by_label.get(label)

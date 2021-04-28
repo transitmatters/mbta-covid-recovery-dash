@@ -65,10 +65,14 @@ def format_bus_data(path_to_excel_file: str):
         path_to_excel_file,
         sheet_name="Ridership by Route",
         header=1,
+        keep_default_na=False,
+        na_values=["N/A"],
     )
 
     # rename unnamed data
     df = df.rename(columns={"Unnamed: 0": "route"})
+    # cast empty values to 0
+    df = df.replace(to_replace="", value=0)
     # melt to get into long format
     df = pd.melt(df, id_vars=["route"], var_name="date", value_name="riders")
     # change datetime to date

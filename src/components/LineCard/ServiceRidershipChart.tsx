@@ -22,14 +22,12 @@ const normalizeToPercent = (timeSeries: number[]) => {
 
 const getChartLabels = memoize(
     (startDate: Date) => {
-        const formatter = new Intl.DateTimeFormat("en-US");
+        // const formatter = new Intl.DateTimeFormat("en-US");
         const now = Date.now();
-        const labels: string[] = [];
+        const labels: number[] = [];
         let time = startDate.valueOf();
         do {
-            let dateString = formatter.format(time);
-            dateString = dateString.slice(0, -4) + dateString.slice(-2);
-            labels.push(dateString);
+            labels.push(time);
             time += 86400 * 1000;
         } while (time <= now);
         return labels;
@@ -65,7 +63,7 @@ const ServiceRidershipChart = (props: Props) => {
                 borderWidth: 2,
             },
             {
-                label: "Frequency",
+                label: "Service levels",
                 actual: serviceHistory,
                 unit: "weekday trips per direction",
                 data: servicePercentage,
@@ -87,7 +85,13 @@ const ServiceRidershipChart = (props: Props) => {
                     xAxes: [
                         {
                             gridLines: { display: false },
-                            ticks: { maxTicksLimit: 15 },
+                            type: "time",
+                            time: {
+                                unit: "month",
+                                displayFormats: {
+                                    month: "MMM 'YY",
+                                },
+                            },
                         },
                     ],
                     yAxes: [
