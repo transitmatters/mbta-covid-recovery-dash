@@ -110,6 +110,7 @@ const LineCard = (props: Props) => {
             {renderTopRow()}
             {renderSectionLabel("Daily service levels", tabs)}
             <TphChart
+                lineTitle={`${title}, ${serviceDay}`}
                 baselineTph={serviceRegimes.baseline[serviceDay].tripsPerHour}
                 currentTph={serviceRegimes.current[serviceDay].tripsPerHour}
                 color={color}
@@ -117,6 +118,7 @@ const LineCard = (props: Props) => {
             />
             {renderSectionLabel(ridershipAndFrequencyLabel)}
             <ServiceRidershipChart
+                lineTitle={title}
                 startDate={startDate}
                 ridershipHistory={ridershipHistory}
                 serviceHistory={serviceHistory}

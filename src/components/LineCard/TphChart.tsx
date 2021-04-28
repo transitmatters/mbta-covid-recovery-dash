@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import Chart from "chart.js";
 import Color from "chartjs-color";
 
@@ -6,19 +6,30 @@ import { TripsPerHour } from "types";
 import { getHourlyTickValues } from "time";
 
 import styles from "./LineCard.module.scss";
+import { DataTable } from "components";
 
-const lineTickValues = getHourlyTickValues(1);
+const hourLabels = getHourlyTickValues(1);
 
 type Props = {
     baselineTph: TripsPerHour;
     currentTph: TripsPerHour;
     highestTph: number;
     color: string;
+    lineTitle: string;
 };
 
 const TphChart = (props: Props) => {
-    const { color, baselineTph, currentTph, highestTph } = props;
+    const { color, baselineTph, currentTph, highestTph, lineTitle } = props;
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+    const columns = useMemo(() => {
+        const withZeroFallback = (x) => x || 0;
+        return [
+            { title: "Hour", values: hourLabels },
+            baselineTph && { title: "Pre-COVID trips", values: baselineTph.map(withZeroFallback) },
+            currentTph && { title: "Current trips", values: currentTph.map(withZeroFallback) },
+        ].filter((x) => x);
+    }, [hourLabels, baselineTph, currentTph]);
 
     useEffect(() => {
         const ctx = canvasRef.current!.getContext("2d");
@@ -46,7 +57,7 @@ const TphChart = (props: Props) => {
         const chart = new Chart(ctx, {
             type: "line",
             data: {
-                labels: lineTickValues,
+                labels: hourLabels,
                 datasets,
             },
             options: {
@@ -98,6 +109,7 @@ const TphChart = (props: Props) => {
     return (
         <div className={styles.tphChartContainer}>
             <canvas ref={canvasRef} />
+            <DataTable columns={columns as any} caption={`Trips each hour (${lineTitle})`} />
         </div>
     );
 };

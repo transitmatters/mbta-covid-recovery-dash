@@ -5,6 +5,7 @@ import pattern from "patternomaly";
 import memoize from "fast-memoize";
 
 import { LineData } from "types";
+import { DataTable } from "components";
 
 import styles from "./LineCard.module.scss";
 
@@ -13,6 +14,7 @@ type Props = {
     serviceHistory: LineData["serviceHistory"];
     color: string;
     startDate: Date;
+    lineTitle: string;
 };
 
 const normalizeToPercent = (timeSeries: number[]) => {
@@ -20,23 +22,27 @@ const normalizeToPercent = (timeSeries: number[]) => {
     return timeSeries.map((n) => n / firstValue);
 };
 
+const asPercentString = (p: number) => Math.round(100 * p).toString() + "%";
+
 const getChartLabels = memoize(
     (startDate: Date) => {
-        // const formatter = new Intl.DateTimeFormat("en-US");
+        const formatter = new Intl.DateTimeFormat("en-US");
         const now = Date.now();
-        const labels: number[] = [];
+        const dateStrings: string[] = [];
+        const timestamps: number[] = [];
         let time = startDate.valueOf();
         do {
-            labels.push(time);
+            dateStrings.push(formatter.format(time));
+            timestamps.push(time);
             time += 86400 * 1000;
         } while (time <= now);
-        return labels;
+        return { timestamps, dateStrings };
     },
     { serializer: (d) => d.valueOf().toString() }
 );
 
 const ServiceRidershipChart = (props: Props) => {
-    const { color, serviceHistory, ridershipHistory, startDate } = props;
+    const { color, serviceHistory, ridershipHistory, startDate, lineTitle } = props;
     const canvasRef = useRef<null | HTMLCanvasElement>(null);
 
     const ridershipPercentage = useMemo(
@@ -46,7 +52,22 @@ const ServiceRidershipChart = (props: Props) => {
     const servicePercentage = useMemo(() => serviceHistory && normalizeToPercent(serviceHistory), [
         serviceHistory,
     ]);
-    const labels = useMemo(() => getChartLabels(startDate), [startDate]);
+    const { timestamps, dateStrings } = useMemo(() => getChartLabels(startDate), [startDate]);
+    const columns = useMemo(() => {
+        return [
+            { title: "Date", values: dateStrings },
+            ridershipHistory && { title: "Ridership (passengers/day)", values: ridershipHistory },
+            ridershipPercentage && {
+                title: "Ridership (percentage)",
+                values: ridershipPercentage.map(asPercentString),
+            },
+            serviceHistory && { title: "Service levels (trips/day)", values: serviceHistory },
+            servicePercentage && {
+                title: "Service levels (percentage)",
+                values: servicePercentage.map(asPercentString),
+            },
+        ].filter((x) => x);
+    }, [dateStrings, ridershipHistory, ridershipPercentage, serviceHistory, servicePercentage]);
 
     useEffect(() => {
         const alphaColor = Color(color).alpha(0.8).rgbString();
@@ -75,8 +96,8 @@ const ServiceRidershipChart = (props: Props) => {
         const chart = new Chart(ctx, {
             type: "line",
             data: {
-                labels,
                 datasets,
+                labels: timestamps,
             },
             options: {
                 maintainAspectRatio: false,
@@ -100,7 +121,7 @@ const ServiceRidershipChart = (props: Props) => {
                                 beginAtZero: true,
                                 stepSize: 0.2,
                                 maxTicksLimit: 6,
-                                callback: (p: number) => Math.round(100 * p).toString() + "%",
+                                callback: asPercentString,
                             },
                             gridLines: { display: false },
                         },
@@ -136,6 +157,7 @@ const ServiceRidershipChart = (props: Props) => {
     return (
         <div className={styles.serviceAndRidershipChartContainer}>
             <canvas className={styles.serviceAndRidershipChart} ref={canvasRef} />
+            <DataTable columns={columns} caption={`Service levels and ridership (${lineTitle})`} />
         </div>
     );
 };
