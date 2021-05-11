@@ -21,7 +21,6 @@ type Props = {
 const dateFormatter = new Intl.DateTimeFormat("en-US");
 
 const getRidershipNoun = (lineId: string) => {
-    console.log(lineId);
     if (["line-Red", "line-Orange", "line-Blue", "line-Green"].includes(lineId)) {
         return "faregate validations";
     }
