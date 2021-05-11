@@ -15,6 +15,17 @@ type Props = {
     color: string;
     startDate: Date;
     lineTitle: string;
+    lineData: LineData;
+};
+
+const dateFormatter = new Intl.DateTimeFormat("en-US");
+
+const getRidershipNoun = (lineId: string) => {
+    console.log(lineId);
+    if (["line-Red", "line-Orange", "line-Blue", "line-Green"].includes(lineId)) {
+        return "faregate validations";
+    }
+    return "riders";
 };
 
 const normalizeToPercent = (timeSeries: number[]) => {
@@ -26,13 +37,12 @@ const asPercentString = (p: number) => Math.round(100 * p).toString() + "%";
 
 const getChartLabels = memoize(
     (startDate: Date) => {
-        const formatter = new Intl.DateTimeFormat("en-US");
         const now = Date.now();
         const dateStrings: string[] = [];
         const timestamps: number[] = [];
         let time = startDate.valueOf();
         do {
-            dateStrings.push(formatter.format(time));
+            dateStrings.push(dateFormatter.format(time));
             timestamps.push(time);
             time += 86400 * 1000;
         } while (time <= now);
@@ -42,7 +52,7 @@ const getChartLabels = memoize(
 );
 
 const ServiceRidershipChart = (props: Props) => {
-    const { color, serviceHistory, ridershipHistory, startDate, lineTitle } = props;
+    const { color, serviceHistory, ridershipHistory, startDate, lineTitle, lineData } = props;
     const canvasRef = useRef<null | HTMLCanvasElement>(null);
 
     const ridershipPercentage = useMemo(
@@ -54,9 +64,13 @@ const ServiceRidershipChart = (props: Props) => {
     ]);
     const { timestamps, dateStrings } = useMemo(() => getChartLabels(startDate), [startDate]);
     const columns = useMemo(() => {
+        const ridershipNoun = getRidershipNoun(lineData.id);
         return [
             { title: "Date", values: dateStrings },
-            ridershipHistory && { title: "Ridership (passengers/day)", values: ridershipHistory },
+            ridershipHistory && {
+                title: `Ridership (${ridershipNoun}/day)`,
+                values: ridershipHistory,
+            },
             ridershipPercentage && {
                 title: "Ridership (percentage)",
                 values: ridershipPercentage.map(asPercentString),
@@ -72,12 +86,13 @@ const ServiceRidershipChart = (props: Props) => {
     useEffect(() => {
         const alphaColor = Color(color).alpha(0.8).rgbString();
         const ctx = canvasRef.current!.getContext("2d");
+        const ridershipNoun = getRidershipNoun(lineData.id);
 
         const datasets: (ChartDataSets & { actual: number[]; unit: string })[] = [
             ridershipPercentage && {
                 label: "Ridership",
                 actual: ridershipHistory,
-                unit: "weekday passengers",
+                unit: `weekday ${ridershipNoun}`,
                 data: ridershipPercentage,
                 borderColor: color,
                 backgroundColor: alphaColor,
@@ -142,6 +157,9 @@ const ServiceRidershipChart = (props: Props) => {
                     mode: "index",
                     intersect: false,
                     callbacks: {
+                        title: ([{ index }]) => {
+                            return dateFormatter.format(timestamps[index]);
+                        },
                         label: ({ datasetIndex, index, value }) => {
                             const { label, actual, unit } = datasets[datasetIndex];
                             const valuePercent = Math.round(parseFloat(value) * 100);
@@ -152,7 +170,7 @@ const ServiceRidershipChart = (props: Props) => {
             },
         });
         return () => chart.destroy();
-    }, [ridershipPercentage, servicePercentage]);
+    }, [ridershipPercentage, servicePercentage, lineData.id]);
 
     return (
         <div className={styles.serviceAndRidershipChartContainer}>
