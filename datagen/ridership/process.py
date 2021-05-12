@@ -66,7 +66,7 @@ def format_bus_data(path_to_excel_file: str):
         sheet_name="Ridership by Route",
         header=1,
         keep_default_na=False,
-        na_values=["N/A"],
+        na_values=["N/A", "999999"],
     )
 
     # rename unnamed data
