@@ -204,6 +204,13 @@ def get_merged_ridership_time_series(
             merged_time_series[idx] += value
     return merged_time_series
 
+def get_ridership_percentage(total_ridership_time_series):
+    ridership_percentage = total_ridership_time_series[-1]/total_ridership_time_series[0]
+    return ridership_percentage
+
+def get_service_percentage(total_service_time_series):
+    service_percentage = total_service_time_series[-1]/total_service_time_series[0]
+    return service_percentage
 
 def generate_data_file():
     today = datetime.now(TIME_ZONE).date()
@@ -216,6 +223,12 @@ def generate_data_file():
         START_DATE,
         today,
     )
+    ridership_time_series_list = []
+    service_time_series_list = []
+    combined_total_trips = 0
+    total_reduced_serv_routes = 0
+    total_increased_serv_routes = 0
+    total_cancelled_routes = 0
     for line_id in line_ids:
         if line_id in IGNORE_LINE_IDS:
             continue
@@ -231,6 +244,9 @@ def generate_data_file():
             current_service_regime,
             baseline_service_regime,
         )
+        ridership_time_series_list.append(ridership_time_series)
+        service_time_series_list.append(service_time_series)
+        combined_total_trips += total_trips
         data_by_line_id[line_id] = {
             "id": line_id,
             "shortName": exemplar_entry.line_short_name,
@@ -247,8 +263,33 @@ def generate_data_file():
                 "current": current_service_regime,
             },
         }
+    total_ridership_time_series = [sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)]
+    total_service_time_series = [sum(entries_for_day) for entries_for_day in zip(*service_time_series_list)]
+    total_ridership_percentage = get_ridership_percentage(total_ridership_time_series)
+    total_service_percentage = get_service_percentage(total_service_time_series)
+    total_passengers = sum(total_ridership_time_series)
+    for i in range(24):
+        if zip(*ridership_time_series_list)[-1] / zip(*ridership_time_series_list)[0] < 1:
+            total_reduced_serv_routes += 1
+        elif zip(*ridership_time_series_list)[-1] / zip(*ridership_time_series_list)[0] > 1:
+            total_increased_serv_routes += 1
+        elif zip(*ridership_time_series_list)[-1] / zip(*ridership_time_series_list)[0] == 0:
+            total_cancelled_routes += 1
+    
+    total_data = {
+        "totalRidershipHistory": total_ridership_time_series,
+        "totalServiceHistory": total_service_time_series,
+        "totalRidershipPercentage": total_ridership_percentage,
+        "totalServicePercentage": total_service_percentage,
+        "totalPassengers": total_passengers,
+        "totalTrips": combined_total_trips,
+        "totalroutesCancelled": total_cancelled_routes,
+        "totalReducedService": total_reduced_serv_routes,
+        "totalIncreasedService": total_increased_serv_routes,
+    }
     with open(OUTPUT_FILE, "w") as file:
         file.write(json.dumps(data_by_line_id))
+        file.write(json.dumps(total_data))
 
 
 if __name__ == "__main__":

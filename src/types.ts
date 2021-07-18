@@ -34,3 +34,15 @@ export type LineData = {
     lineKind: LineKind;
     serviceRegimes: Record<ServiceRegime, Record<ServiceDay, ServiceLevels>>;
 };
+
+export type SummaryData = {
+    totalRidershipHistory: null | number[];
+    totalServiceHistory: null | number[];
+    totalRidershipPercentage: number;
+    totalServicePercentage: number;
+    totalPassengers: number;
+    totalTrips: number;
+    totalroutesCancelled: number;
+    totalReducedService: number;
+    totalIncreasedService: number;
+};

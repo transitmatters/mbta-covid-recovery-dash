@@ -1,6 +1,11 @@
  @import '../../styles/base.scss';
 
- .wrapper {
-    width: 1170px;
-    max-width: 100%;
+ .flexWrap {
+     display: flex;
+     width: 100%;
+     margin: 15px auto;
+  }
+  .flexCol {
+    padding: 10px;
+    width: 50%;
   }
