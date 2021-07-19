@@ -1,6 +1,6 @@
 import React from "react";
 
-import TopLine from "./TopLine";
+import TopLineChart from "./TopLineChart";
 
 var chartData= {
     labels: ["Green", "Blue", "Gray", "Purple", "Yellow", "Red", "Black"],
@@ -22,9 +22,9 @@ var chartData= {
 
 export default {
     title: "TopLine",
-    component: TopLine,
+    component: TopLineChart,
 };
 
 export const Default = () => {
-    return <TopLine ridershipData={chartData} serviceData={chartData} />;
+    return <TopLineChart ridershipData={chartData} serviceData={chartData} />;
 }
