@@ -214,7 +214,7 @@ def get_service_percentage(total_service_time_series):
 
 def generate_data_file():
     #today = datetime.now(TIME_ZONE).date()
-    today = date(2021, 7, 6)
+    today = date(2021, 6, 22)
     ridership_source = get_latest_ridership_source()
     data_by_line_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
