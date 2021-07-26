@@ -1,15 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import Chart from "chart.js";
-import { SummaryData } from "types";
 
 import styles from "./TopLineChart.module.scss";
 
 type Props = {
-    ridershipData: SummaryData["totalRidershipHistory"];
-    serviceData: SummaryData["totalServiceHistory"];
+    sparklineData: any;
+    pieData: any;
 };
 
-const TopLineChart = (props) => {
+const TopLineChart = (props : Props) => {
+    const { sparklineData, pieData } = props;
     const divArr = [] as any;
     for (let i = 0; i < 2; ++i) {
     const canvasRef = useRef<null | HTMLCanvasElement>(null);
@@ -20,13 +20,13 @@ const TopLineChart = (props) => {
                 // Returns an object that provides the methods to draw 2D content to a <canvas>
                 const canvasContext = canvasElement.getContext('2d');
                 if (i == 0) {
-                    new Chart(canvasContext, {type: "doughnut", data: props.ridershipData, options: {
+                    new Chart(canvasContext, {type: "doughnut", data: pieData, options: {
                         legend: {
                           display: false,
                         }
                     }});
                 } else {
-                    new Chart(canvasContext, {type: "line", data: props.serviceData, options: {
+                    new Chart(canvasContext, {type: "line", data: sparklineData, options: {
                         legend: {
                             display: false,
                           },
@@ -34,14 +34,17 @@ const TopLineChart = (props) => {
                           xAxes: [{
                             gridLines: {
                               drawBorder: false,
+                              tickMarkLength: 0,
                             },
                             ticks : {
-                                display : false,
+                                display: false,
+                                maxTicksLimit: 2,
                             },
                           }],
                           yAxes: [{
                             gridLines: {
                               drawBorder: false,
+                              tickMarkLength: 0,
                             },
                             ticks : {
                                 display : false,
@@ -52,13 +55,13 @@ const TopLineChart = (props) => {
                           point:{
                               radius: 0
                           }
-                      },
+                        },
                       },});
                 }
                 Chart.defaults.scale.gridLines.drawOnChartArea = false;
                 Chart.defaults.scale.axisLines = false;
             }
-        }, [props.ridershipData, props.serviceData]);
+        }, [props.sparklineData, props.pieData]);
 
         divArr.push(
             <div className={styles.flexCol} key={i}>

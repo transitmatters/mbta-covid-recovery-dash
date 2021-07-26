@@ -1,30 +1,44 @@
 import React from "react";
 
+import { summaryLineData } from "storydata/summaryLineData";
+
 import TopLineChart from "./TopLineChart";
 
-var chartData= {
-    labels: ["Green", "Blue", "Gray", "Purple", "Yellow", "Red", "Black"],
+// var chartData= {
+//     labels: ["pre-covid", "", "", "", "", "", "", "", "", "", "", "current"],
+//     datasets: [{
+//         data: [858333, 858333, 858333, 858333, 858333, 858333, 858333, 795767, 795767, 795767, 795767, 795767,],
+//         fill: false,
+//         tension: 0,
+//     }],
+// }
+let label_array = ["pre-covid"];
+for (let i = 1; i < summaryLineData["totalRidershipHistory"].length - 1; ++i) {
+    label_array.push("");
+}
+label_array.push("current");
+
+var pie={
+    labels: ["pre-covid", "current"],
     datasets: [{
-        backgroundColor: [
-            "#899499",
-            "#A9A9A9",
-            "#808080",
-            "#D3D3D3",
-            "#E5E4E2",
-            "#C0C0C0",
-            "#848884",
-        ],
-    data: [12, 19, 3, 17, 28, 24, 7],
-    fill: false,
-    tension: 0,
+        data: summaryLineData["totalRidershipPercentage"]
     }],
 }
 
+var line={
+    labels: label_array,
+        datasets: [{
+            data: summaryLineData["totalRidershipHistory"],
+            fill: false,
+            tension: 0,
+        }],
+}
+
 export default {
-    title: "TopLine",
+    title: "TopLine Chart",
     component: TopLineChart,
 };
 
 export const Default = () => {
-    return <TopLineChart ridershipData={chartData} serviceData={chartData} />;
+    return <TopLineChart sparklineData={line} pieData={pie} />;
 }

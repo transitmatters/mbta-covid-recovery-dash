@@ -204,13 +204,25 @@ def get_merged_ridership_time_series(
             merged_time_series[idx] += value
     return merged_time_series
 
-def get_ridership_percentage(total_ridership_time_series):
-    ridership_percentage = total_ridership_time_series[-1]/total_ridership_time_series[0]
-    return ridership_percentage
 
-def get_service_percentage(total_service_time_series):
-    service_percentage = total_service_time_series[-1]/total_service_time_series[0]
-    return service_percentage
+def get_ridership_percentage_array(total_ridership_time_series):
+    ridership_percentage = 100 * round(total_ridership_time_series[-1]/total_ridership_time_series[0], 2)
+    ridership_percent_array = [100 - ridership_percentage, ridership_percentage]
+    return ridership_percent_array
+
+
+def get_service_percentage_array(total_service_time_series):
+    service_percentage = 100 * round(total_service_time_series[-1]/total_service_time_series[0], 2)
+    service_percent_array = [100 - service_percentage, service_percentage]
+    return service_percent_array
+
+def condensed_time_series(total_time_series):
+    condensed_series = [total_time_series[0]]
+    for i in range(len(total_time_series) - 1):
+        if total_time_series[i] != total_time_series[i + 1]:
+            condensed_series.append(total_time_series[i + 1])
+    return condensed_series
+
 
 def generate_data_file():
     #today = datetime.now(TIME_ZONE).date()
@@ -241,12 +253,31 @@ def generate_data_file():
         service_time_series = get_service_level_history(entries_for_line_id, START_DATE, today)
         baseline_service_regime = get_service_regime_dict(entries_for_line_id, PRE_COVID_DATE)
         current_service_regime = get_service_regime_dict(entries_for_line_id, today)
+
+        try: 
+            if "weekday":
+                service_time_fraction = current_service_regime["weekday"]["totalTrips"] / baseline_service_regime["weekday"]["totalTrips"]
+            if "saturday":
+                service_time_fraction = current_service_regime["saturday"]["totalTrips"] / baseline_service_regime["saturday"]["totalTrips"]
+            if "sunday":
+                service_time_fraction = current_service_regime["sunday"]["totalTrips"] / baseline_service_regime["sunday"]["totalTrips"]
+        except ZeroDivisionError:
+            service_time_fraction = 0
+        if service_time_fraction > 1:
+            total_increased_serv_routes += 1
+        elif service_time_fraction < 1 and service_time_fraction != 0:
+            total_reduced_serv_routes += 1
+        
+        if current_service_regime["weekday"]["cancelled"] or current_service_regime["saturday"]["cancelled"] or current_service_regime["sunday"]["cancelled"]: 
+            total_cancelled_routes += 1
+        
         total_trips, service_fraction = summarize_service(
             current_service_regime,
             baseline_service_regime,
         )
-        ridership_time_series_list.append(ridership_time_series)
-        service_time_series_list.append(service_time_series)
+        if ridership_time_series != None and service_time_series != None:
+            ridership_time_series_list.append(ridership_time_series)
+            service_time_series_list.append(service_time_series)
         combined_total_trips += total_trips
         data_by_line_id[line_id] = {
             "id": line_id,
@@ -265,21 +296,16 @@ def generate_data_file():
             },
         }
     total_ridership_time_series = [sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)]
+    condensed_ridership_series = condensed_time_series(total_ridership_time_series)
     total_service_time_series = [sum(entries_for_day) for entries_for_day in zip(*service_time_series_list)]
-    total_ridership_percentage = get_ridership_percentage(total_ridership_time_series)
-    total_service_percentage = get_service_percentage(total_service_time_series)
+    condensed_service_series = condensed_time_series(total_service_time_series)
+    total_ridership_percentage = get_ridership_percentage_array(total_ridership_time_series)
+    total_service_percentage = get_service_percentage_array(total_service_time_series)
     total_passengers = sum(total_ridership_time_series)
-    for i in range(24):
-        if zip(*ridership_time_series_list)[-1] / zip(*ridership_time_series_list)[0] < 1:
-            total_reduced_serv_routes += 1
-        elif zip(*ridership_time_series_list)[-1] / zip(*ridership_time_series_list)[0] > 1:
-            total_increased_serv_routes += 1
-        elif zip(*ridership_time_series_list)[-1] / zip(*ridership_time_series_list)[0] == 0:
-            total_cancelled_routes += 1
     
     total_data = {
-        "totalRidershipHistory": total_ridership_time_series,
-        "totalServiceHistory": total_service_time_series,
+        "totalRidershipHistory": condensed_ridership_series,
+        "totalServiceHistory": condensed_service_series,
         "totalRidershipPercentage": total_ridership_percentage,
         "totalServicePercentage": total_service_percentage,
         "totalPassengers": total_passengers,
