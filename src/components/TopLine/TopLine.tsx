@@ -3,7 +3,6 @@ import { SummaryData } from "types";
 import TopLineChart from "./TopLineChart";
 
 import styles from "./TopLine.module.scss";
-import { isLabeledStatement } from "typescript";
 
 type Props = {
     summaryData: SummaryData;
@@ -32,7 +31,7 @@ const TopLine = (props: Props) => {
     label_array.push("current");
 
     var pieRidership={
-        labels: ["pre-covid", "current"],
+        labels: ["", "current"],
         datasets: [{
             backgroundColor: [
                 "#E5E4E2",
@@ -47,11 +46,12 @@ const TopLine = (props: Props) => {
             data: totalRidershipHistory,
             fill: false,
             tension: 0,
+            borderColor: "#D3D3D3",
         }],
     }
 
     var pieService={
-        labels: ["pre-covid", "current"],
+        labels: ["", "current"],
         datasets: [{
             backgroundColor: [
                 "#E5E4E2",
@@ -66,6 +66,7 @@ const TopLine = (props: Props) => {
             data: totalServiceHistory,
             fill: false,
             tension: 0,
+            borderColor: "#D3D3D3",
         }],
     }
 
@@ -75,19 +76,19 @@ const TopLine = (props: Props) => {
                 <h4>Total Ridership</h4>
                 <TopLineChart sparklineData={lineRidership} pieData={pieRidership} />
                 <p><strong>{totalRidershipPercentage[1]}%</strong> of pre-COVID</p>
-                <p><strong>{totalPassengers}</strong> passengers</p>
+                <p><strong>{totalPassengers.toLocaleString()}</strong> passengers</p>
             </div>
             <div className={styles.Col}>
                 <h4>Total Service</h4>
                 <TopLineChart sparklineData={lineService} pieData={pieService} />
                 <p><strong>{totalServicePercentage[1]}%</strong> of pre-COVID</p>
-                <p><strong>{totalTrips} </strong> trips</p>
+                <p><strong>{totalTrips.toLocaleString()} </strong> trips</p>
             </div>
             <div className={styles.Col}>
                 <ul>
-                    <li><strong>{totalroutesCancelled}</strong> routes cancelled</li>
-                    <li><strong>{totalReducedService}</strong> routes with reduced service</li>
-                    <li><strong>{totalIncreasedService}</strong> routes with increased service</li>
+                    <li><strong>{totalroutesCancelled.toLocaleString()}</strong> routes cancelled</li>
+                    <li><strong>{totalReducedService.toLocaleString()}</strong> routes with reduced service</li>
+                    <li><strong>{totalIncreasedService.toLocaleString()}</strong> routes with increased service</li>
                 </ul>
             </div>
         </div>
@@ -95,4 +96,4 @@ const TopLine = (props: Props) => {
 
 }
 
-export default TopLine
+export default TopLine;
