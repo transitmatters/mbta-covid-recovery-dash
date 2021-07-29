@@ -8,8 +8,8 @@ import { LineData } from "types";
 import { SummaryData } from "types";
 
 type AppData = {
-    lineData: Record<string, LineData>;
     summaryData: SummaryData;
+    lineData: Record<string, LineData>;
 };
 
 type Props = {
@@ -39,7 +39,7 @@ const App = (props: Props) => {
                 />
                 <link rel="icon" type="image/png" href="./favicon.png" />
             </Head>
-            <LineGrid data={data.lineData} />
+            <LineGrid data={data.lineData} summaryData={data.summaryData} />
         </>
     );
 };

@@ -4,27 +4,31 @@ import { summaryLineData } from "storydata/summaryLineData";
 
 import TopLineChart from "./TopLineChart";
 
-let label_array = ["pre-covid"];
+const label_array = ["pre-covid"];
 for (let i = 1; i < summaryLineData["totalRidershipHistory"].length - 1; ++i) {
     label_array.push("");
 }
 label_array.push("current");
 
-var pie={
+const pie = {
     labels: ["pre-covid", "current"],
-    datasets: [{
-        data: summaryLineData["totalRidershipPercentage"]
-    }],
-}
+    datasets: [
+        {
+            data: summaryLineData["totalRidershipPercentage"],
+        },
+    ],
+};
 
-var line={
+const line = {
     labels: label_array,
-        datasets: [{
+    datasets: [
+        {
             data: summaryLineData["totalRidershipHistory"],
             fill: false,
             tension: 0,
-        }],
-}
+        },
+    ],
+};
 
 export default {
     title: "TopLine Chart",
@@ -33,4 +37,4 @@ export default {
 
 export const Default = () => {
     return <TopLineChart sparklineData={line} pieData={pie} />;
-}
+};

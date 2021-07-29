@@ -10,5 +10,5 @@ export default {
 };
 
 export const Default = () => {
-    return <TopLine summaryData={summaryLineData} />
-}
+    return <TopLine summaryData={summaryLineData} />;
+};
