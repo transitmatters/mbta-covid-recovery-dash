@@ -218,20 +218,19 @@ def get_service_percentage(total_service_time_series):
 def condensed_time_series(total_time_series):
     condensed_series = [total_time_series[0]]
     for i in range(len(total_time_series) - 1):
-        if total_time_series[i] != total_time_series[i + 1]:
+        if total_time_series[i] is not total_time_series[i + 1]:
             condensed_series.append(total_time_series[i + 1])
     return condensed_series
 
 def generate_total_data(ridership_time_series_list, service_time_series_list, combined_total_trips, total_cancelled_routes, total_reduced_serv_routes, total_increased_serv_routes):
-    total_ridership_time_series = [sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)] #
-    condensed_ridership_series = condensed_time_series(total_ridership_time_series) #
-    total_service_time_series = [sum(entries_for_day) for entries_for_day in zip(*service_time_series_list)] #
-    condensed_service_series = condensed_time_series(total_service_time_series) #
-    total_ridership_percentage = get_ridership_percentage(total_ridership_time_series) #
-    total_service_percentage = get_service_percentage(total_service_time_series) #
-    total_passengers = sum(total_ridership_time_series) #
+    total_ridership_time_series = [sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)] 
+    condensed_ridership_series = condensed_time_series(total_ridership_time_series) 
+    total_service_time_series = [sum(entries_for_day) for entries_for_day in zip(*service_time_series_list)] 
+    condensed_service_series = condensed_time_series(total_service_time_series) 
+    total_ridership_percentage = get_ridership_percentage(total_ridership_time_series) 
+    total_service_percentage = get_service_percentage(total_service_time_series) 
+    total_passengers = total_ridership_time_series[-1]
     
-    #
     total_data = { 
         "totalRidershipHistory": condensed_ridership_series,
         "totalServiceHistory": condensed_service_series,
@@ -282,7 +281,7 @@ def generate_data_file():
             service_time_fraction = 0
         if service_time_fraction > 1:
             total_increased_serv_routes += 1
-        elif service_time_fraction < 1 and service_time_fraction != 0:
+        elif service_time_fraction < 1 and service_time_fraction is not 0:
             total_reduced_serv_routes += 1
     
         if current_service_regime["weekday"]["cancelled"] or current_service_regime["saturday"]["cancelled"] or current_service_regime["sunday"]["cancelled"]: 

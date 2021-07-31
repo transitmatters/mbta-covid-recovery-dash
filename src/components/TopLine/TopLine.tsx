@@ -36,7 +36,7 @@ const TopLine = (props: Props) => {
         labels: ["", "current"],
         datasets: [
             {
-                backgroundColor: ["#E5E4E2", "#D3D3D3"],
+                backgroundColor: ["#D3D3D3", "#D31A2B"],
                 data: getPercentArray(totalRidershipPercentage),
             },
         ],
@@ -48,7 +48,7 @@ const TopLine = (props: Props) => {
                 data: totalRidershipHistory,
                 fill: false,
                 tension: 0,
-                borderColor: "#D3D3D3",
+                borderColor: "#D31A2B",
             },
         ],
     };
@@ -57,7 +57,7 @@ const TopLine = (props: Props) => {
         labels: ["", "current"],
         datasets: [
             {
-                backgroundColor: ["#E5E4E2", "#D3D3D3"],
+                backgroundColor: ["#D3D3D3", "#D31A2B"],
                 data: getPercentArray(totalServicePercentage),
             },
         ],
@@ -69,7 +69,7 @@ const TopLine = (props: Props) => {
                 data: totalServiceHistory,
                 fill: false,
                 tension: 0,
-                borderColor: "#D3D3D3",
+                borderColor: "#D31A2B",
             },
         ],
     };
@@ -83,7 +83,7 @@ const TopLine = (props: Props) => {
                     <strong>{getPercentArray(totalRidershipPercentage)[1]}%</strong> of pre-COVID
                 </p>
                 <p>
-                    <strong>{totalPassengers.toLocaleString()}</strong> passengers
+                    <strong>{totalPassengers.toLocaleString()}</strong> riders
                 </p>
             </div>
             <div className={styles.Col}>
@@ -99,14 +99,14 @@ const TopLine = (props: Props) => {
             <div className={styles.Col}>
                 <ul>
                     <li>
-                        <strong>{totalroutesCancelled.toLocaleString()}</strong> routes cancelled
+                        <strong><span>{totalroutesCancelled.toLocaleString()}</span></strong> routes cancelled
                     </li>
                     <li>
-                        <strong>{totalReducedService.toLocaleString()}</strong> routes with reduced
+                        <strong><span>{totalReducedService.toLocaleString()}</span></strong> routes with reduced
                         service
                     </li>
                     <li>
-                        <strong>{totalIncreasedService.toLocaleString()}</strong> routes with
+                        <strong><span>{totalIncreasedService.toLocaleString()}</span></strong> routes with
                         increased service
                     </li>
                 </ul>

@@ -38,8 +38,8 @@ export type LineData = {
 export type SummaryData = {
     totalRidershipHistory: null | number[];
     totalServiceHistory: null | number[];
-    totalRidershipPercentage: number[];
-    totalServicePercentage: number[];
+    totalRidershipPercentage: number;
+    totalServicePercentage: number;
     totalPassengers: number;
     totalTrips: number;
     totalroutesCancelled: number;

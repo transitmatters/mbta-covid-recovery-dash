@@ -196,7 +196,7 @@ const LineGrid = (props: Props) => {
                 {renderLineKindDropdown()}
                 {renderSortDropdown()}
             </div>
-            <div className={styles.TopLine}>
+            <div className={styles.toplineWrapper}>
                 <TopLine summaryData={summaryData} />
             </div>
             <div className={classNames(styles.lineGrid, display)}>
