@@ -50,6 +50,9 @@ def get_file_matching_date_pattern(files: List[File], pattern: Pattern):
             month = match[2]
             day = match[3]
             file_date = date(year=int(year), month=int(month), day=int(day))
+            # This file is still hanging around in the box endpoint
+            if file_date == date(2021, 7, 13):
+                continue
             return file, file_date
 
 
