@@ -317,7 +317,7 @@ def generate_data_file():
     
     with open(OUTPUT_FILE, "w") as file:
         file.write(json.dumps({
-            "totalData": total_data,
+            "summaryData": total_data,
             "lineData": data_by_line_id,
         }))
 
