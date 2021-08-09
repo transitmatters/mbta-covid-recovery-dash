@@ -5,15 +5,9 @@ import Head from "next/head";
 
 import { LineGrid } from "components";
 import { LineData } from "types";
-import { SummaryData } from "types";
-
-type AppData = {
-    summaryData: SummaryData;
-    lineData: Record<string, LineData>;
-};
 
 type Props = {
-    data: AppData;
+    data: Record<string, LineData>;
 };
 
 const PATH_TO_DATA = path.join(process.cwd(), "data.json");
@@ -39,7 +33,7 @@ const App = (props: Props) => {
                 />
                 <link rel="icon" type="image/png" href="./favicon.png" />
             </Head>
-            <LineGrid data={data.lineData} summaryData={data.summaryData} />
+            <LineGrid data={data} />
         </>
     );
 };

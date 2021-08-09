@@ -60,7 +60,6 @@ def format_subway_data(path_to_csv_file: str):
 
 
 def format_bus_data(path_to_excel_file: str):
-    print(path_to_excel_file)
     # read data, ignore first sheet and row
     df = pd.read_excel(
         path_to_excel_file,
