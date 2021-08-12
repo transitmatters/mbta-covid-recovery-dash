@@ -55,7 +55,7 @@ const LineCard = (props: Props) => {
 
     const ridershipAndFrequencyLabel = ridershipHistory
         ? "Weekday ridership and service levels"
-        : "Weekday frequency (ridership data not available)";
+        : "Weekday service levels (ridership not available)";
 
     const renderSectionLabel = (title: string, rightElement: React.ReactNode = null) => {
         return (
