@@ -12,6 +12,7 @@ from config import (
     RIDERSHIP_BOX_URL,
     RIDERSHIP_BUS_XLSX_REGEX,
     RIDERSHIP_SUBWAY_CSV_REGEX,
+    RIDERSHIP_TARGET_DATE,
 )
 from secrets import BOX_ACCESS_TOKEN
 
@@ -54,6 +55,8 @@ def get_file_matching_date_pattern(files: List[File], pattern: Pattern):
 
 
 def get_latest_ridership_source(require_matching_bus_subway_dates=False):
+    if RIDERSHIP_TARGET_DATE:
+        return RidershipSource(upload_date=RIDERSHIP_TARGET_DATE)
     client = get_box_client()
     folder = client.get_shared_item(RIDERSHIP_BOX_URL)
     files = list(folder.get_items())
