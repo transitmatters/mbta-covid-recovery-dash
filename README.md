@@ -8,7 +8,7 @@ The MBTA Covid Recovery Dashboard is a project by the TransitMatters Labs team t
 - The [MBTA GTFS feed archive](https://cdn.mbta.com/archive/archived_feeds.txt)
 - Some [public data on ridership](https://massdot.app.box.com/s/21j0q5di9ewzl0abt6kdh5x8j8ok9964) updated regularly by [MassDOT OPMI](https://www.mass.gov/transportation-performance)
 
-The root of this repo is a Next.js webapp, but inside the `datagen/` directory is Python code to read and aggregate data from the sources mentioned above. That file updates `data.json`, which is bundled by Next.js into a static site that lives in the `docs/` directory. We host that static site on [recovery.transitmatters.org](https://recovery.transmitmatters.org).
+The root of this repo is a Next.js webapp, but inside the `datagen/` directory is Python code to read and aggregate data from the sources mentioned above. That file updates `data.json`, which is bundled by Next.js into a static site that lives in the `docs/` directory. We host that static site on [recovery.transitmatters.org](https://recovery.transitmatters.org).
 
 The computations on the ridership data and the GTFS feeds in particular can be very slow, so we cache intermediate results in the following directories:
 
