@@ -19,5 +19,5 @@ RIDERSHIP_BUS_XLSX_REGEX = re.compile(
     r"Weekly_Bus_Ridership_by_Route_(\d{4})\.(\d{1,2})\.(\d{1,2})", re.I
 )
 RIDERSHIP_SUBWAY_CSV_REGEX = re.compile(
-    r"(\d{4})\.(\d{1,2})\.(\d{1,2}) MBTA Gated Station Validations by line", re.I
+    r"(\d{4})\.(\d{1,2})\.(\d{1,2}) MBTA Gated Station Validations by station", re.I
 )

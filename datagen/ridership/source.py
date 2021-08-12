@@ -50,13 +50,10 @@ def get_file_matching_date_pattern(files: List[File], pattern: Pattern):
             month = match[2]
             day = match[3]
             file_date = date(year=int(year), month=int(month), day=int(day))
-            # This file is still hanging around in the box endpoint
-            if file_date == date(2021, 7, 13):
-                continue
             return file, file_date
 
 
-def get_latest_ridership_source():
+def get_latest_ridership_source(require_matching_bus_subway_dates=False):
     client = get_box_client()
     folder = client.get_shared_item(RIDERSHIP_BOX_URL)
     files = list(folder.get_items())
@@ -65,7 +62,9 @@ def get_latest_ridership_source():
     if maybe_bus_file_and_date and maybe_subway_file_and_date:
         subway_file, subway_date = maybe_subway_file_and_date
         bus_file, bus_date = maybe_bus_file_and_date
-        assert bus_date == subway_date, f"Mismatched file dates: {bus_date} and {subway_date}"
+        assert (
+            not require_matching_bus_subway_dates or bus_date == subway_date
+        ), f"Mismatched file dates: {bus_date} and {subway_date}"
         source = RidershipSource(upload_date=subway_date)
         if not path.exists(source.subdirectory):
             mkdir(source.subdirectory)
