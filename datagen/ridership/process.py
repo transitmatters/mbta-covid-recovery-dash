@@ -64,13 +64,13 @@ def format_bus_data(path_to_excel_file: str):
     df = pd.read_excel(
         path_to_excel_file,
         sheet_name="Ridership by Route",
-        header=1,
+        skiprows=2,
         keep_default_na=False,
         na_values=["N/A", "999999"],
     )
 
     # rename unnamed data
-    df = df.rename(columns={"Route Name": "route"})
+    df = df.rename(columns={"Route": "route"})
     # cast empty values to 0
     df = df.replace(to_replace="", value=0)
     # melt to get into long format
