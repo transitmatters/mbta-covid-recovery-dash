@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from "react";
 import classNames from "classnames";
 
-import { LineCard } from "components";
-import { LineData } from "types";
+import { LineCard, TopLine } from "components";
+import { LineData, SummaryData } from "types";
 
 import { useInfiniteScroll } from "./useInfiniteScroll";
 import { sortFunctions, Sort, SortFn } from "./sorting";
@@ -11,6 +11,7 @@ import styles from "./LineGrid.module.scss";
 
 type Props = {
     data: Record<string, LineData>;
+    summaryData: SummaryData;
     filter?: (r: LineData) => boolean;
 };
 
@@ -70,7 +71,7 @@ const isRidershipSort = (sort: "" | Sort) => {
 };
 
 const LineGrid = (props: Props) => {
-    const { data, filter = defaultFilter } = props;
+    const { data, summaryData, filter = defaultFilter } = props;
     const [limit, setLimit] = useState(pagination);
     const [query, setQuery] = useState("");
     const [sort, setSort] = useState<Sort | "">("");
@@ -195,6 +196,7 @@ const LineGrid = (props: Props) => {
                 {renderLineKindDropdown()}
                 {renderSortDropdown()}
             </div>
+            <div> <TopLine summaryData={summaryData} /></div>
             <div className={classNames(styles.lineGrid, display)}>
                 {shownItems.map((item) => (
                     <LineCard lineData={item} key={item.id} />

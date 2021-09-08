@@ -205,8 +205,48 @@ def get_merged_ridership_time_series(
     return merged_time_series
 
 
+def get_ridership_percentage(total_ridership_time_series):
+    ridership_percentage = round(total_ridership_time_series[-1]/total_ridership_time_series[0], 2)
+    return ridership_percentage
+
+def get_service_percentage(total_service_time_series):
+    service_percentage = round(total_service_time_series[-1]/total_service_time_series[0], 2)
+    return service_percentage
+
+# since the data holds constant over a week, this function removes the duplicates of 7 and condenses into 1 datapoint
+# keeps overall trends the same
+def condensed_time_series(total_time_series):
+    condensed_series = [total_time_series[0]]
+    for i in range(len(total_time_series) - 1):
+        if total_time_series[i] is not total_time_series[i + 1]:
+            condensed_series.append(total_time_series[i + 1])
+    return condensed_series
+
+def generate_total_data(ridership_time_series_list, service_time_series_list, combined_total_trips, total_cancelled_routes, total_reduced_serv_routes, total_increased_serv_routes):
+    total_ridership_time_series = [sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)] 
+    condensed_ridership_series = condensed_time_series(total_ridership_time_series) 
+    total_service_time_series = [sum(entries_for_day) for entries_for_day in zip(*service_time_series_list)] 
+    condensed_service_series = condensed_time_series(total_service_time_series) 
+    total_ridership_percentage = get_ridership_percentage(total_ridership_time_series) 
+    total_service_percentage = get_service_percentage(total_service_time_series) 
+    total_passengers = total_ridership_time_series[-1]
+    
+    total_data = { 
+        "totalRidershipHistory": condensed_ridership_series,
+        "totalServiceHistory": condensed_service_series,
+        "totalRidershipPercentage": total_ridership_percentage,
+        "totalServicePercentage": total_service_percentage,
+        "totalPassengers": total_passengers,
+        "totalTrips": combined_total_trips,
+        "totalRoutesCancelled": total_cancelled_routes,
+        "totalReducedService": total_reduced_serv_routes,
+        "totalIncreasedService": total_increased_serv_routes,
+    }
+    return total_data
+
 def generate_data_file():
-    today = datetime.now(TIME_ZONE).date()
+    #today = datetime.now(TIME_ZONE).date()
+    today = date(2021, 6, 22)
     ridership_source = get_latest_ridership_source()
     data_by_line_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
@@ -216,6 +256,12 @@ def generate_data_file():
         START_DATE,
         today,
     )
+    ridership_time_series_list = [] 
+    service_time_series_list = [] 
+    combined_total_trips = 0 
+    total_reduced_serv_routes = 0 
+    total_increased_serv_routes = 0 
+    total_cancelled_routes = 0 
     for line_id in line_ids:
         if line_id in IGNORE_LINE_IDS:
             continue
@@ -227,10 +273,29 @@ def generate_data_file():
         service_time_series = get_service_level_history(entries_for_line_id, START_DATE, today)
         baseline_service_regime = get_service_regime_dict(entries_for_line_id, PRE_COVID_DATE)
         current_service_regime = get_service_regime_dict(entries_for_line_id, today)
-        total_trips, service_fraction = summarize_service(
+        day_kinds = ("weekday", "saturday", "sunday")
+
+        try: 
+            service_time_fraction = sum((current_service_regime[day]["totalTrips"] for day in day_kinds)) / sum((baseline_service_regime[day]["totalTrips"] for day in day_kinds))
+        except ZeroDivisionError:
+            service_time_fraction = 0
+        if service_time_fraction > 1:
+            total_increased_serv_routes += 1
+        elif service_time_fraction < 1 and service_time_fraction != 0:
+            total_reduced_serv_routes += 1
+    
+        if current_service_regime["weekday"]["cancelled"] or current_service_regime["saturday"]["cancelled"] or current_service_regime["sunday"]["cancelled"]: 
+            total_cancelled_routes += 1
+        
+        total_trips, service_fraction = summarize_service( 
             current_service_regime,
             baseline_service_regime,
         )
+        
+        if ridership_time_series is not None and service_time_series is not None:
+            ridership_time_series_list.append(ridership_time_series)
+            service_time_series_list.append(service_time_series)
+        combined_total_trips += total_trips #
         data_by_line_id[line_id] = {
             "id": line_id,
             "shortName": exemplar_entry.line_short_name,
@@ -247,8 +312,14 @@ def generate_data_file():
                 "current": current_service_regime,
             },
         }
+    
+    total_data = generate_total_data(ridership_time_series_list, service_time_series_list, combined_total_trips, total_cancelled_routes, total_reduced_serv_routes, total_increased_serv_routes)
+    
     with open(OUTPUT_FILE, "w") as file:
-        file.write(json.dumps(data_by_line_id))
+        file.write(json.dumps({
+            "summaryData": total_data,
+            "lineData": data_by_line_id,
+        }))
 
 
 if __name__ == "__main__":
