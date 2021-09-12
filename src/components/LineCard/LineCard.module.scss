@@ -60,6 +60,10 @@
     font-size: 14px;
     border-radius: 4px;
     padding: 5px 10px;
+    &:global(.good) {
+        color: white;
+        background: $good;
+    }
     &:global(.bad) {
         color: white;
         background: $bad;
@@ -70,6 +74,10 @@
     }
     > svg {
         margin-right: 4px;
+    }
+    a {
+        color: inherit;
+        text-decoration-style: dotted;
     }
 }
 
@@ -83,35 +91,6 @@
     top: 0;
     left: 0;
     font-size: 14px;
-}
-
-.metrics {
-    margin: 10px 0;
-    display: flex;
-    justify-content: space-between;
-}
-
-.metric {
-    display: flex;
-    align-items: center;
-    :global(.number) {
-        font-size: 34px;
-    }
-    :global(.label) {
-        text-transform: uppercase;
-        margin-left: 5px;
-        font-size: 12px;
-    }
-    &:global(.good) {
-        :global(.number) {
-            color: $good;
-        }
-    }
-    &:global(.bad) {
-        :global(.number) {
-            color: $bad;
-        }
-    }
 }
 
 .sectionLabel {
