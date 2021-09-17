@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import classNames from "classnames";
-import { TiCancel } from "react-icons/ti";
+import { TiCancel, TiTicket } from "react-icons/ti";
 
 import { LineData, ServiceDay } from "types";
 import { TabPicker } from "components";
@@ -68,6 +68,20 @@ const LineCard = (props: Props) => {
 
     const renderStatusBadge = () => {
         const { current, baseline } = serviceRegimes;
+        if (shortName === "28") {
+            return (
+                <div className={classNames(styles.statusBadge, "good")}>
+                    <TiTicket size={20} />
+                    <a
+                        href="https://www.mbta.com/projects/fare-free-bus-pilot-route-28"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        Free Fare Pilot
+                    </a>
+                </div>
+            );
+        }
         if (current.weekday.cancelled) {
             return (
                 <div className={classNames(styles.statusBadge, "bad")}>

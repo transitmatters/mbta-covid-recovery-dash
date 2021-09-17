@@ -1,6 +1,6 @@
 @use 'sass:color';
 
-$good: desaturate(green, 20%);
+$good: desaturate(limegreen, 30%);
 $bad: desaturate(tomato, 30%);
 $warning: desaturate(#ffbf00, 30%);
 $global-shadow: 0px 5px 3px 0px rgba(black, 0.03);
