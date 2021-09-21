@@ -42,7 +42,7 @@ export type SummaryData = {
     totalServicePercentage: number;
     totalPassengers: number;
     totalTrips: number;
-    totalroutesCancelled: number;
+    totalRoutesCancelled: number;
     totalReducedService: number;
     totalIncreasedService: number;
 };

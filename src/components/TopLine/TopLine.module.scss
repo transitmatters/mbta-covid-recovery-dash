@@ -1,12 +1,7 @@
 .Wrap {
     display: flex;
-    width: 97%;
-    margin: 10px auto;
-    border: 1px solid black;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    padding-top: 10px;
-    margin-bottom: -3px;
+    width: 100%;
+    background: linear-gradient(0deg, white 0%, #eee 100%);
 }
 
 .Col {
@@ -15,27 +10,32 @@
     height: auto;
     p {
         position: relative;
-        margin-right: 40px;
         text-align: center;
-        font-size: 14px;
+        font-size: 16px;
+        margin: 0;
+        margin-bottom: 10px;
     }
     h4 {
         text-align: center;
         font-size: 28px;
-        margin-right: 40px;
-        margin-bottom: -10px;
-        margin-top: 12px;
+        margin: 0;
     }
     ul {
-        margin-top: 30px;
-        margin-left: -25px;
+        font-size: 16px;
         list-style-type: none;
+        padding: 0;
         li {
-            margin: 30px;
+            display: flex;
+            align-items: center;
+            &:not(:last-child) {
+                margin-bottom: 30px;
+            }
             span {
-                font-size: 150%;
-                vertical-align: middle;
-                margin: 5px;
+                display: inline-block;
+                font-size: 1.5em;
+                margin-right: 8px;
+                width: 2em;
+                text-align: right;
             }
         }
     }

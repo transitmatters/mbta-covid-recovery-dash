@@ -2,12 +2,14 @@
 
 .flexWrap {
   display: flex;
+  justify-content: center;
   width: 100%;
   margin: 15px auto;
+  > *:not(:first-child) {
+    margin-left: 20px;
+  }
 }
+
 .flexCol {
-  padding: 10px;
   width: 30%;
-  margin-left: 20px;
-  margin-right: -35px;
 }

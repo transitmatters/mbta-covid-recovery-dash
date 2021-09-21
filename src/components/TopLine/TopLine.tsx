@@ -9,8 +9,8 @@ type Props = {
 };
 
 const getPercentArray = (percentage: any) => {
-    return [100 - (percentage * 100), percentage * 100]
-}
+    return [100 - percentage * 100, percentage * 100];
+};
 
 const TopLine = (props: Props) => {
     const { summaryData } = props;
@@ -21,12 +21,10 @@ const TopLine = (props: Props) => {
         totalServicePercentage,
         totalPassengers,
         totalTrips,
-        totalroutesCancelled,
+        totalRoutesCancelled,
         totalReducedService,
         totalIncreasedService,
     } = summaryData;
-
-
 
     const label_array = ["pre-covid"];
     for (let i = 1; i < totalRidershipHistory.length - 1; ++i) {
@@ -82,34 +80,43 @@ const TopLine = (props: Props) => {
                 <h4>Total Ridership</h4>
                 <TopLineChart sparklineData={lineRidership} pieData={pieRidership} />
                 <p>
-                    <strong>{getPercentArray(totalRidershipPercentage)[1]}%</strong> of pre-COVID
+                    <strong>{getPercentArray(totalRidershipPercentage)[1]}%</strong> of pre-pandemic
+                    ridership
                 </p>
                 <p>
-                    <strong>{totalPassengers + ""}</strong> riders
+                    <strong>{Number(totalPassengers).toLocaleString()}</strong> riders
                 </p>
             </div>
             <div className={styles.Col}>
                 <h4>Total Service</h4>
                 <TopLineChart sparklineData={lineService} pieData={pieService} />
                 <p>
-                    <strong>{getPercentArray(totalServicePercentage)[1]}%</strong> of pre-COVID
+                    <strong>{getPercentArray(totalServicePercentage)[1]}%</strong> of pre-pandemic
+                    service
                 </p>
                 <p>
-                    <strong>{totalTrips + ""} </strong> trips
+                    <strong>{Number(totalTrips).toLocaleString()}</strong> trips
                 </p>
             </div>
             <div className={styles.Col}>
                 <ul>
                     <li>
-                        <strong><span>{totalroutesCancelled + ""}</span></strong> routes cancelled
+                        <strong>
+                            <span>{totalRoutesCancelled + ""}</span>
+                        </strong>{" "}
+                        routes cancelled
                     </li>
                     <li>
-                        <strong><span>{totalReducedService + ""}</span></strong> routes with reduced
-                        service
+                        <strong>
+                            <span>{totalReducedService + ""}</span>
+                        </strong>{" "}
+                        routes with reduced service
                     </li>
                     <li>
-                        <strong><span>{totalIncreasedService + ""}</span></strong> routes with
-                        increased service
+                        <strong>
+                            <span>{totalIncreasedService + ""}</span>
+                        </strong>{" "}
+                        routes with increased service
                     </li>
                 </ul>
             </div>
