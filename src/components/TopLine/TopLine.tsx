@@ -80,7 +80,7 @@ const TopLine = (props: Props) => {
                 <h4>Total Ridership</h4>
                 <TopLineChart sparklineData={lineRidership} pieData={pieRidership} />
                 <p>
-                    <strong>{getPercentArray(totalRidershipPercentage)[1]}%</strong> of pre-pandemic
+                    <strong>{Math.round(totalRidershipPercentage * 100)}%</strong> of pre-pandemic
                     ridership
                 </p>
                 <p>
@@ -91,7 +91,7 @@ const TopLine = (props: Props) => {
                 <h4>Total Service</h4>
                 <TopLineChart sparklineData={lineService} pieData={pieService} />
                 <p>
-                    <strong>{getPercentArray(totalServicePercentage)[1]}%</strong> of pre-pandemic
+                    <strong>{Math.round(totalServicePercentage * 100)}%</strong> of pre-pandemic
                     service
                 </p>
                 <p>
