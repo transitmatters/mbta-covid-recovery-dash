@@ -7,7 +7,7 @@ import re
 START_DATE = date(2020, 2, 6)
 
 # Date to use as a baseline
-PRE_COVID_DATE = date(2020, 3, 1)
+PRE_COVID_DATE = date(2020, 2, 24)
 
 TIME_ZONE = timezone("US/Eastern")
 

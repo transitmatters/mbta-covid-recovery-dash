@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime, date
 from functools import cached_property
 from os import path, mkdir
-from zipfile import ZipFile
+from zipfile import BadZipFile, ZipFile
 import pickle
 import json
 
@@ -77,8 +77,11 @@ def extract_gtfs_zip(feed: GtfsFeed):
         return
     download_gtfs_zip(feed)
     print(f"Extracting {feed.url} to {feed.gtfs_subdir_path}")
-    zf = ZipFile(feed.gtfs_zip_path)
-    zf.extractall(feed.gtfs_subdir_path)
+    try:
+        zf = ZipFile(feed.gtfs_zip_path)
+        zf.extractall(feed.gtfs_subdir_path)
+    except BadZipFile:
+        print(feed.gtfs_zip_path)
 
 
 def get_trip_summaries(feed: GtfsFeed):
