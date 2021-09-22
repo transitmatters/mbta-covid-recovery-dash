@@ -8,6 +8,15 @@ type Props = {
     summaryData: SummaryData;
 };
 
+const smooth = (data: number[], window = 20) => {
+    const result: number[] = [];
+    for (let i = 0; i < data.length - window; i++) {
+        const inWindow = data.slice(i, i + window).reduce((a, b) => a + b);
+        result.push(inWindow);
+    }
+    return result;
+};
+
 const getPercentArray = (percentage: any) => {
     return [100 - percentage * 100, percentage * 100];
 };
@@ -19,8 +28,6 @@ const TopLine = (props: Props) => {
         totalServiceHistory,
         totalRidershipPercentage,
         totalServicePercentage,
-        totalPassengers,
-        totalTrips,
         totalRoutesCancelled,
         totalReducedService,
         totalIncreasedService,
@@ -36,6 +43,7 @@ const TopLine = (props: Props) => {
         labels: ["", "current"],
         datasets: [
             {
+                strokeColor: "transparent",
                 backgroundColor: ["#D3D3D3", "#D31A2B"],
                 data: getPercentArray(totalRidershipPercentage),
             },
@@ -45,7 +53,7 @@ const TopLine = (props: Props) => {
         labels: label_array,
         datasets: [
             {
-                data: totalRidershipHistory,
+                data: smooth(totalRidershipHistory),
                 fill: false,
                 tension: 0,
                 borderColor: "#D31A2B",
@@ -66,7 +74,7 @@ const TopLine = (props: Props) => {
         labels: label_array,
         datasets: [
             {
-                data: totalServiceHistory,
+                data: smooth(totalServiceHistory),
                 fill: false,
                 tension: 0,
                 borderColor: "#D31A2B",
@@ -81,10 +89,7 @@ const TopLine = (props: Props) => {
                 <TopLineChart sparklineData={lineRidership} pieData={pieRidership} />
                 <p>
                     <strong>{Math.round(totalRidershipPercentage * 100)}%</strong> of pre-pandemic
-                    ridership
-                </p>
-                <p>
-                    <strong>{Number(totalPassengers).toLocaleString()}</strong> riders
+                    weekday ridership
                 </p>
             </div>
             <div className={styles.Col}>
@@ -92,29 +97,26 @@ const TopLine = (props: Props) => {
                 <TopLineChart sparklineData={lineService} pieData={pieService} />
                 <p>
                     <strong>{Math.round(totalServicePercentage * 100)}%</strong> of pre-pandemic
-                    service
-                </p>
-                <p>
-                    <strong>{Number(totalTrips).toLocaleString()}</strong> trips
+                    weekday service
                 </p>
             </div>
             <div className={styles.Col}>
                 <ul>
                     <li>
                         <strong>
-                            <span>{totalRoutesCancelled + ""}</span>
+                            <span>{totalRoutesCancelled}</span>
                         </strong>{" "}
                         routes cancelled
                     </li>
                     <li>
                         <strong>
-                            <span>{totalReducedService + ""}</span>
+                            <span>{totalReducedService}</span>
                         </strong>{" "}
                         routes with reduced service
                     </li>
                     <li>
                         <strong>
-                            <span>{totalIncreasedService + ""}</span>
+                            <span>{totalIncreasedService}</span>
                         </strong>{" "}
                         routes with increased service
                     </li>

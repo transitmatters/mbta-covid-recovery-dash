@@ -1,17 +1,29 @@
+@import '../../styles/base.scss';
+
+@mixin smaller {
+    @media screen and (max-width: 1000px) {
+        @content;
+    }
+}
+
 .Wrap {
     display: flex;
     width: 100%;
-    background: linear-gradient(0deg, white 0%, #eee 100%);
+    // background: linear-gradient(0deg, white 0%, #e5e5e5 100%);
+    @include mobile {
+        display: none;
+    }
 }
 
 .Col {
     padding: 10px;
     width: 100%;
     height: auto;
+    font-size: 16px;
+
     p {
         position: relative;
         text-align: center;
-        font-size: 16px;
         margin: 0;
         margin-bottom: 10px;
     }
@@ -21,7 +33,6 @@
         margin: 0;
     }
     ul {
-        font-size: 16px;
         list-style-type: none;
         padding: 0;
         li {
@@ -37,6 +48,13 @@
                 width: 2em;
                 text-align: right;
             }
+        }
+    }
+
+    @include smaller {
+        font-size: 14px;
+        h4 {
+            font-size: 18px;
         }
     }
 }

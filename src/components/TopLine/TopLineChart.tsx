@@ -22,11 +22,17 @@ const TopLineChart = (props: Props) => {
                     legend: {
                         display: false,
                     },
+                    tooltips: {
+                        enabled: false,
+                    },
+                    hover: {
+                        mode: null,
+                    },
                 },
             });
         }
     }, [props.pieData]);
-    
+
     const lineCanvasRef = useRef<null | HTMLCanvasElement>(null);
     useEffect(() => {
         const lineCanvasElement = lineCanvasRef.current;
@@ -36,12 +42,17 @@ const TopLineChart = (props: Props) => {
                 type: "line",
                 data: sparklineData,
                 options: {
+                    tooltips: {
+                        enabled: false,
+                    },
+                    hover: {
+                        mode: null,
+                    },
                     legend: {
                         display: false,
                     },
                     layout: {
-                        padding: -10
-                        
+                        padding: -10,
                     },
                     scales: {
                         xAxes: [
@@ -49,7 +60,7 @@ const TopLineChart = (props: Props) => {
                                 gridLines: {
                                     drawBorder: false,
                                     tickMarkLength: 0,
-                                    drawOnChartArea: false
+                                    drawOnChartArea: false,
                                 },
                                 ticks: {
                                     display: false,
@@ -67,7 +78,6 @@ const TopLineChart = (props: Props) => {
                                 ticks: {
                                     display: false,
                                 },
-                                
                             },
                         ],
                     },
@@ -80,7 +90,6 @@ const TopLineChart = (props: Props) => {
             });
         }
     }, [props.sparklineData]);
-    
 
     return (
         <div className={styles.flexWrap}>
