@@ -4,7 +4,7 @@ from pytz import timezone
 import re
 
 # Lower bound for time series and GTFS feeds
-START_DATE = date(2020, 2, 6)
+EARLIEST_DATE = date(2020, 2, 6)
 
 # Date to use as a baseline
 PRE_COVID_DATE = date(2020, 2, 24)

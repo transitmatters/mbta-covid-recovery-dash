@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from datetime import datetime, date, timedelta
 import json
 
-from config import START_DATE, TIME_ZONE, OUTPUT_FILE, PRE_COVID_DATE, IGNORE_LINE_IDS
+from config import TIME_ZONE, OUTPUT_FILE, PRE_COVID_DATE, EARLIEST_DATE, IGNORE_LINE_IDS
 
 from gtfs.archive import load_feeds_and_service_levels_from_archive, GtfsFeed
 from gtfs.time import date_from_string
@@ -124,7 +124,7 @@ def get_exemplar_service_levels_for_lookback_date(
     matching_days_of_week: List[int],
 ):
     date = start_lookback_date
-    while date >= START_DATE:
+    while date >= EARLIEST_DATE:
         entry = get_service_levels_entry_for_date(entries, date)
         if entry and not date in entry.exception_dates and date.weekday() in matching_days_of_week:
             return entry.service_levels
@@ -262,6 +262,7 @@ def generate_total_data(
 
 
 def generate_data_file():
+    start_date = PRE_COVID_DATE
     today = datetime.now(TIME_ZONE).date()
     ridership_source = get_latest_ridership_source()
     data_by_line_id = {}
@@ -269,7 +270,7 @@ def generate_data_file():
     entries, line_ids = get_service_level_entries_and_line_ids(feeds_and_service_levels)
     ridership_time_series_by_label = get_ridership_time_series_by_adhoc_label(
         ridership_source,
-        START_DATE,
+        start_date,
         today,
     )
     ridership_time_series_list = []
@@ -286,8 +287,8 @@ def generate_data_file():
         ridership_time_series = get_merged_ridership_time_series(
             exemplar_entry.route_ids, ridership_time_series_by_label
         )
-        service_time_series = get_service_level_history(entries_for_line_id, START_DATE, today)
-        baseline_service_regime = get_service_regime_dict(entries_for_line_id, PRE_COVID_DATE)
+        service_time_series = get_service_level_history(entries_for_line_id, start_date, today)
+        baseline_service_regime = get_service_regime_dict(entries_for_line_id, start_date)
         current_service_regime = get_service_regime_dict(entries_for_line_id, today)
         day_kinds = ("weekday", "saturday", "sunday")
 
@@ -323,7 +324,7 @@ def generate_data_file():
             "shortName": exemplar_entry.line_short_name,
             "longName": exemplar_entry.line_long_name,
             "routeIds": exemplar_entry.route_ids,
-            "startDate": START_DATE.strftime("%Y-%m-%d"),
+            "startDate": start_date.strftime("%Y-%m-%d"),
             "lineKind": get_line_kind(exemplar_entry.route_ids, line_id),
             "ridershipHistory": ridership_time_series,
             "serviceHistory": service_time_series,

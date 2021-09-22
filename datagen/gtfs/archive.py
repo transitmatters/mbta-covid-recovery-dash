@@ -10,7 +10,7 @@ import json
 import requests
 from tqdm import tqdm
 
-from config import GTFS_ARCHIVE_URL, GTFS_DATA_PATH, START_DATE
+from config import GTFS_ARCHIVE_URL, GTFS_DATA_PATH, EARLIEST_DATE
 from gtfs.loader import GtfsLoader
 from gtfs.network import build_network_from_gtfs
 from gtfs.trips import get_trip_summaries_for_network
@@ -130,7 +130,7 @@ def load_feeds_from_archive(load_start_date: date):
     return feeds
 
 
-def load_feeds_and_service_levels_from_archive(load_start_date: date = START_DATE):
+def load_feeds_and_service_levels_from_archive(load_start_date: date = EARLIEST_DATE):
     for feed in load_feeds_from_archive(load_start_date):
         yield feed, get_service_levels_json(feed)
 
@@ -138,6 +138,6 @@ def load_feeds_and_service_levels_from_archive(load_start_date: date = START_DAT
 if __name__ == "__main__":
     if not path.exists(GTFS_DATA_PATH):
         mkdir(GTFS_DATA_PATH)
-    feeds = load_feeds_from_archive(START_DATE)
+    feeds = load_feeds_from_archive(EARLIEST_DATE)
     for feed in feeds:
         get_service_levels_json(feed)
