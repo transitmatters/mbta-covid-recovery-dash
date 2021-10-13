@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3500",
     "build": "next build",
     "start": "next start -p $PORT",
-    "storybook": "start-storybook -p 3001 -c .storybook",
+    "storybook": "start-storybook -p 3501 -c .storybook",
     "build-static": "BUILD_GH_PAGES=true next build && next export -o docs && touch ./docs/.nojekyll && echo recovery.transitmatters.org > ./docs/CNAME"
   },
   "dependencies": {
