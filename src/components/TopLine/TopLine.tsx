@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { SummaryData } from "types";
 import TopLineChart from "./TopLineChart";
 
@@ -33,54 +33,67 @@ const TopLine = (props: Props) => {
         totalIncreasedService,
     } = summaryData;
 
-    const label_array = ["pre-covid"];
-    for (let i = 1; i < totalRidershipHistory.length - 1; ++i) {
-        label_array.push("");
-    }
-    label_array.push("current");
+    const labelArray = useMemo(
+        () => ["pre-covid", ...Array(totalRidershipHistory.length - 2).fill(""), "current"],
+        []
+    );
 
-    const pieRidership = {
-        labels: ["", "current"],
-        datasets: [
-            {
-                strokeColor: "transparent",
-                backgroundColor: ["#D3D3D3", "#D31A2B"],
-                data: getPercentArray(totalRidershipPercentage),
-            },
-        ],
-    };
-    const lineRidership = {
-        labels: label_array,
-        datasets: [
-            {
-                data: smooth(totalRidershipHistory),
-                fill: false,
-                tension: 0,
-                borderColor: "#D31A2B",
-            },
-        ],
-    };
+    const pieRidership = useMemo(
+        () => ({
+            labels: ["", "current"],
+            datasets: [
+                {
+                    strokeColor: "transparent",
+                    backgroundColor: ["#D3D3D3", "#D31A2B"],
+                    data: getPercentArray(totalRidershipPercentage),
+                },
+            ],
+        }),
+        [totalRidershipPercentage]
+    );
 
-    const pieService = {
-        labels: ["", "current"],
-        datasets: [
-            {
-                backgroundColor: ["#D3D3D3", "#D31A2B"],
-                data: getPercentArray(totalServicePercentage),
-            },
-        ],
-    };
-    const lineService = {
-        labels: label_array,
-        datasets: [
-            {
-                data: smooth(totalServiceHistory),
-                fill: false,
-                tension: 0,
-                borderColor: "#D31A2B",
-            },
-        ],
-    };
+    const lineRidership = useMemo(
+        () => ({
+            labels: labelArray,
+            datasets: [
+                {
+                    data: smooth(totalRidershipHistory),
+                    fill: false,
+                    tension: 0,
+                    borderColor: "#D31A2B",
+                },
+            ],
+        }),
+        [labelArray, totalRidershipHistory]
+    );
+
+    const pieService = useMemo(
+        () => ({
+            labels: ["", "current"],
+            datasets: [
+                {
+                    backgroundColor: ["#D3D3D3", "#D31A2B"],
+                    data: getPercentArray(totalServicePercentage),
+                },
+            ],
+        }),
+        [totalServicePercentage]
+    );
+
+    const lineService = useMemo(
+        () => ({
+            labels: labelArray,
+            datasets: [
+                {
+                    data: smooth(totalServiceHistory),
+                    fill: false,
+                    tension: 0,
+                    borderColor: "#D31A2B",
+                },
+            ],
+        }),
+        [totalServiceHistory]
+    );
 
     return (
         <div className={styles.Wrap}>
