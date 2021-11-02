@@ -34,9 +34,7 @@ def format_subway_data(path_to_csv_file: str):
 
     # limit data to just peak, merge back dates
     final = df[df["peak"] == "peak"]
-    final = (
-        final.groupby(["year", "week", "route_or_line"])["validations"].mean().round().reset_index()
-    )
+    final = final.groupby(["year", "week", "route_or_line"])["sum"].mean().round().reset_index()
 
     final = final.merge(dates, on=["week", "year"], how="left")
 
@@ -50,8 +48,8 @@ def format_subway_data(path_to_csv_file: str):
     for route in routelist:
         dftemp = final[final["route_or_line"] == route]
         dictdata = (
-            dftemp[["servicedate", "validations"]]
-            .rename(columns={"servicedate": "date", "validations": "riders"})
+            dftemp[["servicedate", "sum"]]
+            .rename(columns={"servicedate": "date", "sum": "riders"})
             .to_dict(orient="records")
         )
         output[route] = dictdata
