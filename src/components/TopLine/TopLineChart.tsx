@@ -93,10 +93,10 @@ const TopLineChart = (props: Props) => {
 
     return (
         <div className={styles.flexWrap}>
-            <div className={styles.flexCol} key={1}>
+            <div className={styles.flexCol}>
                 <canvas ref={pieCanvasRef} />
             </div>
-            <div className={styles.flexCol} key={1}>
+            <div className={styles.flexCol}>
                 <canvas ref={lineCanvasRef} />
             </div>
         </div>

@@ -1,5 +1,8 @@
 import React, { useMemo } from "react";
+import classNames from "classnames";
+
 import { SummaryData } from "types";
+
 import TopLineChart from "./TopLineChart";
 
 import styles from "./TopLine.module.scss";
@@ -96,8 +99,8 @@ const TopLine = (props: Props) => {
     );
 
     return (
-        <div className={styles.Wrap}>
-            <div className={styles.Col}>
+        <div className={styles.topLine}>
+            <div className={styles.column}>
                 <h4>Total Ridership</h4>
                 <TopLineChart sparklineData={lineRidership} pieData={pieRidership} />
                 <p>
@@ -105,7 +108,7 @@ const TopLine = (props: Props) => {
                     weekday ridership
                 </p>
             </div>
-            <div className={styles.Col}>
+            <div className={styles.column}>
                 <h4>Total Service</h4>
                 <TopLineChart sparklineData={lineService} pieData={pieService} />
                 <p>
@@ -113,24 +116,24 @@ const TopLine = (props: Props) => {
                     weekday service
                 </p>
             </div>
-            <div className={styles.Col}>
+            <div className={styles.column}>
                 <ul>
                     <li>
-                        <strong>
+                        <div className={classNames(styles.bubble, styles.bad)}>
                             <span>{totalRoutesCancelled}</span>
-                        </strong>{" "}
-                        routes cancelled
+                        </div>{" "}
+                        routes canceled
                     </li>
                     <li>
-                        <strong>
+                        <div className={classNames(styles.bubble, styles.warning)}>
                             <span>{totalReducedService}</span>
-                        </strong>{" "}
+                        </div>{" "}
                         routes with reduced service
                     </li>
                     <li>
-                        <strong>
+                        <div className={classNames(styles.bubble, styles.good)}>
                             <span>{totalIncreasedService}</span>
-                        </strong>{" "}
+                        </div>{" "}
                         routes with increased service
                     </li>
                 </ul>

@@ -1,5 +1,6 @@
 @use 'sass:color';
 
+$tm-red: #d31a2b;
 $good: desaturate(limegreen, 30%);
 $bad: desaturate(tomato, 30%);
 $warning: desaturate(#ffbf00, 30%);
