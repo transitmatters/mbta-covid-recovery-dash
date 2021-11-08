@@ -1,0 +1,51 @@
+@import '../../styles/base.scss';
+
+$spacing: 10px;
+
+.topLineMobile {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 15px;
+    padding-bottom: 0;
+    font-size: 14px;
+    display: none;
+
+    @include mobile {
+        display: grid;
+        row-gap: $spacing;
+        column-gap: $spacing;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas: 'left right';
+    }
+
+    > .service,
+    .ridership,
+    .lines {
+        border-radius: 2px;
+        border: 1px solid #ddd;
+        padding: $spacing;
+    }
+
+    > .service,
+    .ridership {
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        > .large {
+            font-weight: bold;
+            font-size: 32px;
+        }
+    }
+
+    > .ridership {
+        grid-area: left;
+    }
+
+    > .service {
+        grid-area: right;
+    }
+
+    > .lines {
+        grid-area: bottom;
+    }
+}

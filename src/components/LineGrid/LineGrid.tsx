@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import classNames from "classnames";
 
-import { LineCard, TopLine } from "components";
+import { LineCard, TopLine, TopLineMobile } from "components";
 import { LineData, SummaryData } from "types";
 
 import { useInfiniteScroll } from "./useInfiniteScroll";
@@ -196,7 +196,8 @@ const LineGrid = (props: Props) => {
                 {renderLineKindDropdown()}
                 {renderSortDropdown()}
             </div>
-            <div> <TopLine summaryData={summaryData} /></div>
+            <TopLine summaryData={summaryData} />
+            <TopLineMobile summaryData={summaryData} />
             <div className={classNames(styles.lineGrid, display)}>
                 {shownItems.map((item) => (
                     <LineCard lineData={item} key={item.id} />
