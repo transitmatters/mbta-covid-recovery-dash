@@ -9,7 +9,7 @@
 .topLine {
     display: flex;
     width: 100%;
-    background: linear-gradient(0deg, white 0%, lighten($tm-red, 50%) 100%);
+    // background: linear-gradient(0deg, white 0%, lighten($tm-red, 50%) 100%);
     @include mobile {
         display: none;
     }
