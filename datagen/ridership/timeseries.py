@@ -40,8 +40,9 @@ def create_time_series_from_entries(
             continue
         ridership = get_valid_ridership_value(entries, idx)
         entry_start_date = max(start_date, entry.date)
-        entry_end_date = (
-            end_date if idx == len(entries) - 1 else entries[idx + 1].date - timedelta(days=1)
+        entry_end_date = min(
+            end_date if idx == len(entries) - 1 else entries[idx + 1].date - timedelta(days=1),
+            end_date,
         )
         today = entry_start_date
         while today <= entry_end_date:
@@ -64,12 +65,6 @@ def get_ridership_time_series_by_adhoc_label(
 
 
 _adhoc_labels_map = {
-    "741": "SL1",
-    "741": "SL2",
-    "743": "SL3",
-    "751": "SL4",
-    "749": "SL5",
-    "746": "SLW",
     "Green-B": "Green Line",
     "Green-C": "Green Line",
     "Green-D": "Green Line",

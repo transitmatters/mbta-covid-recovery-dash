@@ -318,7 +318,7 @@ def generate_data_file():
         if ridership_time_series is not None and service_time_series is not None:
             ridership_time_series_list.append(ridership_time_series)
             service_time_series_list.append(service_time_series)
-        combined_total_trips += total_trips  #
+        combined_total_trips += total_trips
         data_by_line_id[line_id] = {
             "id": line_id,
             "shortName": exemplar_entry.line_short_name,
