@@ -39,7 +39,7 @@ const App = (props: Props) => {
                 />
                 <link rel="icon" type="image/png" href="./favicon.png" />
             </Head>
-            <LineGrid data={data.lineData} summaryData={data.summaryData} />
+            <LineGrid {...data} />
         </>
     );
 };

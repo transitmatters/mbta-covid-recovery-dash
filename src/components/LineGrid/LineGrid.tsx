@@ -10,7 +10,7 @@ import { sortFunctions, Sort, SortFn } from "./sorting";
 import styles from "./LineGrid.module.scss";
 
 type Props = {
-    data: Record<string, LineData>;
+    lineData: Record<string, LineData>;
     summaryData: SummaryData;
     filter?: (r: LineData) => boolean;
 };
@@ -71,7 +71,7 @@ const isRidershipSort = (sort: "" | Sort) => {
 };
 
 const LineGrid = (props: Props) => {
-    const { data, summaryData, filter = defaultFilter } = props;
+    const { lineData: lineData, summaryData, startDate, filter = defaultFilter } = props;
     const [limit, setLimit] = useState(pagination);
     const [query, setQuery] = useState("");
     const [sort, setSort] = useState<Sort | "">("");
@@ -80,7 +80,7 @@ const LineGrid = (props: Props) => {
 
     const availableItems = useMemo(() => {
         return sortOnKey(
-            Object.values(data).filter(
+            Object.values(lineData).filter(
                 (lineData) =>
                     filter(lineData) &&
                     matchesQuery(lineData, query) &&
@@ -88,7 +88,7 @@ const LineGrid = (props: Props) => {
             ),
             sortFunctions[sort || "kind"]
         );
-    }, [data, filter, query, kindOption, sort]);
+    }, [lineData, filter, query, kindOption, sort]);
     const shownItems = useMemo(() => availableItems.slice(0, limit), [availableItems, limit]);
 
     useInfiniteScroll({

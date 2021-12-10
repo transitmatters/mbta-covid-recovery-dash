@@ -34,7 +34,7 @@ const normalizeToPercent = (timeSeries: number[]) => {
 
 const asPercentString = (p: number) => Math.round(100 * p).toString() + "%";
 
-const getChartLabels = memoize(
+export const getChartLabels = memoize(
     (startDate: Date) => {
         const now = Date.now();
         const dateStrings: string[] = [];

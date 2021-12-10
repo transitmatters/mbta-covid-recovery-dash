@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import classNames from "classnames";
 
 import { SummaryData } from "types";
+import { getChartLabels } from "components/LineCard/ServiceRidershipChart";
 
 import TopLineChart from "./TopLineChart";
 
@@ -9,6 +10,15 @@ import styles from "./TopLine.module.scss";
 
 type Props = {
     summaryData: SummaryData;
+};
+
+const normalize = (data: number[]) => {
+    const [baseline] = data;
+    const normalized: number[] = [];
+    for (let i = 0; i < data.length; i++) {
+        normalized.push(data[i] / baseline);
+    }
+    return normalized;
 };
 
 const smooth = (data: number[], window = 20) => {
@@ -34,9 +44,13 @@ const TopLine = (props: Props) => {
         totalRoutesCancelled,
         totalReducedService,
         totalIncreasedService,
+        startDate: startDateString,
     } = summaryData;
 
-    const labelArray = useMemo(
+    const startDate = useMemo(() => new Date(startDateString), [startDateString]);
+    const labels = useMemo(() => getChartLabels(startDate), [startDate]);
+
+    const endLabels = useMemo(
         () => ["pre-covid", ...Array(totalRidershipHistory.length - 2).fill(""), "current"],
         []
     );
@@ -57,17 +71,18 @@ const TopLine = (props: Props) => {
 
     const lineRidership = useMemo(
         () => ({
-            labels: labelArray,
+            labels: endLabels,
             datasets: [
                 {
                     data: smooth(totalRidershipHistory),
                     fill: false,
                     tension: 0,
                     borderColor: "#D31A2B",
+                    labels: labels,
                 },
             ],
         }),
-        [labelArray, totalRidershipHistory]
+        [labels, totalRidershipHistory]
     );
 
     const pieService = useMemo(
@@ -85,13 +100,14 @@ const TopLine = (props: Props) => {
 
     const lineService = useMemo(
         () => ({
-            labels: labelArray,
+            labels: endLabels,
             datasets: [
                 {
                     data: smooth(totalServiceHistory),
                     fill: false,
                     tension: 0,
                     borderColor: "#D31A2B",
+                    labels: labels,
                 },
             ],
         }),
@@ -102,15 +118,19 @@ const TopLine = (props: Props) => {
         <div className={styles.topLine}>
             <div className={styles.column}>
                 <h4>Total Ridership</h4>
-                <TopLineChart sparklineData={lineRidership} pieData={pieRidership} />
+                <TopLineChart
+                    sparklineData={lineRidership}
+                    pieData={pieRidership}
+                    label="ridership"
+                />
                 <p>
                     <strong>{Math.round(totalRidershipPercentage * 100)}%</strong> of pre-pandemic
-                    weekday ridership
+                    weekday ridership on subway and bus
                 </p>
             </div>
             <div className={styles.column}>
                 <h4>Total Service</h4>
-                <TopLineChart sparklineData={lineService} pieData={pieService} />
+                <TopLineChart sparklineData={lineService} pieData={pieService} label="service" />
                 <p>
                     <strong>{Math.round(totalServicePercentage * 100)}%</strong> of pre-pandemic
                     weekday service

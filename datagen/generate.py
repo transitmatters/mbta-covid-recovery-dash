@@ -234,6 +234,7 @@ def generate_total_data(
     total_cancelled_routes,
     total_reduced_serv_routes,
     total_increased_serv_routes,
+    start_date,
 ):
     total_ridership_time_series = [
         sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)
@@ -247,7 +248,7 @@ def generate_total_data(
     total_service_percentage = get_service_percentage(total_service_time_series)
     total_passengers = total_ridership_time_series[-1]
 
-    total_data = {
+    return {
         "totalRidershipHistory": condensed_ridership_series,
         "totalServiceHistory": condensed_service_series,
         "totalRidershipPercentage": total_ridership_percentage,
@@ -257,8 +258,8 @@ def generate_total_data(
         "totalRoutesCancelled": total_cancelled_routes,
         "totalReducedService": total_reduced_serv_routes,
         "totalIncreasedService": total_increased_serv_routes,
+        "startDate": start_date.strftime("%Y-%m-%d"),
     }
-    return total_data
 
 
 def generate_data_file():
@@ -343,6 +344,7 @@ def generate_data_file():
         total_cancelled_routes,
         total_reduced_serv_routes,
         total_increased_serv_routes,
+        start_date,
     )
 
     with open(OUTPUT_FILE, "w") as file:

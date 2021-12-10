@@ -17,11 +17,11 @@ const TopLineMobile = (props: Props) => {
         <div className={styles.topLineMobile}>
             <div className={styles.ridership}>
                 <div className={styles.large}>{asPercentString(totalRidershipPercentage)}</div>
-                of pre-pandemic ridership
+                of pre-pandemic weekday ridership
             </div>
             <div className={styles.service}>
                 <div className={styles.large}>{asPercentString(totalServicePercentage)}</div>
-                of pre-pandemic service
+                of pre-pandemic weekday service
             </div>
         </div>
     );

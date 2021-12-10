@@ -25,7 +25,6 @@ export type LineData = {
     id: string;
     shortName: string;
     longName: string;
-    startDate: string;
     totalTrips: number;
     serviceFraction: number;
     routeIds: string[];
@@ -45,4 +44,5 @@ export type SummaryData = {
     totalRoutesCancelled: number;
     totalReducedService: number;
     totalIncreasedService: number;
+    startDate: string;
 };

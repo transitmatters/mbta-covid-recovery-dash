@@ -6,10 +6,13 @@ import styles from "./TopLineChart.module.scss";
 type Props = {
     sparklineData: any;
     pieData: any;
+    label: string;
 };
 
+const asPercentString = (p: number) => Math.round(100 * p).toString() + "%";
+
 const TopLineChart = (props: Props) => {
-    const { sparklineData, pieData } = props;
+    const { sparklineData, pieData, label } = props;
     const pieCanvasRef = useRef<null | HTMLCanvasElement>(null);
     useEffect(() => {
         const pieCanvasElement = pieCanvasRef.current;
@@ -38,15 +41,28 @@ const TopLineChart = (props: Props) => {
         const lineCanvasElement = lineCanvasRef.current;
         if (lineCanvasElement) {
             const lineCanvasContext = lineCanvasElement.getContext("2d");
+            const { datasets } = sparklineData;
             new Chart(lineCanvasContext, {
                 type: "line",
                 data: sparklineData,
                 options: {
                     tooltips: {
-                        enabled: false,
-                    },
-                    hover: {
-                        mode: null,
+                        mode: "index",
+                        intersect: false,
+                        displayColors: false,
+                        callbacks: {
+                            title: ([{ index, datasetIndex }]) => {
+                                const {
+                                    labels: { dateStrings },
+                                } = datasets[datasetIndex];
+                                return dateStrings[index];
+                            },
+                            label: ({ index, datasetIndex }) => {
+                                const { data } = datasets[datasetIndex];
+                                const percentage = asPercentString(data[index] / data[0]);
+                                return `${percentage} of pre-pandemic ${label}`;
+                            },
+                        },
                     },
                     legend: {
                         display: false,

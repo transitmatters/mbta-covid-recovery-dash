@@ -14,7 +14,7 @@ TIME_ZONE = timezone("US/Eastern")
 # Should point to data.json in the root of the repo
 OUTPUT_FILE = path.normpath(path.join(path.dirname(__file__), "..", "data.json"))
 
-IGNORE_LINE_IDS = ["line-CapeFlyer"]
+IGNORE_LINE_IDS = ["line-CapeFlyer", "line-Foxboro"]
 
 GTFS_ARCHIVE_URL = "https://cdn.mbta.com/archive/archived_feeds.txt"
 GTFS_DATA_PATH = path.join(path.dirname(__file__), "gtfs", ".data")
