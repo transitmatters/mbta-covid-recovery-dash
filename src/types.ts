@@ -32,6 +32,7 @@ export type LineData = {
     serviceHistory: number[];
     lineKind: LineKind;
     serviceRegimes: Record<ServiceRegime, Record<ServiceDay, ServiceLevels>>;
+    startDate: string;
 };
 
 export type SummaryData = {

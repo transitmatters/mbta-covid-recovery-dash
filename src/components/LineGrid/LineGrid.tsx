@@ -71,7 +71,7 @@ const isRidershipSort = (sort: "" | Sort) => {
 };
 
 const LineGrid = (props: Props) => {
-    const { lineData: lineData, summaryData, startDate, filter = defaultFilter } = props;
+    const { lineData: lineData, summaryData, filter = defaultFilter } = props;
     const [limit, setLimit] = useState(pagination);
     const [query, setQuery] = useState("");
     const [sort, setSort] = useState<Sort | "">("");

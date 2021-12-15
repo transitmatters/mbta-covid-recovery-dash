@@ -169,4 +169,5 @@ export const summaryLineData: SummaryData = {
     totalRoutesCancelled: 7,
     totalReducedService: 16,
     totalIncreasedService: 20,
+    startDate: "2020-02-06",
 };

@@ -12,15 +12,6 @@ type Props = {
     summaryData: SummaryData;
 };
 
-const normalize = (data: number[]) => {
-    const [baseline] = data;
-    const normalized: number[] = [];
-    for (let i = 0; i < data.length; i++) {
-        normalized.push(data[i] / baseline);
-    }
-    return normalized;
-};
-
 const smooth = (data: number[], window = 20) => {
     const result: number[] = [];
     for (let i = 0; i < data.length - window; i++) {

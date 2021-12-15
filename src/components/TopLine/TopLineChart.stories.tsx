@@ -36,5 +36,5 @@ export default {
 };
 
 export const Default = () => {
-    return <TopLineChart sparklineData={line} pieData={pie} />;
+    return <TopLineChart sparklineData={line} pieData={pie} label="ridership" />;
 };
