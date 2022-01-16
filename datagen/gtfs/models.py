@@ -56,6 +56,7 @@ class Trip(object):
     shape: List[Tuple[float, float]]
     direction_id: int
     service: Service
+    stops: set[str]
 
     def __post_init__(self):
         self.stop_times = []

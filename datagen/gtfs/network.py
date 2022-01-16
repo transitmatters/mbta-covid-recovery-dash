@@ -133,6 +133,7 @@ def link_trips(trip_dicts, services_by_id, shapes_by_id):
                 direction_id=int(trip_dict["direction_id"]),
                 shape_id=trip_dict["shape_id"],
                 shape=shapes_by_id[trip_dict["shape_id"]],
+                stops=set(),
             )
             res[trip_id] = trip
     return res
@@ -150,6 +151,7 @@ def link_stop_times(stop, stop_time_dicts_for_stop_id, trips_by_id):
                 trip=trip,
                 time=time_from_string(stop_time_dict["departure_time"]),
             )
+            trip.stops.add(stop.id)
             added += 1
             stop_times.append(stop_time)
             trip.add_stop_time(stop_time)
