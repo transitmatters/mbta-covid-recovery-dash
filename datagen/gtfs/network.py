@@ -133,7 +133,6 @@ def link_trips(trip_dicts, services_by_id, shapes_by_id):
                 direction_id=int(trip_dict["direction_id"]),
                 shape_id=trip_dict["shape_id"],
                 shape=shapes_by_id[trip_dict["shape_id"]],
-                stops=set(),
             )
             res[trip_id] = trip
     return res

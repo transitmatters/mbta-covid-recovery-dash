@@ -56,13 +56,17 @@ class Trip(object):
     shape: List[Tuple[float, float]]
     direction_id: int
     service: Service
-    stops: set[str]
 
     def __post_init__(self):
         self.stop_times = []
 
     def add_stop_time(self, stop_time):
         self.stop_times.append(stop_time)
+
+    @functools.cached_property
+    def stop_ids(self):
+        assert len(self.stop_times) > 0, "Stop ids inaccessible; stop times not yet populated"
+        return set([stop_time.stop.id for stop_time in self.stop_times])
 
 
 @dataclass

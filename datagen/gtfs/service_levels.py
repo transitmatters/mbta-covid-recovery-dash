@@ -43,16 +43,16 @@ def bucket_trips_by_hour(trips: List[TripSummary]):
     return by_time_of_day
 
 # Given a list of trips on a single date, prune to match a more realistic service level
-def prune_trips_single_date(trips: List[TripSummary]):
+def filter_trips_serving_most_common_stop(trips: List[TripSummary]):
     accepted: List[TripSummary] = []
     trips_by_route_id = bucket_by(trips, "route_id")
 
     for trips in trips_by_route_id.values():
         # What the route id actually is doesn't matter, as long as it's bucketed
-        count = Counter([list(trip.stops) for trip in trips])
+        count = Counter([list(trip.stop_ids) for trip in trips])
         [(most_serviced_stop, )] = count.most_common(1)
         accepted.extend(
-            filter(lambda trip: most_serviced_stop in trip.stops, trips)
+            filter(lambda trip: most_serviced_stop in trip.stop_ids, trips)
         )
 
     return accepted
@@ -70,7 +70,7 @@ def summarize_trips_by_date(line_id: str, trips: List[TripSummary]):
         trips_for_date = [
             t for t in trips if t.service in services_for_date and t.route_id in valid_route_ids
         ]
-        pruned_trips = prune_trips_single_date(trips_for_date)
+        pruned_trips = filter_trips_serving_most_common_stop(trips_for_date)
         summary_by_date[date] = bucket_trips_by_hour(pruned_trips)
         date += timedelta(days=1)
 
