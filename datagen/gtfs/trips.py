@@ -14,6 +14,9 @@ class TripSummary:
     departure_time: datetime.timedelta
     stop_ids: set[str]
 
+    def __getitem__(self, item):
+        return getattr(self, item)
+
 
 def get_trip_summaries_for_network(network: Network):
     summaries = []

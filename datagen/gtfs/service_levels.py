@@ -1,6 +1,7 @@
 from collections import Counter
 from datetime import date, timedelta
 from typing import List, Dict
+from .util import flatten
 
 from gtfs.models import Service, ServiceExceptionType
 from gtfs.trips import TripSummary
@@ -49,8 +50,8 @@ def filter_trips_serving_most_common_stop(trips: List[TripSummary]):
 
     for trips in trips_by_route_id.values():
         # What the route id actually is doesn't matter, as long as it's bucketed
-        count = Counter([list(trip.stop_ids) for trip in trips])
-        [(most_serviced_stop, )] = count.most_common(1)
+        count = Counter(flatten([trip.stop_ids for trip in trips]))
+        [(most_serviced_stop, _)] = count.most_common(1)
         accepted.extend(
             filter(lambda trip: most_serviced_stop in trip.stop_ids, trips)
         )
