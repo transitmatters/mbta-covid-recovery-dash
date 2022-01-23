@@ -38,6 +38,8 @@ const App = (props: Props) => {
                     content="Data on MBTA ridership and service levels throughout the COVID-19 pandemic"
                 />
                 <link rel="icon" type="image/png" href="./favicon.png" />
+                <script data-goatcounter="https://transitmatters-crd.goatcounter.com/count"
+                    async src="//gc.zgo.at/count.js"></script>
             </Head>
             <LineGrid {...data} />
         </>
