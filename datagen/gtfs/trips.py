@@ -12,10 +12,6 @@ class TripSummary:
     service: Service
     line: Line
     departure_time: datetime.timedelta
-    stop_ids: set[str]
-
-    def __getitem__(self, item):
-        return getattr(self, item)
 
 
 def get_trip_summaries_for_network(network: Network):
@@ -28,7 +24,6 @@ def get_trip_summaries_for_network(network: Network):
             service=trip.service,
             line=network.routes_by_id[trip.route_id].line,
             departure_time=trip.stop_times[0].time,
-            stop_ids=trip.stop_ids,
         )
         summaries.append(summary)
     return summaries

@@ -19,8 +19,6 @@ def bucket_by(items, key_getter):
         key_items.append(item)
     return res
 
-def flatten(list_of_lists):
-    return [item for sublist in list_of_lists for item in sublist]
 
 def get_ranges_of_same_value(items_dict):
     current_value = None
