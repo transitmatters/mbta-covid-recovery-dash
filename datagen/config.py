@@ -33,3 +33,10 @@ RIDERSHIP_BUS_XLSX_REGEX = re.compile(
 RIDERSHIP_SUBWAY_CSV_REGEX = re.compile(
     r"(\d{4})\.(\d{1,2})\.(\d{1,2}) MBTA Gated Station Validations by line", re.I
 )
+
+# Date ranges with service gaps that we paper over because of major holidays rather than doing
+# more complicated special-casing with GTFS services
+FILL_DATE_RANGES = [
+    (date(2021, 11, 19), date(2021, 11, 26)),  # Thanksgiving 2021
+    (date(2021, 12, 18), date(2021, 12, 26)),  # Christmas 2021
+]

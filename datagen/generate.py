@@ -1,13 +1,13 @@
 from typing import List, Tuple, Dict
 from dataclasses import dataclass
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
 import json
 
-from config import TIME_ZONE, OUTPUT_FILE, PRE_COVID_DATE, EARLIEST_DATE, IGNORE_LINE_IDS
+from config import OUTPUT_FILE, PRE_COVID_DATE, EARLIEST_DATE, IGNORE_LINE_IDS, FILL_DATE_RANGES
 
 from gtfs.archive import load_feeds_and_service_levels_from_archive, GtfsFeed
 from gtfs.time import date_from_string
-from gtfs.util import bucket_by, get_date_ranges_of_same_value
+from gtfs.util import bucket_by, get_date_ranges_of_same_value, date_range_contains
 from ridership.source import get_latest_ridership_source
 from ridership.timeseries import (
     get_ridership_time_series_by_adhoc_label,
@@ -107,12 +107,16 @@ def get_service_level_history(
         levels_by_date[date] = round(sum(entry.service_levels)) if entry else 0
         date += timedelta(days=1)
     values = []
-    for (min_date, max_date), value in get_date_ranges_of_same_value(levels_by_date):
+    for date_range, value in get_date_ranges_of_same_value(levels_by_date):
+        (min_date, max_date) = date_range
         range_length_days = 1 + (max_date - min_date).days
         is_weekend = range_length_days <= 2 and all(
             (d.weekday() in (5, 6) for d in (min_date, max_date))
         )
-        fill_hole = value == 0 and range_length_days <= 5
+        fill_hole = value == 0 and (
+            range_length_days <= 5
+            or any((date_range_contains(fill_range, date_range) for fill_range in FILL_DATE_RANGES))
+        )
         value_to_append = values[-1] if len(values) and (fill_hole or is_weekend) else value
         values += range_length_days * [value_to_append]
     return values
