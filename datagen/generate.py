@@ -264,7 +264,7 @@ def generate_total_data(
 
 def generate_data_file():
     start_date = PRE_COVID_DATE
-    today = datetime.now(TIME_ZONE).date()
+    today = date(2022, 1, 12)
     ridership_source = get_latest_ridership_source()
     data_by_line_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
