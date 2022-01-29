@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import React from "react";
 import Head from "next/head";
+import Script from "next/script";
 
 import { LineGrid } from "components";
 import { LineData } from "types";
@@ -40,6 +41,8 @@ const App = (props: Props) => {
                 <link rel="icon" type="image/png" href="./favicon.png" />
             </Head>
             <LineGrid {...data} />
+            <Script data-goatcounter="https://transitmatters-crd.goatcounter.com/count"
+                src="//gc.zgo.at/count.js" />
         </>
     );
 };
