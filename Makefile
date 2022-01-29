@@ -9,6 +9,9 @@ clean-python-env:
 
 update-data:
 	cd datagen; pipenv run python -m generate
+
+update:
+	make update-data
 	npm run build-static
 	git add .
 	git commit -am "Data update: $$(date -R)"

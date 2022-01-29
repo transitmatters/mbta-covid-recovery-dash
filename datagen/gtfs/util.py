@@ -1,3 +1,7 @@
+from typing import Tuple
+from datetime import date
+
+
 def index_by(items, key_getter):
     res = {}
     if isinstance(key_getter, str):
@@ -19,8 +23,6 @@ def bucket_by(items, key_getter):
         key_items.append(item)
     return res
 
-def flatten(list_of_lists):
-    return [item for sublist in list_of_lists for item in sublist]
 
 def get_ranges_of_same_value(items_dict):
     current_value = None
@@ -43,3 +45,9 @@ def get_date_ranges_of_same_value(items_dict):
         min_date = min(dates)
         max_date = max(dates)
         yield (min_date, max_date), value
+
+
+def date_range_contains(containing: Tuple[date], contained: Tuple[date]):
+    (containing_from, containing_to) = containing
+    (contained_from, contained_to) = contained
+    return contained_from >= containing_from and contained_to <= containing_to
