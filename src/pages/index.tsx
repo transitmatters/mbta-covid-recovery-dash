@@ -41,8 +41,10 @@ const App = (props: Props) => {
                 <link rel="icon" type="image/png" href="./favicon.png" />
             </Head>
             <LineGrid {...data} />
-            <Script data-goatcounter="https://transitmatters-crd.goatcounter.com/count"
-                src="//gc.zgo.at/count.js" />
+            <Script
+                data-goatcounter="https://transitmatters-crd.goatcounter.com/count"
+                src="//gc.zgo.at/count.js"
+            />
         </>
     );
 };
