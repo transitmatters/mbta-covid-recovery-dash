@@ -1,9 +1,16 @@
 from typing import List, Tuple, Dict
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 import json
 
-from config import OUTPUT_FILE, PRE_COVID_DATE, EARLIEST_DATE, IGNORE_LINE_IDS, FILL_DATE_RANGES
+from config import (
+    OUTPUT_FILE,
+    PRE_COVID_DATE,
+    EARLIEST_DATE,
+    IGNORE_LINE_IDS,
+    FILL_DATE_RANGES,
+    TIME_ZONE,
+)
 
 from gtfs.archive import load_feeds_and_service_levels_from_archive, GtfsFeed
 from gtfs.time import date_from_string
@@ -268,7 +275,7 @@ def generate_total_data(
 
 def generate_data_file():
     start_date = PRE_COVID_DATE
-    today = date(2022, 1, 12)
+    today = datetime.now(TIME_ZONE).date()
     ridership_source = get_latest_ridership_source()
     data_by_line_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
