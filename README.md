@@ -53,7 +53,7 @@ npm run dev
 To rebuild `data.json` with the latest data, run:
 
 ```
-cd datagen; pipenv run python -m generate
+make update-data
 ```
 
 To build a production version of the site in `docs/`, run:
@@ -65,7 +65,7 @@ npm run build-static
 To update `data.json`, rebuild the production site, _and_ make a Git commit of the changes, run:
 
 ```
-npm run update-data
+npm run update
 ```
 
 This is what we use to periodically update the production site.
