@@ -68,7 +68,7 @@ def format_bus_data(path_to_excel_file: str):
     )
 
     # rename unnamed data
-    df = df.rename(columns={"Row Labels": "route"})
+    df = df.rename(columns={"Route": "route"})
     # cast empty values to 0
     df = df.replace(to_replace="", value=0)
     # melt to get into long format
