@@ -20,6 +20,8 @@ const serviceDayItems = [
     { value: "sunday", label: "Sunday" },
 ];
 
+const hasFreeFarePilot = (routeShortName: string) => ["23", "28", "29"].includes(routeShortName);
+
 const getHighestTphValue = (lineData: LineData) => {
     let max = 0;
     Object.entries(lineData.serviceRegimes).forEach(([key, regime]) => {
@@ -68,7 +70,7 @@ const LineCard = (props: Props) => {
 
     const renderStatusBadge = () => {
         const { current, baseline } = serviceRegimes;
-        if (shortName === "28") {
+        if (hasFreeFarePilot(shortName)) {
             return (
                 <div className={classNames(styles.statusBadge, "good")}>
                     <TiTicket size={20} />
