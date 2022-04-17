@@ -170,4 +170,5 @@ export const summaryLineData: SummaryData = {
     totalReducedService: 16,
     totalIncreasedService: 20,
     startDate: "2020-02-06",
+    endDate: "2021-04-15",
 };
