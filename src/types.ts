@@ -46,4 +46,5 @@ export type SummaryData = {
     totalReducedService: number;
     totalIncreasedService: number;
     startDate: string;
+    endDate: string;
 };

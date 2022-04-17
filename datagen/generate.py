@@ -7,6 +7,8 @@ from config import (
     OUTPUT_FILE,
     PRE_COVID_DATE,
     EARLIEST_DATE,
+    RIDERSHIP_TARGET_DATE,
+    CUTOFF_DATE,
     IGNORE_LINE_IDS,
     FILL_DATE_RANGES,
     TIME_ZONE,
@@ -47,7 +49,9 @@ def get_line_kind(route_ids: List[str], line_id: str):
     return "bus"
 
 
-def get_weekday_service_levels_history(feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]):
+def get_weekday_service_levels_history(
+    feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]
+):
     histories = {}
     for (feed, service_levels) in feeds_and_service_levels:
         for line_id, service_dates in service_levels.items():
@@ -64,11 +68,15 @@ def get_weekday_service_levels_history(feeds_and_service_levels: List[Tuple[Gtfs
                         }
                     )
             else:
-                history.append({"date": feed.start_date.strftime("%Y-%m-%d"), "trips": 0})
+                history.append(
+                    {"date": feed.start_date.strftime("%Y-%m-%d"), "trips": 0}
+                )
     return histories
 
 
-def get_service_level_entries_and_line_ids(feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]):
+def get_service_level_entries_and_line_ids(
+    feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]
+):
     entries = []
     all_line_ids = set()
     for feed, service_levels in feeds_and_service_levels:
@@ -122,9 +130,16 @@ def get_service_level_history(
         )
         fill_hole = value == 0 and (
             range_length_days <= 5
-            or any((date_range_contains(fill_range, date_range) for fill_range in FILL_DATE_RANGES))
+            or any(
+                (
+                    date_range_contains(fill_range, date_range)
+                    for fill_range in FILL_DATE_RANGES
+                )
+            )
         )
-        value_to_append = values[-1] if len(values) and (fill_hole or is_weekend) else value
+        value_to_append = (
+            values[-1] if len(values) and (fill_hole or is_weekend) else value
+        )
         values += range_length_days * [value_to_append]
     return values
 
@@ -137,7 +152,11 @@ def get_exemplar_service_levels_for_lookback_date(
     date = start_lookback_date
     while date >= EARLIEST_DATE:
         entry = get_service_levels_entry_for_date(entries, date)
-        if entry and not date in entry.exception_dates and date.weekday() in matching_days_of_week:
+        if (
+            entry
+            and not date in entry.exception_dates
+            and date.weekday() in matching_days_of_week
+        ):
             return entry.service_levels
         date -= timedelta(days=1)
     return None
@@ -168,12 +187,20 @@ def get_service_levels_summary_dict(
         matching_days_of_week,
     )
     total_trips = round(sum(trips_per_hour)) if trips_per_hour else 0
-    return {"cancelled": False, "tripsPerHour": trips_per_hour, "totalTrips": total_trips}
-
-
-def get_service_regime_dict(entries: List[ServiceLevelsEntry], start_lookback_date: date):
     return {
-        "weekday": get_service_levels_summary_dict(entries, start_lookback_date, list(range(0, 5))),
+        "cancelled": False,
+        "tripsPerHour": trips_per_hour,
+        "totalTrips": total_trips,
+    }
+
+
+def get_service_regime_dict(
+    entries: List[ServiceLevelsEntry], start_lookback_date: date
+):
+    return {
+        "weekday": get_service_levels_summary_dict(
+            entries, start_lookback_date, list(range(0, 5))
+        ),
         "saturday": get_service_levels_summary_dict(entries, start_lookback_date, [5]),
         "sunday": get_service_levels_summary_dict(entries, start_lookback_date, [6]),
     }
@@ -224,7 +251,9 @@ def get_ridership_percentage(total_ridership_time_series):
 
 
 def get_service_percentage(total_service_time_series):
-    service_percentage = round(total_service_time_series[-1] / total_service_time_series[0], 2)
+    service_percentage = round(
+        total_service_time_series[-1] / total_service_time_series[0], 2
+    )
     return service_percentage
 
 
@@ -239,13 +268,13 @@ def condensed_time_series(total_time_series):
 
 
 def generate_total_data(
-    ridership_time_series_list,
-    service_time_series_list,
-    combined_total_trips,
-    total_cancelled_routes,
-    total_reduced_serv_routes,
-    total_increased_serv_routes,
-    start_date,
+    ridership_time_series_list: List[List[float]],
+    service_time_series_list: List[List[float]],
+    combined_total_trips: int,
+    total_cancelled_routes: int,
+    total_reduced_serv_routes: int,
+    total_increased_serv_routes: int,
+    start_date: date,
 ):
     total_ridership_time_series = [
         sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)
@@ -258,7 +287,7 @@ def generate_total_data(
     total_ridership_percentage = get_ridership_percentage(total_ridership_time_series)
     total_service_percentage = get_service_percentage(total_service_time_series)
     total_passengers = total_ridership_time_series[-1]
-
+    end_date = start_date + timedelta(days=(len(total_service_time_series) - 1))
     return {
         "totalRidershipHistory": condensed_ridership_series,
         "totalServiceHistory": condensed_service_series,
@@ -270,12 +299,13 @@ def generate_total_data(
         "totalReducedService": total_reduced_serv_routes,
         "totalIncreasedService": total_increased_serv_routes,
         "startDate": start_date.strftime("%Y-%m-%d"),
+        "endDate": end_date.strftime("%Y-%m-%d"),
     }
 
 
 def generate_data_file():
     start_date = PRE_COVID_DATE
-    today = datetime.now(TIME_ZONE).date()
+    today = CUTOFF_DATE or RIDERSHIP_TARGET_DATE or datetime.now(TIME_ZONE).date()
     ridership_source = get_latest_ridership_source()
     data_by_line_id = {}
     feeds_and_service_levels = load_feeds_and_service_levels_from_archive()
@@ -297,10 +327,18 @@ def generate_data_file():
         entries_for_line_id = entries[line_id]
         exemplar_entry = entries_for_line_id[-1]
         ridership_time_series = get_merged_ridership_time_series(
-            exemplar_entry.route_ids, ridership_time_series_by_label
+            exemplar_entry.route_ids,
+            ridership_time_series_by_label,
         )
-        service_time_series = get_service_level_history(entries_for_line_id, start_date, today)
-        baseline_service_regime = get_service_regime_dict(entries_for_line_id, start_date)
+        service_time_series = get_service_level_history(
+            entries_for_line_id,
+            start_date,
+            today,
+        )
+        baseline_service_regime = get_service_regime_dict(
+            entries_for_line_id,
+            start_date,
+        )
         current_service_regime = get_service_regime_dict(entries_for_line_id, today)
         day_kinds = ("weekday", "saturday", "sunday")
 

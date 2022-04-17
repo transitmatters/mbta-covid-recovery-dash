@@ -52,7 +52,6 @@
         margin: 0;
         margin-left: 10px;
         font-size: 20px;
-        transform: translateY(1px);
 
         @include mobile {
             font-size: 20px;
@@ -75,10 +74,10 @@
         &:hover {
             text-decoration: underline;
         }
-        &:not(:last-child)::after {
-            content: '|';
-            margin: 0 10px;
-        }
+    }
+    > *:not(:last-child)::after {
+        content: '|';
+        margin: 0 10px;
     }
     @include mobile {
         margin: 0;

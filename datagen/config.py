@@ -24,7 +24,9 @@ RIDERSHIP_DATA_PATH = path.join(path.dirname(__file__), "ridership", ".data")
 
 # Change to e.g. date(2021, 8, 8) to load ridership data already in datagen/ridership/.data
 # rather than attempting to fetch later data from the MassDOT Box endpoint.
-RIDERSHIP_TARGET_DATE = None
+RIDERSHIP_TARGET_DATE = date(2022, 3, 29)
+
+CUTOFF_DATE = date(2022, 3, 22)
 
 # Patterns to find several files in the MassDOT Box endpoint.
 RIDERSHIP_BUS_XLSX_REGEX = re.compile(
