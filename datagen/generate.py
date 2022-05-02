@@ -112,7 +112,6 @@ def get_service_levels_entry_for_date(entries: List[ServiceLevelsEntry], date: d
 
 
 def get_service_level_history(
-    debug: bool,
     entries: List[ServiceLevelsEntry],
     start_date: date,
     end_date: date,
@@ -142,8 +141,6 @@ def get_service_level_history(
                 for ignore_range in IGNORE_DATE_RANGES
             )
         )
-        if debug:
-            print(date_range, value, is_ignore_range)
         fill_hole = value == 0 and (range_length_days <= 5 or is_fill_range)
         value_to_append = (
             values[-1] if len(values) and (fill_hole or is_ignore_range or is_weekend) else value
@@ -339,7 +336,6 @@ def generate_data_file():
             ridership_time_series_by_label,
         )
         service_time_series = get_service_level_history(
-            line_id == "line-Orange",
             entries_for_line_id,
             start_date,
             today,
