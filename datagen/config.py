@@ -45,5 +45,5 @@ FILL_DATE_RANGES = [
 
 # Date ranges with service anomalies that we'll smooth over with the previous date's values
 IGNORE_DATE_RANGES = [
-    (date(2022, 3, 28), date(2021, 3, 28)),  # Haymarket garage collapse
+    (date(2022, 3, 28), date(2021, 3, 30)),  # Haymarket garage collapse
 ]
