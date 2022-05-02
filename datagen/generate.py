@@ -11,6 +11,7 @@ from config import (
     CUTOFF_DATE,
     IGNORE_LINE_IDS,
     FILL_DATE_RANGES,
+    IGNORE_DATE_RANGES,
     TIME_ZONE,
 )
 
@@ -128,17 +129,21 @@ def get_service_level_history(
         is_weekend = range_length_days <= 2 and all(
             (d.weekday() in (5, 6) for d in (min_date, max_date))
         )
-        fill_hole = value == 0 and (
-            range_length_days <= 5
-            or any(
-                (
-                    date_range_contains(fill_range, date_range)
-                    for fill_range in FILL_DATE_RANGES
-                )
+        is_fill_range = any(
+            (
+                date_range_contains(fill_range, date_range)
+                for fill_range in FILL_DATE_RANGES
             )
         )
+        is_ignore_range = any(
+            (
+                date_range_contains(ignore_range, date_range)
+                for ignore_range in IGNORE_DATE_RANGES
+            )
+        )
+        fill_hole = value == 0 and (range_length_days <= 5 or is_fill_range)
         value_to_append = (
-            values[-1] if len(values) and (fill_hole or is_weekend) else value
+            values[-1] if len(values) and (fill_hole or is_ignore_range or is_weekend) else value
         )
         values += range_length_days * [value_to_append]
     return values

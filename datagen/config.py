@@ -42,3 +42,8 @@ FILL_DATE_RANGES = [
     (date(2021, 11, 19), date(2021, 11, 26)),  # Thanksgiving 2021
     (date(2021, 12, 18), date(2021, 12, 26)),  # Christmas 2021
 ]
+
+# Date ranges with service anomalies that we'll smooth over with the previous date's values
+IGNORE_DATE_RANGES = [
+    (date(2022, 3, 28), date(2021, 3, 28)),  # Haymarket garage collapse
+]
