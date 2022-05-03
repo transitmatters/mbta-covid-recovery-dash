@@ -176,7 +176,7 @@ const LineGrid = (props: Props) => {
                 </a>
                 <h1>MBTA Covid Recovery Dashboard</h1>
                 <div className={styles.links}>
-                    <span>Updated {summaryData.endDate}</span>
+                    <span>Data through {summaryData.endDate}</span>
                     <a href="https://github.com/transitmatters/mbta-covid-recovery-dash">
                         Source code
                     </a>
