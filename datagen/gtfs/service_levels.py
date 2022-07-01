@@ -9,7 +9,11 @@ from gtfs.time import date_to_string, DAYS_OF_WEEK
 
 def count_route_id(route_id: str):
     # 602 is a Green Line shuttle
-    return not route_id.startswith("Shuttle") and route_id != "602"
+    return (
+        not route_id.startswith("Shuttle")
+        and not route_id.startswith("Boat")
+        and route_id != "602"
+    )
 
 
 def service_runs_on_date(service: Service, date: date):
@@ -45,7 +49,10 @@ def bucket_trips_by_hour(trips: List[TripSummary]):
 def summarize_trips_by_date(line_id: str, trips: List[TripSummary]):
     summary_by_date = {}
     services = set((t.service for t in trips))
+    all_route_ids = set((t.route_id for t in trips))
     valid_route_ids = set((t.route_id for t in trips if count_route_id(t.route_id)))
+    if line_id == "line-Blue":
+        print("blue", all_route_ids, valid_route_ids)
     exemplar_trip = trips[-1]
     earliest_service_date = min((s.start_date for s in services))
     latest_service_date = max((s.end_date for s in services))
@@ -53,7 +60,9 @@ def summarize_trips_by_date(line_id: str, trips: List[TripSummary]):
     while date <= latest_service_date:
         services_for_date = [s for s in services if service_runs_on_date(s, date)]
         trips_for_date = [
-            t for t in trips if t.service in services_for_date and t.route_id in valid_route_ids
+            t
+            for t in trips
+            if t.service in services_for_date and t.route_id in valid_route_ids
         ]
         summary_by_date[date] = bucket_trips_by_hour(trips_for_date)
         date += timedelta(days=1)
