@@ -49,10 +49,7 @@ def bucket_trips_by_hour(trips: List[TripSummary]):
 def summarize_trips_by_date(line_id: str, trips: List[TripSummary]):
     summary_by_date = {}
     services = set((t.service for t in trips))
-    all_route_ids = set((t.route_id for t in trips))
     valid_route_ids = set((t.route_id for t in trips if count_route_id(t.route_id)))
-    if line_id == "line-Blue":
-        print("blue", all_route_ids, valid_route_ids)
     exemplar_trip = trips[-1]
     earliest_service_date = min((s.start_date for s in services))
     latest_service_date = max((s.end_date for s in services))
