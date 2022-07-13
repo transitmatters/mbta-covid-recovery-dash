@@ -6,6 +6,15 @@ from pandas.tseries.holiday import USFederalHolidayCalendar
 
 from ridership.source import RidershipSource
 
+unofficial_labels_map = {
+    "SL1": "741",
+    "SL2": "742",
+    "SL3": "743",
+    "SL4": "751",
+    "SL5": "749",
+    "SLW": "746",
+}
+
 
 def format_subway_data(path_to_csv_file: str):
     # read data, convert to datetime
@@ -34,7 +43,12 @@ def format_subway_data(path_to_csv_file: str):
 
     # limit data to just peak, merge back dates
     final = df[df["peak"] == "peak"]
-    final = final.groupby(["year", "week", "route_or_line"])["sum"].mean().round().reset_index()
+    final = (
+        final.groupby(["year", "week", "route_or_line"])["sum"]
+        .mean()
+        .round()
+        .reset_index()
+    )
 
     final = final.merge(dates, on=["week", "year"], how="left")
 
@@ -86,7 +100,9 @@ def format_bus_data(path_to_excel_file: str):
     for route in routelist:
         dftemp = df[df["route"] == route]
         dictdata = dftemp[["date", "riders"]].to_dict(orient="records")
-        output[route] = dictdata
+        rewritten_route_id = unofficial_labels_map.get(route) or route
+        print(route, rewritten_route_id)
+        output[rewritten_route_id] = dictdata
 
     return output
 
