@@ -68,7 +68,7 @@ const TopLineChart = (props: Props) => {
                         display: false,
                     },
                     layout: {
-                        padding: -10,
+                        padding: 10,
                     },
                     scales: {
                         xAxes: [

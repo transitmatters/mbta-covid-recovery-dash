@@ -12,11 +12,15 @@ type Props = {
     summaryData: SummaryData;
 };
 
-const smooth = (data: number[], window = 20) => {
+const smooth = (data: number[], window = 5) => {
     const result: number[] = [];
+    const extraInterval = Math.floor(data.length / window);
     for (let i = 0; i < data.length - window; i++) {
         const inWindow = data.slice(i, i + window).reduce((a, b) => a + b);
         result.push(inWindow);
+        if (i % extraInterval === 0) {
+            result.push(inWindow);
+        }
     }
     return result;
 };
@@ -67,7 +71,7 @@ const TopLine = (props: Props) => {
                 {
                     data: smooth(totalRidershipHistory),
                     fill: false,
-                    tension: 0,
+                    tension: 0.8,
                     borderColor: "#D31A2B",
                     labels: labels,
                 },
