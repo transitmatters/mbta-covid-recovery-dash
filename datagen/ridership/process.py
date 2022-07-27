@@ -101,7 +101,6 @@ def format_bus_data(path_to_excel_file: str):
         dftemp = df[df["route"] == route]
         dictdata = dftemp[["date", "riders"]].to_dict(orient="records")
         rewritten_route_id = unofficial_labels_map.get(route) or route
-        print(route, rewritten_route_id)
         output[rewritten_route_id] = dictdata
 
     return output
