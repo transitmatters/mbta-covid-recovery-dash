@@ -88,7 +88,10 @@ def format_bus_data(path_to_excel_file: str):
     # melt to get into long format
     df = pd.melt(df, id_vars=["route"], var_name="date", value_name="riders")
     # change datetime to date
-    df["date"] = pd.to_datetime(df["date"]).dt.date.astype(str)
+    df["date"] = pd.to_datetime(
+        df["date"],
+        infer_datetime_format=True,
+    ).dt.date.astype(str)
 
     # get list of bus routes
     routelist = list(set(df["route"].tolist()))
