@@ -84,7 +84,7 @@ const LineCard = (props: Props) => {
                 </div>
             );
         }
-        if (current.weekday.cancelled) {
+        if (current.weekday.totalTrips === 0) {
             return (
                 <div className={classNames(styles.statusBadge, "bad")}>
                     <TiCancel size={20} />
