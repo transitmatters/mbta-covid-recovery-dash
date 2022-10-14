@@ -1,5 +1,5 @@
 # MBTA Covid Recovery Dashboard
-
+[![pages-build-deployment](https://github.com/transitmatters/mbta-covid-recovery-dash/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/transitmatters/mbta-covid-recovery-dash/actions/workflows/pages/pages-build-deployment)
 <img width="1904" alt="Screen Shot 2021-08-12 at 3 05 02 PM" src="https://user-images.githubusercontent.com/2208769/129256786-5ac21cce-2d5a-42c3-823a-5533804c2abd.png">
 
 
