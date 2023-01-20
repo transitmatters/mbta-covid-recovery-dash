@@ -41,6 +41,7 @@ RIDERSHIP_SUBWAY_CSV_REGEX = re.compile(
 FILL_DATE_RANGES = [
     (date(2021, 11, 19), date(2021, 11, 26)),  # Thanksgiving 2021
     (date(2021, 12, 18), date(2021, 12, 26)),  # Christmas 2021
+    (date(2022, 12, 18), date(2023, 1, 3)),    # Christmas 2022
 ]
 
 # Date ranges with service anomalies that we'll smooth over with the previous date's values
