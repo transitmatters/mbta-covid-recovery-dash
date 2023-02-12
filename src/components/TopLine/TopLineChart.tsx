@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import Chart from "chart.js";
+import Chart from "chart.js/auto";
 
 import styles from "./TopLineChart.module.scss";
 
@@ -22,11 +22,13 @@ const TopLineChart = (props: Props) => {
                 type: "doughnut",
                 data: pieData,
                 options: {
-                    legend: {
-                        display: false,
-                    },
-                    tooltips: {
-                        enabled: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        tooltip: {
+                            enabled: false,
+                        },
                     },
                     hover: {
                         mode: null,
@@ -46,56 +48,54 @@ const TopLineChart = (props: Props) => {
                 type: "line",
                 data: sparklineData,
                 options: {
-                    tooltips: {
-                        mode: "index",
-                        intersect: false,
-                        displayColors: false,
-                        callbacks: {
-                            title: ([{ index, datasetIndex }]) => {
-                                const {
-                                    labels: { dateStrings },
-                                } = datasets[datasetIndex];
-                                return dateStrings[index];
-                            },
-                            label: ({ index, datasetIndex }) => {
-                                const { data } = datasets[datasetIndex];
-                                const percentage = asPercentString(data[index] / data[0]);
-                                return `${percentage} of pre-pandemic ${label}`;
+                    plugins: {
+                        tooltip: {
+                            mode: "index",
+                            intersect: false,
+                            displayColors: false,
+                            callbacks: {
+                                title: ([{ index, datasetIndex }]) => {
+                                    const {
+                                        labels: { dateStrings },
+                                    } = datasets[datasetIndex];
+                                    return dateStrings[index];
+                                },
+                                label: ({ index, datasetIndex }) => {
+                                    const { data } = datasets[datasetIndex];
+                                    const percentage = asPercentString(data[index] / data[0]);
+                                    return `${percentage} of pre-pandemic ${label}`;
+                                },
                             },
                         },
-                    },
-                    legend: {
-                        display: false,
+                        legend: {
+                            display: false,
+                        },
                     },
                     layout: {
                         padding: 10,
                     },
                     scales: {
-                        xAxes: [
-                            {
-                                gridLines: {
-                                    drawBorder: false,
-                                    tickMarkLength: 0,
-                                    drawOnChartArea: false,
-                                },
-                                ticks: {
-                                    display: false,
-                                    maxTicksLimit: 2,
-                                },
+                        xAxes: {
+                            grid: {
+                                drawBorder: false,
+                                tickLength: 0,
+                                drawOnChartArea: false,
                             },
-                        ],
-                        yAxes: [
-                            {
-                                gridLines: {
-                                    drawBorder: false,
-                                    tickMarkLength: 0,
-                                    drawOnChartArea: false,
-                                },
-                                ticks: {
-                                    display: false,
-                                },
+                            ticks: {
+                                display: false,
+                                maxTicksLimit: 2,
                             },
-                        ],
+                        },
+                        yAxes: {
+                            grid: {
+                                drawBorder: false,
+                                tickLength: 0,
+                                drawOnChartArea: false,
+                            },
+                            ticks: {
+                                display: false,
+                            },
+                        },
                     },
                     elements: {
                         point: {

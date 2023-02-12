@@ -1,5 +1,8 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import Chart, { ChartDataSets } from "chart.js";
+import { ChartDataset } from "chart.js";
+import "chartjs-adapter-date-fns";
+import { enUS } from "date-fns/locale";
+import Chart from "chart.js/auto";
 import Color from "chartjs-color";
 import pattern from "patternomaly";
 import memoize from "fast-memoize";
@@ -58,9 +61,10 @@ const ServiceRidershipChart = (props: Props) => {
         () => ridershipHistory && normalizeToPercent(ridershipHistory),
         [ridershipHistory]
     );
-    const servicePercentage = useMemo(() => serviceHistory && normalizeToPercent(serviceHistory), [
-        serviceHistory,
-    ]);
+    const servicePercentage = useMemo(
+        () => serviceHistory && normalizeToPercent(serviceHistory),
+        [serviceHistory]
+    );
     const { timestamps, dateStrings } = useMemo(() => getChartLabels(startDate), [startDate]);
     const columns = useMemo(() => {
         const ridershipNoun = getRidershipNoun(lineData.id);
@@ -87,7 +91,7 @@ const ServiceRidershipChart = (props: Props) => {
         const ctx = canvasRef.current!.getContext("2d");
         const ridershipNoun = getRidershipNoun(lineData.id);
 
-        const datasets: (ChartDataSets & { actual: number[]; unit: string })[] = [
+        const datasets: (ChartDataset & { actual: number[]; unit: string })[] = [
             ridershipPercentage && {
                 label: "Ridership",
                 actual: ridershipHistory,
@@ -95,6 +99,7 @@ const ServiceRidershipChart = (props: Props) => {
                 data: ridershipPercentage,
                 borderColor: color,
                 backgroundColor: alphaColor,
+                fill: true,
                 borderWidth: 2,
             },
             {
@@ -104,6 +109,7 @@ const ServiceRidershipChart = (props: Props) => {
                 data: servicePercentage,
                 borderColor: alphaColor,
                 backgroundColor: pattern.draw("diagonal", "rgba(0,0,0,0)", color, 5),
+                fill: true,
                 borderWidth: 2,
             },
         ].filter((x) => x);
@@ -117,52 +123,56 @@ const ServiceRidershipChart = (props: Props) => {
                 maintainAspectRatio: false,
                 animation: { duration: 0 },
                 scales: {
-                    xAxes: [
-                        {
-                            gridLines: { display: false },
-                            type: "time",
-                            time: {
-                                unit: "month",
-                                displayFormats: {
-                                    month: "MMM 'YY",
-                                },
+                    xAxes: {
+                        grid: { display: false },
+                        type: "time",
+                        adapters: {
+                            date: {
+                                locale: enUS,
                             },
                         },
-                    ],
-                    yAxes: [
-                        {
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 0.2,
-                                maxTicksLimit: 6,
-                                callback: asPercentString,
+                        time: {
+                            unit: "month",
+                            displayFormats: {
+                                month: "MMM yy",
                             },
-                            gridLines: { display: false },
                         },
-                    ],
+                    },
+                    yAxes: {
+                        type: "linear",
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 0.2,
+                            maxTicksLimit: 6,
+                            callback: asPercentString,
+                        },
+                        grid: { display: false },
+                    },
                 },
                 elements: {
                     point: { radius: 0 },
                     line: { tension: 0 },
                 },
-                legend: {
-                    position: "top",
-                    align: "end",
-                    labels: {
-                        boxWidth: 15,
-                    },
-                },
-                tooltips: {
-                    mode: "index",
-                    intersect: false,
-                    callbacks: {
-                        title: ([{ index }]) => {
-                            return dateFormatter.format(timestamps[index]);
+                plugins: {
+                    legend: {
+                        position: "top",
+                        align: "end",
+                        labels: {
+                            boxWidth: 15,
                         },
-                        label: ({ datasetIndex, index, value }) => {
-                            const { label, actual, unit } = datasets[datasetIndex];
-                            const valuePercent = Math.round(parseFloat(value) * 100);
-                            return `${label}: ${actual[index]} ${unit} (${valuePercent}%)`;
+                    },
+                    tooltip: {
+                        mode: "index",
+                        intersect: false,
+                        callbacks: {
+                            title: ([{ index }]) => {
+                                return dateFormatter.format(timestamps[index]);
+                            },
+                            label: ({ datasetIndex, index, value }) => {
+                                const { label, actual, unit } = datasets[datasetIndex];
+                                const valuePercent = Math.round(parseFloat(value) * 100);
+                                return `${label}: ${actual[index]} ${unit} (${valuePercent}%)`;
+                            },
                         },
                     },
                 },
