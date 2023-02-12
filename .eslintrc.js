@@ -6,9 +6,10 @@ module.exports = {
     },
     extends: [
         "eslint:recommended",
-        "plugin:prettier/recommended",
+        "prettier",
         "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended",
+        "next/core-web-vitals",
     ],
     parser: "@typescript-eslint/parser",
     parserOptions: {
@@ -20,9 +21,11 @@ module.exports = {
     },
     plugins: ["react", "prettier", "@typescript-eslint"],
     rules: {
+        "import/no-anonymous-default-export": 0,
         "react/display-name": 0,
         "react/react-in-jsx-scope": 0,
         "react/no-unescaped-entities": 0,
+        "react-hooks/exhaustive-deps": 0,
         "@typescript-eslint/ban-ts-ignore": 0,
         "@typescript-eslint/camelcase": 0,
         "@typescript-eslint/explicit-function-return-type": 0,

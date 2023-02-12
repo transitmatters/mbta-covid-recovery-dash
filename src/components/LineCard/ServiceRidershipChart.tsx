@@ -58,9 +58,10 @@ const ServiceRidershipChart = (props: Props) => {
         () => ridershipHistory && normalizeToPercent(ridershipHistory),
         [ridershipHistory]
     );
-    const servicePercentage = useMemo(() => serviceHistory && normalizeToPercent(serviceHistory), [
-        serviceHistory,
-    ]);
+    const servicePercentage = useMemo(
+        () => serviceHistory && normalizeToPercent(serviceHistory),
+        [serviceHistory]
+    );
     const { timestamps, dateStrings } = useMemo(() => getChartLabels(startDate), [startDate]);
     const columns = useMemo(() => {
         const ridershipNoun = getRidershipNoun(lineData.id);
