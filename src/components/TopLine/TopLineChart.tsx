@@ -75,31 +75,27 @@ const TopLineChart = (props: Props) => {
                         padding: 10,
                     },
                     scales: {
-                        xAxes: [
-                            {
-                                gridLines: {
-                                    drawBorder: false,
-                                    tickMarkLength: 0,
-                                    drawOnChartArea: false,
-                                },
-                                ticks: {
-                                    display: false,
-                                    maxTicksLimit: 2,
-                                },
+                        xAxes: {
+                            grid: {
+                                drawBorder: false,
+                                tickLength: 0,
+                                drawOnChartArea: false,
                             },
-                        ],
-                        yAxes: [
-                            {
-                                gridLines: {
-                                    drawBorder: false,
-                                    tickMarkLength: 0,
-                                    drawOnChartArea: false,
-                                },
-                                ticks: {
-                                    display: false,
-                                },
+                            ticks: {
+                                display: false,
+                                maxTicksLimit: 2,
                             },
-                        ],
+                        },
+                        yAxes: {
+                            grid: {
+                                drawBorder: false,
+                                tickLength: 0,
+                                drawOnChartArea: false,
+                            },
+                            ticks: {
+                                display: false,
+                            },
+                        },
                     },
                     elements: {
                         point: {

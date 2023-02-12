@@ -123,34 +123,31 @@ const ServiceRidershipChart = (props: Props) => {
                 maintainAspectRatio: false,
                 animation: { duration: 0 },
                 scales: {
-                    xAxes: [
-                        {
-                            gridLines: { display: false },
-                            type: "time",
-                            adapters: {
-                                date: {
-                                    locale: enUS,
-                                },
-                            },
-                            time: {
-                                unit: "month",
-                                displayFormats: {
-                                    month: "MMM 'YY",
-                                },
+                    xAxes: {
+                        grid: { display: false },
+                        type: "time",
+                        adapters: {
+                            date: {
+                                locale: enUS,
                             },
                         },
-                    ],
-                    yAxes: [
-                        {
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 0.2,
-                                maxTicksLimit: 6,
-                                callback: asPercentString,
+                        time: {
+                            unit: "month",
+                            displayFormats: {
+                                month: "MMM yy",
                             },
-                            gridLines: { display: false },
                         },
-                    ],
+                    },
+                    yAxes: {
+                        type: "linear",
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 0.2,
+                            maxTicksLimit: 6,
+                            callback: asPercentString,
+                        },
+                        grid: { display: false },
+                    },
                 },
                 elements: {
                     point: { radius: 0 },
