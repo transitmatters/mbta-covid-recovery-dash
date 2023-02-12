@@ -21,7 +21,7 @@ const hackStylesToSupportNonPureDeclarations = (config) => {
     return config;
 };
 
-const assetPrefix = process.env.BUILD_GH_PAGES === "true" ? "./" : null;
+const assetPrefix = process.env.BUILD_GH_PAGES === "true" ? "./" : undefined;
 
 module.exports = {
     webpack: (config) => {

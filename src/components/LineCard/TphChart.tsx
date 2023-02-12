@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from "react";
-import Chart from "chart.js";
+import Chart from "chart.js/auto";
 import Color from "chartjs-color";
 
 import { TripsPerHour } from "types";
@@ -39,7 +39,7 @@ const TphChart = (props: Props) => {
             {
                 label: "Pre-COVID trips per hour",
                 data: baselineTph as any,
-                steppedLine: true,
+                stepped: true,
                 borderColor: color,
                 borderWidth: 2,
                 backgroundColor: "rgba(0,0,0,0)",
@@ -47,10 +47,11 @@ const TphChart = (props: Props) => {
             {
                 label: "Current trips per hour",
                 data: currentTph as any,
-                steppedLine: true,
+                stepped: true,
                 borderWidth: 2,
                 borderColor: "rgba(0,0,0,0)",
                 backgroundColor: currentColor,
+                fill: true,
             },
         ];
 
