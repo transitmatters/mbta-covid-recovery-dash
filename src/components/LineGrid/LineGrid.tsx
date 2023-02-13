@@ -3,6 +3,7 @@ import classNames from "classnames";
 
 import { LineCard, TopLine, TopLineMobile } from "components";
 import { LineData, SummaryData } from "types";
+import Image from "next/image";
 
 import { useInfiniteScroll } from "./useInfiniteScroll";
 import { sortFunctions, Sort, SortFn } from "./sorting";
@@ -172,7 +173,13 @@ const LineGrid = (props: Props) => {
         <>
             <div className={styles.header}>
                 <a href="https://transitmatters.org">
-                    <img src="./logo.svg" className={styles.logo} height="20" />
+                    <Image
+                        src="/logo.svg"
+                        className={styles.logo}
+                        height={20}
+                        width={197}
+                        alt={"Transitmatters Logo"}
+                    />
                 </a>
                 <h1>MBTA Covid Recovery Dashboard</h1>
                 <div className={styles.links}>
