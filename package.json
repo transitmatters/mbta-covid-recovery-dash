@@ -35,7 +35,7 @@
     "@storybook/addon-actions": "^5.3.21",
     "@storybook/addon-knobs": "^6.4.0",
     "@storybook/addon-viewport": "^5.3.21",
-    "@storybook/react": "^5.3.21",
+    "@storybook/react": "^6.5.16",
     "@types/bezier-js": "0.0.8",
     "@types/chart.js": "^2.9.37",
     "@types/heap": "^0.2.31",
