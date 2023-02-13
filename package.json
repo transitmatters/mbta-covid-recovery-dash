@@ -11,9 +11,9 @@
     "build-static": "BUILD_GH_PAGES=true next build && next export -o docs && touch ./docs/.nojekyll && echo recovery.transitmatters.org > ./docs/CNAME"
   },
   "dependencies": {
-    "@nivo/core": "^0.67.0",
-    "@nivo/line": "^0.67.0",
-    "@nivo/pie": "^0.67.0",
+    "@nivo/core": "^0.80.0",
+    "@nivo/line": "^0.80.0",
+    "@nivo/pie": "^0.80.0",
     "chart.js": "^2.9.4",
     "chartjs-color": "^2.4.1",
     "classnames": "^2.3.2",
@@ -32,14 +32,14 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
-    "@storybook/addon-actions": "^5.3.21",
+    "@storybook/addon-actions": "^6.5.16",
     "@storybook/addon-knobs": "^6.4.0",
-    "@storybook/addon-viewport": "^5.3.21",
-    "@storybook/react": "^5.3.21",
+    "@storybook/addon-viewport": "^6.5.16",
+    "@storybook/react": "^6.5.16",
     "@types/bezier-js": "4.1.0",
     "@types/chart.js": "^2.9.37",
     "@types/heap": "^0.2.31",
-    "@types/node": "^14.18.36",
+    "@types/node": "^16.18.12",
     "@types/react": "^16.9.43",
     "@typescript-eslint/eslint-plugin": "^5.52.0",
     "@typescript-eslint/parser": "^5.52.0",
@@ -57,6 +57,6 @@
     "tsconfig-paths": "^4.1.2"
   },
   "engines": {
-    "node": ">=14.19.0"
+    "node": ">=16.18.0"
   }
 }
