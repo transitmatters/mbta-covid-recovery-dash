@@ -27,5 +27,11 @@ module.exports = {
     webpack: (config) => {
         return hackStylesToSupportNonPureDeclarations(config);
     },
+    // https://stackoverflow.com/questions/65487914/error-image-optimization-using-next-js-default-loader-is-not-compatible-with-n
+    // On Next.js 12.3 we can use unoptimized: true instead
+    images: {
+        loader: "akamai",
+        path: "",
+    },
     assetPrefix,
 };
