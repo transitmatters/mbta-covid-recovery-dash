@@ -14,7 +14,7 @@ The computations on the ridership data and the GTFS feeds in particular can be v
 
 ```
 datagen/gtfs/.data
-datagen/gtfs/.ridership
+datagen/ridership/.data
 ```
 
 You can force some computations to re-run by selectively deleting files from these.
