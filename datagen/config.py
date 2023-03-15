@@ -26,7 +26,7 @@ RIDERSHIP_DATA_PATH = path.join(path.dirname(__file__), "ridership", ".data")
 # rather than attempting to fetch later data from the MassDOT Box endpoint.
 RIDERSHIP_TARGET_DATE = None
 
-CUTOFF_DATE = date(2023, 3, 1)
+CUTOFF_DATE = date(2023, 3, 9)
 
 # Patterns to find several files in the MassDOT Box endpoint.
 RIDERSHIP_BUS_XLSX_REGEX = re.compile(
