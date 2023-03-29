@@ -3,7 +3,7 @@ on:
   schedule:
   - cron: '0 0 * * 0'
   push:
-    branches: [main]
+    branches: [main, automatic-update]
   pull_request:
     branches: [main]
     types: [opened, reopened]
