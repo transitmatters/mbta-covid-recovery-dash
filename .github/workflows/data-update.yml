@@ -1,0 +1,28 @@
+name: Update Data
+on:
+  schedule:
+    - cron:  '0 0 * * 7'
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    branches:
+      - main
+jobs:
+  data-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Run data update
+        run: |
+          make setup-env
+          make update-data
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          branch: update-data
