@@ -117,6 +117,8 @@ def estimate_daily_boardings_by_cr_route(path_to_csv_file: str):
     out_dict = {}
     for entry in merged.to_dict(orient="records"):
         out_dict[entry["route_id"]] = entry["scaled_boardings"]
+    # We lose a few when flooring to integers but...
+    assert abs(sum(out_dict.values()) - CR_RIDERSHIP_BASELINE) < 10
     return out_dict
 
 
