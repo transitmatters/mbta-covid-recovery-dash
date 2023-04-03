@@ -3,12 +3,13 @@ import classNames from "classnames";
 import { TiCancel, TiTicket } from "react-icons/ti";
 
 import { LineData, ServiceDay } from "types";
-import { TabPicker } from "components";
+import { CardFrame, TabPicker } from "components";
 
 import { lineKindColors } from "./colors";
-import styles from "./LineCard.module.scss";
 import TphChart from "./TphChart";
 import ServiceRidershipChart from "./ServiceRidershipChart";
+
+import styles from "./LineCard.module.scss";
 
 type Props = {
     lineData: LineData;
@@ -35,6 +36,32 @@ const getHighestTphValue = (lineData: LineData) => {
     });
     return max;
 };
+
+const regionalRailCaveats = (
+    <details>
+        <summary>Caveats on Commuter Rail data</summary>
+        <div className={styles.detailsExpanded}>
+            The MBTA doesn't provide us daily Commuter Rail ridership from before June 2020. We
+            estimate a baseline (100%) value for February 2020 based on{" "}
+            <a
+                href="https://mbta-massdot.opendata.arcgis.com/datasets/MassDOT::mbta-commuter-rail-ridership-by-trip-season-route-line-and-stop/explore"
+                target="_blank"
+                rel="noreferrer"
+            >
+                2018 per-line ridership values
+            </a>{" "}
+            scaled to February 2020's{" "}
+            <a
+                href="https://mbtabackontrack.com/performance/#/detail/ridership/2020-02-01/Commuter%20Rail///all"
+                target="_blank"
+                rel="noreferrer"
+            >
+                total ridership
+            </a>
+            .
+        </div>
+    </details>
+);
 
 const LineCard = (props: Props) => {
     const { lineData } = props;
@@ -66,6 +93,13 @@ const LineCard = (props: Props) => {
                 {rightElement}
             </h3>
         );
+    };
+
+    const renderDetails = () => {
+        if (lineData.lineKind === "regional-rail") {
+            return regionalRailCaveats;
+        }
+        return null;
     };
 
     const renderStatusBadge = () => {
@@ -101,15 +135,6 @@ const LineCard = (props: Props) => {
         }
     };
 
-    const renderTopRow = () => {
-        return (
-            <div className={styles.topRow}>
-                <h2 className={styles.title}>{title}</h2>
-                {renderStatusBadge()}
-            </div>
-        );
-    };
-
     const tabs = (
         <TabPicker
             className={styles.tabs}
@@ -122,8 +147,7 @@ const LineCard = (props: Props) => {
     );
 
     return (
-        <div className={styles.lineCard}>
-            {renderTopRow()}
+        <CardFrame title={title} topRight={renderStatusBadge()} details={renderDetails()}>
             {renderSectionLabel("Daily service levels", tabs)}
             <TphChart
                 lineTitle={`${title}, ${serviceDay}`}
@@ -141,7 +165,7 @@ const LineCard = (props: Props) => {
                 serviceHistory={serviceHistory}
                 color={color}
             />
-        </div>
+        </CardFrame>
     );
 };
 

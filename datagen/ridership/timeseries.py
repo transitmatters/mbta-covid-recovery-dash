@@ -41,7 +41,9 @@ def create_time_series_from_entries(
         ridership = get_valid_ridership_value(entries, idx)
         entry_start_date = max(start_date, entry.date)
         entry_end_date = min(
-            end_date if idx == len(entries) - 1 else entries[idx + 1].date - timedelta(days=1),
+            end_date
+            if idx == len(entries) - 1
+            else entries[idx + 1].date - timedelta(days=1),
             end_date,
         )
         today = entry_start_date
