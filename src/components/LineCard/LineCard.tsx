@@ -134,7 +134,7 @@ const LineCard = (props: Props) => {
             />
             {renderSectionLabel(ridershipAndFrequencyLabel)}
             <ServiceRidershipChart
-                lineData={lineData}
+                lineId={lineData.id}
                 lineTitle={`${title}, ${serviceDay}`}
                 startDate={startDate}
                 ridershipHistory={ridershipHistory}

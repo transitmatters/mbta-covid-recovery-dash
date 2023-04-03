@@ -15,7 +15,7 @@ type Props = {
     color: string;
     startDate: Date;
     lineTitle: string;
-    lineData: LineData;
+    lineId: string;
 };
 
 const dateFormatter = new Intl.DateTimeFormat("en-US");
@@ -51,7 +51,7 @@ export const getChartLabels = memoize(
 );
 
 const ServiceRidershipChart = (props: Props) => {
-    const { color, serviceHistory, ridershipHistory, startDate, lineTitle, lineData } = props;
+    const { color, serviceHistory, ridershipHistory, startDate, lineTitle, lineId } = props;
     const canvasRef = useRef<null | HTMLCanvasElement>(null);
 
     const ridershipPercentage = useMemo(
@@ -64,7 +64,7 @@ const ServiceRidershipChart = (props: Props) => {
     );
     const { timestamps, dateStrings } = useMemo(() => getChartLabels(startDate), [startDate]);
     const columns = useMemo(() => {
-        const ridershipNoun = getRidershipNoun(lineData.id);
+        const ridershipNoun = getRidershipNoun(lineId);
         return [
             { title: "Date", values: dateStrings },
             ridershipHistory && {
@@ -86,7 +86,7 @@ const ServiceRidershipChart = (props: Props) => {
     useEffect(() => {
         const alphaColor = Color(color).alpha(0.8).rgbString();
         const ctx = canvasRef.current!.getContext("2d");
-        const ridershipNoun = getRidershipNoun(lineData.id);
+        const ridershipNoun = getRidershipNoun(lineId);
 
         const datasets: (ChartDataSets & { actual: number[]; unit: string })[] = [
             ridershipPercentage && {
@@ -170,7 +170,7 @@ const ServiceRidershipChart = (props: Props) => {
             },
         });
         return () => chart.destroy();
-    }, [ridershipPercentage, servicePercentage, lineData.id]);
+    }, [ridershipPercentage, servicePercentage, lineId]);
 
     return (
         <div className={styles.serviceAndRidershipChartContainer}>

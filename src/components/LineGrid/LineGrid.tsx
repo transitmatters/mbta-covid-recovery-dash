@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import classNames from "classnames";
 
-import { LineCard, TopLine, TopLineMobile } from "components";
+import { LineCard, SystemCard, TopLine, TopLineMobile } from "components";
 import { LineData, SummaryData } from "types";
 import Image from "next/image";
 
@@ -209,6 +209,7 @@ const LineGrid = (props: Props) => {
             </div>
             <TopLine summaryData={summaryData} />
             <TopLineMobile summaryData={summaryData} />
+            {kindOption === "all" && <SystemCard summaryData={summaryData} />}
             <div className={classNames(styles.lineGrid, display)}>
                 {shownItems.map((item) => (
                     <LineCard lineData={item} key={item.id} />
