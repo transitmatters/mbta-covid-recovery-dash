@@ -1,9 +1,9 @@
 # MBTA Covid Recovery Dashboard
+
 [![pages-build-deployment](https://github.com/transitmatters/mbta-covid-recovery-dash/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/transitmatters/mbta-covid-recovery-dash/actions/workflows/pages/pages-build-deployment)
 <img width="1904" alt="Screen Shot 2021-08-12 at 3 05 02 PM" src="https://user-images.githubusercontent.com/2208769/129256786-5ac21cce-2d5a-42c3-823a-5533804c2abd.png">
 
-
-The MBTA Covid Recovery Dashboard is a project by the TransitMatters Labs team to track changes in MBTA service levels and ridership during the Covid-19 pandemic. It draws data from the following sources:
+The MBTA Covid Recovery Dashboard is a project by the [TransitMatters Labs](https://transitmatters.org/transitmatters-labs) team to track changes in MBTA service levels and ridership during the Covid-19 pandemic. It draws data from the following sources:
 
 - The [MBTA GTFS feed archive](https://cdn.mbta.com/archive/archived_feeds.txt)
 - Some [public data on ridership](https://massdot.app.box.com/s/21j0q5di9ewzl0abt6kdh5x8j8ok9964) updated regularly by [MassDOT OPMI](https://www.mass.gov/transportation-performance)
@@ -30,7 +30,6 @@ make setup-env
 _Some recent macOS environments will crash while installing NumPy here — if this happens to you, you can try rerunning the command as `SYSTEM_VERSION_COMPAT=1 make setup-env` per the solution [here](https://github.com/pypa/pipenv/issues/4576#issuecomment-751639556)._
 
 There are more useful commands in both the `Makefile` and `package.json`.
-
 
 ## Secrets
 
@@ -69,3 +68,7 @@ npm run update
 ```
 
 This is what we use to periodically update the production site.
+
+## Support TransitMatters
+
+If you've found this app helpful or interesting, please consider [donating](https://transitmatters.org/donate) to TransitMatters to help support our mission to provide data-driven advocacy for a more reliable, sustainable, and equitable transit system in Metropolitan Boston.
