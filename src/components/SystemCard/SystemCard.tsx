@@ -21,7 +21,7 @@ const SystemCard = (props: Props) => {
         <CardFrame
             title="System-wide"
             className={styles.systemCard}
-            details="Excludes ridership data Green Line surface stations."
+            details="Excludes ridership data from Green Line surface stations."
         >
             <ServiceRidershipChart
                 lineId=""
