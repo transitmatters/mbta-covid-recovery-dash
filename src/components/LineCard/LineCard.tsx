@@ -49,14 +49,6 @@ const regionalRailCaveats = (
                 rel="noreferrer"
             >
                 2018 per-line ridership values
-            </a>{" "}
-            scaled to February 2020's{" "}
-            <a
-                href="https://mbtabackontrack.com/performance/#/detail/ridership/2020-02-01/Commuter%20Rail///all"
-                target="_blank"
-                rel="noreferrer"
-            >
-                total ridership
             </a>
             .
         </div>
