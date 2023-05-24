@@ -9,9 +9,6 @@ from pandas.tseries.holiday import USFederalHolidayCalendar
 from config import PRE_COVID_DATE
 from ridership.source import RidershipSource
 
-# Daily weekday boardings for 2/2020
-# See https://mbtabackontrack.com/performance/#/detail/ridership/2020-02-01/Commuter%20Rail///all
-CR_RIDERSHIP_BASELINE = 114000
 
 unofficial_bus_labels_map = {
     # Silver Line
@@ -101,7 +98,7 @@ def format_ridership_csv(
     return output
 
 
-def estimate_daily_boardings_by_cr_route(path_to_csv_file: str):
+def get_baseline_daily_boardings_by_cr_route(path_to_csv_file: str):
     df = pd.read_csv(path_to_csv_file)
     df = df[(df["season"] == "Spring 2018") & (df["day_type_name"] == "weekday")]
     df = df[["route_id", "average_ons"]]
@@ -110,15 +107,9 @@ def estimate_daily_boardings_by_cr_route(path_to_csv_file: str):
         .aggregate({"route_id": "first", "average_ons": "sum"})
         .rename(columns={"average_ons": "boardings"})
     )
-    sum_boardings = merged["boardings"].sum()
-    merged["scaled_boardings"] = (
-        merged["boardings"] * (CR_RIDERSHIP_BASELINE / sum_boardings)
-    ).astype(int)
     out_dict = {}
     for entry in merged.to_dict(orient="records"):
-        out_dict[entry["route_id"]] = entry["scaled_boardings"]
-    # We lose a few when flooring to integers but...
-    assert abs(sum(out_dict.values()) - CR_RIDERSHIP_BASELINE) < 10
+        out_dict[entry["route_id"]] = int(entry["boardings"])
     return out_dict
 
 
@@ -132,7 +123,7 @@ def format_subway_data(path_to_csv_file: str):
 
 
 def format_cr_data(path_to_ridershp_file: str, path_to_seasonal_ridership_file: str):
-    estimations = estimate_daily_boardings_by_cr_route(path_to_seasonal_ridership_file)
+    baselines = get_baseline_daily_boardings_by_cr_route(path_to_seasonal_ridership_file)
     ridership_by_route = format_ridership_csv(
         path_to_csv_file=path_to_ridershp_file,
         date_key="service_date",
@@ -140,13 +131,13 @@ def format_cr_data(path_to_ridershp_file: str, path_to_seasonal_ridership_file: 
         count_key="estimated_boardings",
         route_ids_map=unofficial_cr_labels_map,
     )
-    with_estimations = {}
+    with_baselines = {}
     for route_id, route_dates in ridership_by_route.items():
-        estimate = estimations[route_id]
-        with_estimations[route_id] = [
+        baseline = baselines[route_id]
+        with_baselines[route_id] = [
             {
                 "date": PRE_COVID_DATE.strftime("%Y-%m-%d"),
-                "riders": estimate,
+                "riders": baseline,
             },
             {
                 "date": (PRE_COVID_DATE + timedelta(days=1)).strftime("%Y-%m-%d"),
@@ -154,7 +145,7 @@ def format_cr_data(path_to_ridershp_file: str, path_to_seasonal_ridership_file: 
             },
             *route_dates,
         ]
-    return with_estimations
+    return with_baselines
 
 
 def format_bus_data(path_to_excel_file: str):
