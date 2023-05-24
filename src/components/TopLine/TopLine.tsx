@@ -120,7 +120,7 @@ const TopLine = (props: Props) => {
                 />
                 <p>
                     <strong>{Math.round(totalRidershipPercentage * 100)}%</strong> of pre-pandemic
-                    weekday ridership on subway and bus
+                    weekday ridership
                 </p>
             </div>
             <div className={styles.column}>

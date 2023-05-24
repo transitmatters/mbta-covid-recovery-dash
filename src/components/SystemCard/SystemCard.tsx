@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 
+import { CardFrame } from "components";
 import { SummaryData } from "types";
 import ServiceRidershipChart from "../LineCard/ServiceRidershipChart";
 
@@ -17,11 +18,11 @@ const SystemCard = (props: Props) => {
     const startDate = useMemo(() => new Date(startDateString), [startDateString]);
 
     return (
-        <div className={styles.systemCard}>
-            <h2 className={styles.title}>System-wide</h2>
-            <div className={styles.caveat}>
-                Excludes ridership data from Commuter Rail and Green Line surface stations.
-            </div>
+        <CardFrame
+            title="System-wide"
+            className={styles.systemCard}
+            details="Excludes ridership data Green Line surface stations."
+        >
             <ServiceRidershipChart
                 lineId=""
                 lineTitle="System-wide"
@@ -30,7 +31,7 @@ const SystemCard = (props: Props) => {
                 ridershipHistory={totalRidershipHistory}
                 startDate={startDate}
             />
-        </div>
+        </CardFrame>
     );
 };
 

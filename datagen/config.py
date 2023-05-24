@@ -22,11 +22,14 @@ GTFS_DATA_PATH = path.join(path.dirname(__file__), "gtfs", ".data")
 RIDERSHIP_BOX_URL = "https://massdot.app.box.com/s/21j0q5di9ewzl0abt6kdh5x8j8ok9964"
 RIDERSHIP_DATA_PATH = path.join(path.dirname(__file__), "ridership", ".data")
 
+CR_RIDERSHIP_ARCGIS_URL = "https://opendata.arcgis.com/api/v3/datasets/e2635c945f5b47a7923e0ee441b040c8_0/downloads/data?format=csv&spatialRefId=4326&where=1=1"
+CR_SEASONAL_RIDERSHIP_ARCGIS_URL = "https://opendata.arcgis.com/api/v3/datasets/3b93de20570f462ea27219dfb7e75347_0/downloads/data?format=csv&spatialRefId=4326&where=1=1"
+
 # Change to e.g. date(2021, 8, 8) to load ridership data already in datagen/ridership/.data
 # rather than attempting to fetch later data from the MassDOT Box endpoint.
 RIDERSHIP_TARGET_DATE = None
 
-CUTOFF_DATE = date(2023, 4, 27)
+CUTOFF_DATE = date(2023, 5, 17)
 
 # Patterns to find several files in the MassDOT Box endpoint.
 RIDERSHIP_BUS_XLSX_REGEX = re.compile(

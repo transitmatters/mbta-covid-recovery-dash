@@ -6,6 +6,7 @@ from os import path, mkdir
 from typing import List
 from boxsdk import OAuth2, Client
 from boxsdk.object.file import File
+import requests
 
 from config import (
     RIDERSHIP_DATA_PATH,
@@ -13,6 +14,8 @@ from config import (
     RIDERSHIP_BUS_XLSX_REGEX,
     RIDERSHIP_SUBWAY_CSV_REGEX,
     RIDERSHIP_TARGET_DATE,
+    CR_RIDERSHIP_ARCGIS_URL,
+    CR_SEASONAL_RIDERSHIP_ARCGIS_URL,
 )
 from secrets import BOX_ACCESS_TOKEN
 
@@ -32,6 +35,14 @@ class RidershipSource:
     @cached_property
     def bus_ridership_xlsx_path(self):
         return path.join(self.subdirectory, "bus.xlsx")
+
+    @cached_property
+    def cr_ridership_csv_path(self):
+        return path.join(self.subdirectory, "cr.csv")
+
+    @cached_property
+    def cr_seasonal_ridership_csv_path(self):
+        return path.join(self.subdirectory, "cr_seasonal.csv")
 
     @cached_property
     def ridership_json_path(self):
@@ -60,8 +71,12 @@ def get_latest_ridership_source(require_matching_bus_subway_dates=False):
     client = get_box_client()
     folder = client.get_shared_item(RIDERSHIP_BOX_URL)
     files = list(folder.get_items())
-    maybe_bus_file_and_date = get_file_matching_date_pattern(files, RIDERSHIP_BUS_XLSX_REGEX)
-    maybe_subway_file_and_date = get_file_matching_date_pattern(files, RIDERSHIP_SUBWAY_CSV_REGEX)
+    maybe_bus_file_and_date = get_file_matching_date_pattern(
+        files, RIDERSHIP_BUS_XLSX_REGEX
+    )
+    maybe_subway_file_and_date = get_file_matching_date_pattern(
+        files, RIDERSHIP_SUBWAY_CSV_REGEX
+    )
     if maybe_bus_file_and_date and maybe_subway_file_and_date:
         subway_file, subway_date = maybe_subway_file_and_date
         bus_file, bus_date = maybe_bus_file_and_date
@@ -75,5 +90,11 @@ def get_latest_ridership_source(require_matching_bus_subway_dates=False):
                 subway_file.download_to(file)
             with open(source.bus_ridership_xlsx_path, "wb") as file:
                 bus_file.download_to(file)
+            with open(source.cr_ridership_csv_path, "wb") as file:
+                req = requests.get(CR_RIDERSHIP_ARCGIS_URL)
+                file.write(req.content)
+            with open(source.cr_seasonal_ridership_csv_path, "wb") as file:
+                req = requests.get(CR_SEASONAL_RIDERSHIP_ARCGIS_URL)
+                file.write(req.content)
         return source
     raise Exception("Could not load ridership data!")
