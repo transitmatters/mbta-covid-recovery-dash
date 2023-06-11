@@ -1,14 +1,13 @@
 setup-env:
-	pipenv --python 3.9
-	pipenv install
+	poetry install
 	cp datagen/secrets.example.py datagen/secrets.py
 	npm install
 
 clean-python-env:
-	pipenv --rm
+	poetry env remove 3
 
 update-data:
-	cd datagen; pipenv run python -m generate
+	cd datagen; poetry run python3 -m generate
 
 update:
 	make update-data
