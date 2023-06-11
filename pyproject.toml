@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "mbta-covid-recovery-dash"
 version = "0.1.0"
-description = "Tracking changes in MBTA service levels and ridership during the Covid-19 pandemic "
+description = "Tracking changes in MBTA service levels and ridership during the Covid-19 pandemic"
 authors = ["TransitMatters Labs Team"]
 license = "MIT"
 
