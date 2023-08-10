@@ -16,8 +16,13 @@ requests = "2.31.0"
 tqdm = "4.65.0"
 
 [tool.poetry.dev-dependencies]
-black = "23.3.0"
+pip = ">=23.0"
+black = "23.7.0"
+
+[tool.black]
+line-length = 120
+target-version = ['py39']
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.5.0"]
 build-backend = "poetry.core.masonry.api"
