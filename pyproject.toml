@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "mbta-covid-recovery-dash"
+version = "0.1.0"
+description = "Tracking changes in MBTA service levels and ridership during the Covid-19 pandemic"
+authors = ["TransitMatters Labs Team"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "~3.9"
+boxsdk = "3.7.2"
+numpy = "1.24.3"
+openpyxl = "3.1.2"
+pandas = "1.5.3"
+pytz = "2023.3"
+requests = "2.31.0"
+tqdm = "4.65.0"
+
+[tool.poetry.dev-dependencies]
+pip = ">=23.0"
+black = "23.7.0"
+
+[tool.black]
+line-length = 120
+target-version = ['py39']
+
+[build-system]
+requires = ["poetry-core>=1.5.0"]
+build-backend = "poetry.core.masonry.api"

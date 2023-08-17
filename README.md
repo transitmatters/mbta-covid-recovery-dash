@@ -27,10 +27,6 @@ To initialize a Python virtual environment and install Python and JavaScript dep
 make setup-env
 ```
 
-_Some recent macOS environments will crash while installing NumPy here — if this happens to you, you can try rerunning the command as `SYSTEM_VERSION_COMPAT=1 make setup-env` per the solution [here](https://github.com/pypa/pipenv/issues/4576#issuecomment-751639556)._
-
-There are more useful commands in both the `Makefile` and `package.json`.
-
 ## Secrets
 
 The setup process creates a `datagen/secrets.py`. TransitMatters members have a `BOX_ACCESS_TOKEN` from a free [Box developer account](https://developer.box.com/guides/authentication/tokens/) which should be copied into this file. If you don't want to bother with this step, you can read cached ridership data from a specific date in by modifying `RIDERSHIP_TARGET_DATE` in `datagen/config.py`:
