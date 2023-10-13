@@ -9,32 +9,25 @@ from gtfs.time import date_to_string, DAYS_OF_WEEK
 
 def count_route_id(route_id: str):
     # 602 is a Green Line shuttle
-    return (
-        not route_id.startswith("Shuttle")
-        and not route_id.startswith("Boat")
-        and route_id != "602"
-    )
+    return not route_id.startswith("Shuttle") and not route_id.startswith("Boat") and route_id != "602"
 
 
 def service_runs_on_date(service: Service, date: date):
-    return (
+    is_removed_by_exception = any(
+        (ed.date == date and ed.exception_type == ServiceExceptionType.REMOVED for ed in service.exception_dates)
+    )
+    is_added_by_exception = any(
+        (ed.date == date and ed.exception_type == ServiceExceptionType.ADDED for ed in service.exception_dates)
+    )
+    return is_added_by_exception or (
         service.start_date <= date <= service.end_date
         and DAYS_OF_WEEK[date.weekday()] in service.days
-        and not any(
-            (
-                ed.date == date and ed.exception_type == ServiceExceptionType.REMOVED
-                for ed in service.exception_dates
-            )
-        )
+        and not is_removed_by_exception
     )
 
 
 def get_exception_date_strings_for_services(services: List[Service]):
-    dates = [
-        date_to_string(exception_date.date)
-        for service in services
-        for exception_date in service.exception_dates
-    ]
+    dates = [date_to_string(exception_date.date) for service in services for exception_date in service.exception_dates]
     return sorted(set(dates))
 
 
@@ -56,11 +49,7 @@ def summarize_trips_by_date(line_id: str, trips: List[TripSummary]):
     date = earliest_service_date
     while date <= latest_service_date:
         services_for_date = [s for s in services if service_runs_on_date(s, date)]
-        trips_for_date = [
-            t
-            for t in trips
-            if t.service in services_for_date and t.route_id in valid_route_ids
-        ]
+        trips_for_date = [t for t in trips if t.service in services_for_date and t.route_id in valid_route_ids]
         summary_by_date[date] = bucket_trips_by_hour(trips_for_date)
         date += timedelta(days=1)
 

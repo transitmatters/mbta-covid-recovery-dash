@@ -17,7 +17,7 @@ from config import (
     CR_RIDERSHIP_ARCGIS_URL,
     CR_SEASONAL_RIDERSHIP_ARCGIS_URL,
 )
-from secrets import BOX_ACCESS_TOKEN
+from secret_values import BOX_ACCESS_TOKEN
 
 
 @dataclass

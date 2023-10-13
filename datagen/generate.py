@@ -50,11 +50,9 @@ def get_line_kind(route_ids: List[str], line_id: str):
     return "bus"
 
 
-def get_weekday_service_levels_history(
-    feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]
-):
+def get_weekday_service_levels_history(feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]):
     histories = {}
-    for (feed, service_levels) in feeds_and_service_levels:
+    for feed, service_levels in feeds_and_service_levels:
         for line_id, service_dates in service_levels.items():
             history = histories.setdefault(line_id, [])
             weekday_service = service_dates["Weekday"]
@@ -69,15 +67,11 @@ def get_weekday_service_levels_history(
                         }
                     )
             else:
-                history.append(
-                    {"date": feed.start_date.strftime("%Y-%m-%d"), "trips": 0}
-                )
+                history.append({"date": feed.start_date.strftime("%Y-%m-%d"), "trips": 0})
     return histories
 
 
-def get_service_level_entries_and_line_ids(
-    feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]
-):
+def get_service_level_entries_and_line_ids(feeds_and_service_levels: List[Tuple[GtfsFeed, Dict]]):
     entries = []
     all_line_ids = set()
     for feed, service_levels in feeds_and_service_levels:
@@ -126,25 +120,11 @@ def get_service_level_history(
     for date_range, value in get_date_ranges_of_same_value(levels_by_date):
         (min_date, max_date) = date_range
         range_length_days = 1 + (max_date - min_date).days
-        is_weekend = range_length_days <= 2 and all(
-            (d.weekday() in (5, 6) for d in (min_date, max_date))
-        )
-        is_fill_range = any(
-            (
-                date_range_contains(fill_range, date_range)
-                for fill_range in FILL_DATE_RANGES
-            )
-        )
-        is_ignore_range = any(
-            (
-                date_range_contains(ignore_range, date_range)
-                for ignore_range in IGNORE_DATE_RANGES
-            )
-        )
+        is_weekend = range_length_days <= 2 and all((d.weekday() in (5, 6) for d in (min_date, max_date)))
+        is_fill_range = any((date_range_contains(fill_range, date_range) for fill_range in FILL_DATE_RANGES))
+        is_ignore_range = any((date_range_contains(ignore_range, date_range) for ignore_range in IGNORE_DATE_RANGES))
         fill_hole = value == 0 and (range_length_days <= 5 or is_fill_range)
-        value_to_append = (
-            values[-1] if len(values) and (fill_hole or is_ignore_range or is_weekend) else value
-        )
+        value_to_append = values[-1] if len(values) and (fill_hole or is_ignore_range or is_weekend) else value
         values += range_length_days * [value_to_append]
     return values
 
@@ -159,6 +139,7 @@ def get_exemplar_service_levels_for_lookback_date(
         entry = get_service_levels_entry_for_date(entries, date)
         if (
             entry
+            and sum(entry.service_levels) > 0
             and not date in entry.exception_dates
             and date.weekday() in matching_days_of_week
         ):
@@ -199,13 +180,9 @@ def get_service_levels_summary_dict(
     }
 
 
-def get_service_regime_dict(
-    entries: List[ServiceLevelsEntry], start_lookback_date: date
-):
+def get_service_regime_dict(entries: List[ServiceLevelsEntry], start_lookback_date: date):
     return {
-        "weekday": get_service_levels_summary_dict(
-            entries, start_lookback_date, list(range(0, 5))
-        ),
+        "weekday": get_service_levels_summary_dict(entries, start_lookback_date, list(range(0, 5))),
         "saturday": get_service_levels_summary_dict(entries, start_lookback_date, [5]),
         "sunday": get_service_levels_summary_dict(entries, start_lookback_date, [6]),
     }
@@ -235,9 +212,7 @@ def get_merged_ridership_time_series(
 ):
     labels = set((map_route_id_to_adhoc_label(route_id) for route_id in route_ids))
     matching_time_series = [
-        ridership_time_series_by_label.get(label)
-        for label in labels
-        if label in ridership_time_series_by_label
+        ridership_time_series_by_label.get(label) for label in labels if label in ridership_time_series_by_label
     ]
     if len(matching_time_series) == 0:
         return None
@@ -249,16 +224,12 @@ def get_merged_ridership_time_series(
 
 
 def get_ridership_percentage(total_ridership_time_series):
-    ridership_percentage = round(
-        total_ridership_time_series[-1] / total_ridership_time_series[0], 2
-    )
+    ridership_percentage = round(total_ridership_time_series[-1] / total_ridership_time_series[0], 2)
     return ridership_percentage
 
 
 def get_service_percentage(total_service_time_series):
-    service_percentage = round(
-        total_service_time_series[-1] / total_service_time_series[0], 2
-    )
+    service_percentage = round(total_service_time_series[-1] / total_service_time_series[0], 2)
     return service_percentage
 
 
@@ -281,13 +252,9 @@ def generate_total_data(
     total_increased_serv_routes: int,
     start_date: date,
 ):
-    total_ridership_time_series = [
-        sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)
-    ]
+    total_ridership_time_series = [sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)]
     condensed_ridership_series = condensed_time_series(total_ridership_time_series)
-    total_service_time_series = [
-        sum(entries_for_day) for entries_for_day in zip(*service_time_series_list)
-    ]
+    total_service_time_series = [sum(entries_for_day) for entries_for_day in zip(*service_time_series_list)]
     condensed_service_series = condensed_time_series(total_service_time_series)
     total_ridership_percentage = get_ridership_percentage(total_ridership_time_series)
     total_service_percentage = get_service_percentage(total_service_time_series)
@@ -348,9 +315,9 @@ def generate_data_file():
         day_kinds = ("weekday", "saturday", "sunday")
 
         try:
-            service_time_fraction = sum(
-                (current_service_regime[day]["totalTrips"] for day in day_kinds)
-            ) / sum((baseline_service_regime[day]["totalTrips"] for day in day_kinds))
+            service_time_fraction = sum((current_service_regime[day]["totalTrips"] for day in day_kinds)) / sum(
+                (baseline_service_regime[day]["totalTrips"] for day in day_kinds)
+            )
         except ZeroDivisionError:
             service_time_fraction = 0
         if service_time_fraction > 1:
