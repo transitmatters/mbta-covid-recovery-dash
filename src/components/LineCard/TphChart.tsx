@@ -103,7 +103,7 @@ const TphChart = (props: Props) => {
                 },
             },
         });
-        return () => chart.destroy();
+        return () => void chart.destroy();
     }, [baselineTph, currentTph]);
 
     return (

@@ -169,7 +169,7 @@ const ServiceRidershipChart = (props: Props) => {
                 },
             },
         });
-        return () => chart.destroy();
+        return () => void chart.destroy();
     }, [ridershipPercentage, servicePercentage, lineId]);
 
     return (
