@@ -29,22 +29,18 @@ CR_SEASONAL_RIDERSHIP_ARCGIS_URL = "https://opendata.arcgis.com/api/v3/datasets/
 # rather than attempting to fetch later data from the MassDOT Box endpoint.
 RIDERSHIP_TARGET_DATE = None
 
-CUTOFF_DATE = date(2023, 10, 31)
+CUTOFF_DATE = date(2023, 12, 6)
 
 # Patterns to find several files in the MassDOT Box endpoint.
-RIDERSHIP_BUS_XLSX_REGEX = re.compile(
-    r"Weekly_Bus_Ridership_by_Route_(\d{4})\.(\d{1,2})\.(\d{1,2})", re.I
-)
-RIDERSHIP_SUBWAY_CSV_REGEX = re.compile(
-    r"(\d{4})\.(\d{1,2})\.(\d{1,2}) MBTA Gated Station Validations by line", re.I
-)
+RIDERSHIP_BUS_XLSX_REGEX = re.compile(r"Weekly_Bus_Ridership_by_Route_(\d{4})\.(\d{1,2})\.(\d{1,2})", re.I)
+RIDERSHIP_SUBWAY_CSV_REGEX = re.compile(r"(\d{4})\.(\d{1,2})\.(\d{1,2}) MBTA Gated Station Validations by line", re.I)
 
 # Date ranges with service gaps that we paper over because of major holidays rather than doing
 # more complicated special-casing with GTFS services
 FILL_DATE_RANGES = [
     (date(2021, 11, 19), date(2021, 11, 26)),  # Thanksgiving 2021
     (date(2021, 12, 18), date(2021, 12, 26)),  # Christmas 2021
-    (date(2022, 12, 18), date(2023, 1, 3)),    # Christmas 2022
+    (date(2022, 12, 18), date(2023, 1, 3)),  # Christmas 2022
 ]
 
 # Date ranges with service anomalies that we'll smooth over with the previous date's values
