@@ -6,7 +6,7 @@ authors = ["TransitMatters Labs Team"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "~3.9"
+python = "~3.11"
 boxsdk = "3.7.2"
 numpy = "1.24.3"
 openpyxl = "3.1.2"
@@ -16,13 +16,13 @@ requests = "2.31.0"
 tqdm = "4.65.0"
 
 [tool.poetry.dev-dependencies]
-pip = ">=23.0"
-black = "23.7.0"
+pip = ">=23.1"
+black = "23.12.0"
 
 [tool.black]
 line-length = 120
-target-version = ['py39']
+target-version = ['py311']
 
 [build-system]
-requires = ["poetry-core>=1.5.0"]
+requires = ["poetry-core>=1.6.0"]
 build-backend = "poetry.core.masonry.api"
