@@ -29,7 +29,7 @@ CR_SEASONAL_RIDERSHIP_ARCGIS_URL = "https://opendata.arcgis.com/api/v3/datasets/
 # rather than attempting to fetch later data from the MassDOT Box endpoint.
 RIDERSHIP_TARGET_DATE = None
 
-CUTOFF_DATE = date(2023, 12, 6)
+CUTOFF_DATE = date(2023, 1, 5)
 
 # Patterns to find several files in the MassDOT Box endpoint.
 RIDERSHIP_BUS_XLSX_REGEX = re.compile(r"Weekly_Bus_Ridership_by_Route_(\d{4})\.(\d{1,2})\.(\d{1,2})", re.I)
