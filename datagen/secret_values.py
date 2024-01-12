@@ -1,1 +1,0 @@
-BOX_ACCESS_TOKEN = "pOmgmDkluuXvsyKG6fYggoyOCfANM3WV"
