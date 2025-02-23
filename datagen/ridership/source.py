@@ -71,12 +71,8 @@ def get_latest_ridership_source(require_matching_bus_subway_dates=False):
     client = get_box_client()
     folder = client.get_shared_item(RIDERSHIP_BOX_URL)
     files = list(folder.get_items())
-    maybe_bus_file_and_date = get_file_matching_date_pattern(
-        files, RIDERSHIP_BUS_XLSX_REGEX
-    )
-    maybe_subway_file_and_date = get_file_matching_date_pattern(
-        files, RIDERSHIP_SUBWAY_CSV_REGEX
-    )
+    maybe_bus_file_and_date = get_file_matching_date_pattern(files, RIDERSHIP_BUS_XLSX_REGEX)
+    maybe_subway_file_and_date = get_file_matching_date_pattern(files, RIDERSHIP_SUBWAY_CSV_REGEX)
     if maybe_bus_file_and_date and maybe_subway_file_and_date:
         subway_file, subway_date = maybe_subway_file_and_date
         bus_file, bus_date = maybe_bus_file_and_date

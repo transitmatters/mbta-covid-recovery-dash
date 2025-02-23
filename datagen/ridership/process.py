@@ -71,12 +71,7 @@ def format_ridership_csv(
     # limit data to just peak, merge back dates
     final = df[df["peak"] == "peak"]
 
-    final = (
-        final.groupby(["year", "week", route_key])[count_key]
-        .mean()
-        .round()
-        .reset_index()
-    )
+    final = final.groupby(["year", "week", route_key])[count_key].mean().round().reset_index()
 
     final = final.merge(dates, on=["week", "year"], how="left")
 
@@ -90,9 +85,7 @@ def format_ridership_csv(
     for route in routelist:
         for_route = final[final[route_key] == route]
         only_date_and_count = for_route[[date_key, count_key]].dropna()
-        dictdata = only_date_and_count.rename(
-            columns={date_key: "date", count_key: "riders"}
-        ).to_dict(orient="records")
+        dictdata = only_date_and_count.rename(columns={date_key: "date", count_key: "riders"}).to_dict(orient="records")
         route_id = route_ids_map[route] if route_ids_map else route
         output[route_id] = dictdata
     return output

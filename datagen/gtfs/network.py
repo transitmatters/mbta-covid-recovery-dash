@@ -28,9 +28,7 @@ def get_shapes_by_id(shapes):
         seq = int(shape["shape_pt_sequence"])
         res[shape_id].append((lat, lon, seq))
     for shape_id in res:
-        res[shape_id] = [
-            (lat, lon) for (lat, lon, _) in sorted(res[shape_id], key=lambda entry: entry[2])
-        ]
+        res[shape_id] = [(lat, lon) for (lat, lon, _) in sorted(res[shape_id], key=lambda entry: entry[2])]
     return res
 
 
@@ -173,11 +171,7 @@ def link_transfers(stop, all_stops, transfer_dicts_for_from_stop_id):
     for transfer_dict in transfer_dicts_for_from_stop_id:
         assert transfer_dict["from_stop_id"] == stop.id
         to_stop = next(
-            (
-                other_stop
-                for other_stop in all_stops
-                if other_stop.id == transfer_dict["to_stop_id"]
-            ),
+            (other_stop for other_stop in all_stops if other_stop.id == transfer_dict["to_stop_id"]),
             None,
         )
         if to_stop:

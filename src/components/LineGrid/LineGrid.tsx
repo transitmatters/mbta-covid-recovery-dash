@@ -188,6 +188,7 @@ const LineGrid = (props: Props) => {
                     <a href="https://github.com/transitmatters/mbta-covid-recovery-dash">
                         Source code
                     </a>
+                    <a href="https://transitmatters.org/donate">Donate</a>
                     <a href="mailto:labs@transitmatters.org?subject=Covid Dashboard Feedback">
                         Send feedback
                     </a>

@@ -28,7 +28,7 @@ module.exports = {
         return hackStylesToSupportNonPureDeclarations(config);
     },
     images: {
-        unoptimized: true
+        unoptimized: true,
     },
     assetPrefix,
 };

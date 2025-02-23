@@ -60,7 +60,7 @@ npm run build-static
 To update `data.json`, rebuild the production site, _and_ make a Git commit of the changes, run:
 
 ```
-npm run update
+make update
 ```
 
 This is what we use to periodically update the production site.

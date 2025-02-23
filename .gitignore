@@ -180,3 +180,4 @@ dmypy.json
 cython_debug/
 
 datagen/secrets.py
+datagen/secrets_values.py
