@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Tracking changes in MBTA service levels and ridership during the Covid-19 pandemic"
 authors = ["TransitMatters Labs Team"]
 license = "MIT"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "~3.11"
