@@ -243,6 +243,12 @@ def condensed_time_series(total_time_series):
     return condensed_series
 
 
+def pad_to_length(lst, length):
+    if len(lst) < length:
+        return lst + [0] * (length - len(lst))
+    return lst
+
+
 def generate_total_data(
     ridership_time_series_list: List[List[float]],
     service_time_series_list: List[List[float]],
@@ -252,9 +258,13 @@ def generate_total_data(
     total_increased_serv_routes: int,
     start_date: date,
 ):
-    total_ridership_time_series = [sum(entries_for_day) for entries_for_day in zip(*ridership_time_series_list)]
+    # Pad all time series to the maximum length
+    max_length = max(len(ts) for ts in ridership_time_series_list)
+    padded_ridership = [pad_to_length(ts, max_length) for ts in ridership_time_series_list]
+    padded_service = [pad_to_length(ts, max_length) for ts in service_time_series_list]
+    total_ridership_time_series = [sum(entries_for_day) for entries_for_day in zip(*padded_ridership)]
     condensed_ridership_series = condensed_time_series(total_ridership_time_series)
-    total_service_time_series = [sum(entries_for_day) for entries_for_day in zip(*service_time_series_list)]
+    total_service_time_series = [sum(entries_for_day) for entries_for_day in zip(*padded_service)]
     condensed_service_series = condensed_time_series(total_service_time_series)
     total_ridership_percentage = get_ridership_percentage(total_ridership_time_series)
     total_service_percentage = get_service_percentage(total_service_time_series)

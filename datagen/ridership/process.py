@@ -9,7 +9,6 @@ from pandas.tseries.holiday import USFederalHolidayCalendar
 from config import PRE_COVID_DATE
 from ridership.source import RidershipSource
 
-
 unofficial_bus_labels_map = {
     # Silver Line
     "SL1": "741",
@@ -34,6 +33,7 @@ unofficial_cr_labels_map = {
     "Lowell": "CR-Lowell",
     "Haverhill": "CR-Haverhill",
     "Kingston": "CR-Kingston",
+    "Fall.River/New.Bedford": "CR-NewBedford",
 }
 
 
@@ -85,6 +85,8 @@ def format_ridership_csv(
     for route in routelist:
         for_route = final[final[route_key] == route]
         only_date_and_count = for_route[[date_key, count_key]].dropna()
+        # ensure all values are numeric, NULL/invalid to 0
+        only_date_and_count[count_key] = pd.to_numeric(only_date_and_count[count_key], errors="coerce").fillna(0)
         dictdata = only_date_and_count.rename(columns={date_key: "date", count_key: "riders"}).to_dict(orient="records")
         route_id = route_ids_map[route] if route_ids_map else route
         output[route_id] = dictdata
@@ -92,18 +94,23 @@ def format_ridership_csv(
 
 
 def get_baseline_daily_boardings_by_cr_route(path_to_csv_file: str):
-    df = pd.read_csv(path_to_csv_file)
-    df = df[(df["season"] == "Spring 2018") & (df["day_type_name"] == "weekday")]
-    df = df[["route_id", "average_ons"]]
-    merged = (
-        df.groupby(df["route_id"])
-        .aggregate({"route_id": "first", "average_ons": "sum"})
-        .rename(columns={"average_ons": "boardings"})
-    )
-    out_dict = {}
-    for entry in merged.to_dict(orient="records"):
-        out_dict[entry["route_id"]] = int(entry["boardings"])
-    return out_dict
+    # get CR baseline boardings from seasonal file
+    try:
+        df = pd.read_csv(path_to_csv_file)
+        df = df[(df["season"] == "Spring 2018") & (df["day_type_name"] == "weekday")]
+        df = df[["route_id", "average_ons"]]
+        merged = (
+            df.groupby(df["route_id"])
+            .aggregate({"route_id": "first", "average_ons": "sum"})
+            .rename(columns={"average_ons": "boardings"})
+        )
+        out_dict = {}
+        for entry in merged.to_dict(orient="records"):
+            out_dict[entry["route_id"]] = int(entry["boardings"])
+        return out_dict
+    except Exception:
+        # If file is missing or empty, return 0 for all known CR routes
+        return {k: 0 for k in unofficial_cr_labels_map.values()}
 
 
 def format_subway_data(path_to_csv_file: str):
@@ -116,6 +123,7 @@ def format_subway_data(path_to_csv_file: str):
 
 
 def format_cr_data(path_to_ridershp_file: str, path_to_seasonal_ridership_file: str):
+    # format CR data, fallback to 0 for missing baselines
     baselines = get_baseline_daily_boardings_by_cr_route(path_to_seasonal_ridership_file)
     ridership_by_route = format_ridership_csv(
         path_to_csv_file=path_to_ridershp_file,
@@ -126,7 +134,10 @@ def format_cr_data(path_to_ridershp_file: str, path_to_seasonal_ridership_file: 
     )
     with_baselines = {}
     for route_id, route_dates in ridership_by_route.items():
-        baseline = baselines[route_id]
+        baseline = baselines.get(route_id, 0)
+        # ensure all values are numeric, NULL/invalid to 0
+        for entry in route_dates:
+            entry["riders"] = float(entry["riders"]) if str(entry["riders"]).replace(".", "", 1).isdigit() else 0
         with_baselines[route_id] = [
             {
                 "date": PRE_COVID_DATE.strftime("%Y-%m-%d"),
@@ -141,47 +152,73 @@ def format_cr_data(path_to_ridershp_file: str, path_to_seasonal_ridership_file: 
     return with_baselines
 
 
-def format_bus_data(path_to_excel_file: str):
-    # read data, ignore first sheet and row
+def format_bus_data(path_to_excel_file: str, sheet_name: str = "Ridership by Route"):
+    # read data - new format doesn't need skiprows
     df = pd.read_excel(
         path_to_excel_file,
-        sheet_name="Ridership by Route",
-        skiprows=2,
+        sheet_name=sheet_name,
         keep_default_na=False,
-        na_values=["N/A", "999999"],
+        na_values=["N/A", "999999", "NULL"],
     )
 
-    # rename unnamed data
-    df = df.rename(columns={"Route": "route"})
-    # cast empty values to 0
-    df = df.replace(to_replace="", value=0)
-    # melt to get into long format
-    df = pd.melt(df, id_vars=["route"], var_name="date", value_name="riders")
-    # change datetime to date
-    df["date"] = pd.to_datetime(
-        df["date"],
-        infer_datetime_format=True,
-    ).dt.date.astype(str)
-
+    # Check if this is the new format (has WeekStartDay, Route, TotalRiders columns)
+    if "WeekStartDay" in df.columns and "Route" in df.columns and "TotalRiders" in df.columns:
+        # New format - data is already in the right structure
+        df = df.rename(columns={"Route": "route", "WeekStartDay": "date", "TotalRiders": "riders"})
+        # cast empty/NULL values to 0
+        df = df.replace(to_replace=["", "NULL"], value=0)
+        # change datetime to date
+        df["date"] = pd.to_datetime(
+            df["date"],
+            infer_datetime_format=True,
+        ).dt.date.astype(str)
+    else:
+        # Old format (Box files) - need to re-read with skiprows=2
+        df = pd.read_excel(
+            path_to_excel_file,
+            sheet_name=sheet_name,
+            skiprows=2,
+            keep_default_na=False,
+            na_values=["N/A", "999999", "NULL"],
+        )
+        # Old format - rename unnamed data and melt
+        # For old format, we need to find the route column and date columns
+        route_col = None
+        for col in df.columns:
+            col_str = str(col) if not isinstance(col, str) else col
+            if col_str.lower() == "route" or "route" in col_str.lower():
+                route_col = col
+        if route_col:
+            df = df.rename(columns={route_col: "route"})
+            # cast empty/NULL values to 0
+            df = df.replace(to_replace=["", "NULL"], value=0)
+            # melt to get into long format
+            df = pd.melt(df, id_vars=["route"], var_name="date", value_name="riders")
+            # change datetime to date
+            df["date"] = pd.to_datetime(
+                df["date"],
+                infer_datetime_format=True,
+            ).dt.date.astype(str)
+        else:
+            raise ValueError(f"Could not find route column. Available columns: {list(df.columns)}")
+    # ensure all values are numeric, NULL/invalid to 0
+    df["riders"] = pd.to_numeric(df["riders"], errors="coerce").fillna(0)
     # get list of bus routes
     routelist = list(set(df["route"].tolist()))
-
     # create dict
     output = {}
-
     # write out each set of routes to dict
     for route in routelist:
         dftemp = df[df["route"] == route]
         dictdata = dftemp[["date", "riders"]].to_dict(orient="records")
         rewritten_route_id = unofficial_bus_labels_map.get(route) or route
         output[rewritten_route_id] = dictdata
-
     return output
 
 
 def generate_ridership_json(source: RidershipSource):
     subway = format_subway_data(source.subway_ridership_csv_path)
-    bus = format_bus_data(source.bus_ridership_xlsx_path)
+    bus = format_bus_data(source.bus_ridership_xlsx_path, source.bus_sheet_name)
     cr = format_cr_data(
         source.cr_ridership_csv_path,
         source.cr_seasonal_ridership_csv_path,

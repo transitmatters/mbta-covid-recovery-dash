@@ -14,9 +14,18 @@ class RidershipEntry:
 
 
 def create_ridership_entry_from_dict(entry_dict):
+    # Handle NULL or invalid ridership values
+    riders_value = entry_dict["riders"]
+    if riders_value == "NULL" or riders_value is None:
+        riders_value = 0
+    try:
+        riders_float = float(riders_value)
+    except (ValueError, TypeError):
+        riders_float = 0
+
     return RidershipEntry(
         date=datetime.strptime(entry_dict["date"], "%Y-%m-%d").date(),
-        ridership=float(entry_dict["riders"]),
+        ridership=riders_float,
     )
 
 

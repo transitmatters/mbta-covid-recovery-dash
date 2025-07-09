@@ -16,6 +16,10 @@ from config import (
     RIDERSHIP_TARGET_DATE,
     CR_RIDERSHIP_ARCGIS_URL,
     CR_SEASONAL_RIDERSHIP_ARCGIS_URL,
+    PREFER_LOCAL_FILES,
+    LOCAL_BUS_XLSX_PATH,
+    LOCAL_SUBWAY_CSV_PATH,
+    LOCAL_RIDERSHIP_DATE,
 )
 from secret_values import BOX_ACCESS_TOKEN
 
@@ -23,6 +27,10 @@ from secret_values import BOX_ACCESS_TOKEN
 @dataclass
 class RidershipSource:
     upload_date: date
+
+    @cached_property
+    def bus_sheet_name(self):
+        return "Ridership by Route" if self.upload_date < date(2025, 5, 1) else "Weekly by Route"
 
     @cached_property
     def subdirectory(self):
@@ -50,7 +58,11 @@ class RidershipSource:
 
 
 def get_box_client():
-    oauth = OAuth2(client_id=None, client_secret=None, access_token=BOX_ACCESS_TOKEN)
+    oauth = OAuth2(
+        client_id=None,
+        client_secret=None,
+        access_token=BOX_ACCESS_TOKEN,
+    )
     return Client(oauth=oauth)
 
 
@@ -66,6 +78,24 @@ def get_file_matching_date_pattern(files: List[File], pattern: Pattern):
 
 
 def get_latest_ridership_source(require_matching_bus_subway_dates=False):
+    # Prefer local files if configured
+    if PREFER_LOCAL_FILES and LOCAL_BUS_XLSX_PATH and LOCAL_SUBWAY_CSV_PATH and LOCAL_RIDERSHIP_DATE:
+        source = RidershipSource(upload_date=LOCAL_RIDERSHIP_DATE)
+        if not path.exists(source.subdirectory):
+            mkdir(source.subdirectory)
+            # Copy local files into the expected subdirectory
+            with open(LOCAL_SUBWAY_CSV_PATH, "rb") as src, open(source.subway_ridership_csv_path, "wb") as dst:
+                dst.write(src.read())
+            with open(LOCAL_BUS_XLSX_PATH, "rb") as src, open(source.bus_ridership_xlsx_path, "wb") as dst:
+                dst.write(src.read())
+            with open(source.cr_ridership_csv_path, "wb") as file:
+                req = requests.get(CR_RIDERSHIP_ARCGIS_URL)
+                file.write(req.content)
+            with open(source.cr_seasonal_ridership_csv_path, "wb") as file:
+                req = requests.get(CR_SEASONAL_RIDERSHIP_ARCGIS_URL)
+                file.write(req.content)
+        return source
+    # Fallback to Box or RIDERSHIP_TARGET_DATE
     if RIDERSHIP_TARGET_DATE:
         return RidershipSource(upload_date=RIDERSHIP_TARGET_DATE)
     client = get_box_client()
