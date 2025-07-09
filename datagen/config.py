@@ -32,14 +32,14 @@ RIDERSHIP_TARGET_DATE = None
 # Local file paths for manually downloaded ridership data
 # Set these to point to your manually downloaded files when Box is unavailable
 # e.g., "/path/to/Weekly_Bus_Ridership_by_Route_2025.02.22.xlsx"
-LOCAL_BUS_XLSX_PATH = None
+LOCAL_BUS_XLSX_PATH = "/Users/devin.matte/Downloads/MBTA Bus Weekly Ridership.xlsx"
 # e.g., "/path/to/2025.02.22 MBTA Gated Station Validations by line.csv"
-LOCAL_SUBWAY_CSV_PATH = None
+LOCAL_SUBWAY_CSV_PATH = "/Users/devin.matte/Downloads/2025.07.08 MBTA Gated Station Validations by line.csv"
 # e.g., date(2025, 2, 22) - date for the local files
 LOCAL_RIDERSHIP_DATE = date(2025, 6, 30)
 
 # Whether to prefer local files over Box downloads
-PREFER_LOCAL_FILES = False
+PREFER_LOCAL_FILES = True
 
 CUTOFF_DATE = date(2025, 6, 30)
 
