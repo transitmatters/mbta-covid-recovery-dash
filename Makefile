@@ -10,4 +10,7 @@ update-data:
 	cd datagen; poetry run python3 -m generate
 
 update:
+	make update-data
+	npm run build-static
+	git add .
 	git commit -am "Data update: $$(date -R)"
