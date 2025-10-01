@@ -27,21 +27,21 @@ CR_SEASONAL_RIDERSHIP_ARCGIS_URL = "https://opendata.arcgis.com/api/v3/datasets/
 
 # Change to e.g. date(2021, 8, 8) to load ridership data already in datagen/ridership/.data
 # rather than attempting to fetch later data from the MassDOT Box endpoint.
-RIDERSHIP_TARGET_DATE = None
+RIDERSHIP_TARGET_DATE = date(2025, 9, 15)
 
 # Local file paths for manually downloaded ridership data
 # Set these to point to your manually downloaded files when Box is unavailable
 # e.g., "/path/to/Weekly_Bus_Ridership_by_Route_2025.02.22.xlsx"
-LOCAL_BUS_XLSX_PATH = "/Users/devin.matte/Downloads/MBTA Bus Weekly Ridership.xlsx"
+LOCAL_BUS_XLSX_PATH = "/home/andrew/transitmatters/mbta-covid-recovery-dash/MBTA Bus Weekly Ridership.xlsx"
 # e.g., "/path/to/2025.02.22 MBTA Gated Station Validations by line.csv"
-LOCAL_SUBWAY_CSV_PATH = "/Users/devin.matte/Downloads/2025.07.08 MBTA Gated Station Validations by line.csv"
+LOCAL_SUBWAY_CSV_PATH = "/home/andrew/transitmatters/mbta-covid-recovery-dash/2025.09.30 MBTA Gated Station Validations by line.csv"
 # e.g., date(2025, 2, 22) - date for the local files
-LOCAL_RIDERSHIP_DATE = date(2025, 6, 30)
+LOCAL_RIDERSHIP_DATE = date(2025, 9, 15)
 
 # Whether to prefer local files over Box downloads
 PREFER_LOCAL_FILES = True
 
-CUTOFF_DATE = date(2025, 6, 30)
+CUTOFF_DATE = date(2025, 9, 15)
 
 # Patterns to find several files in the MassDOT Box endpoint.
 RIDERSHIP_BUS_XLSX_REGEX = re.compile(r"Weekly_Bus_Ridership_by_Route_(\d{4})\.(\d{1,2})\.(\d{1,2})", re.I)
