@@ -89,7 +89,7 @@ def get_latest_ridership_source(require_matching_bus_subway_dates=False):
             with open(LOCAL_BUS_XLSX_PATH, "rb") as src, open(source.bus_ridership_xlsx_path, "wb") as dst:
                 dst.write(src.read())
             with open(source.cr_ridership_csv_path, "wb") as file:
-                req = requests.get(CR_RIDERSHIP_ARCGIS_URL)
+                req = requests.get(CR_RIDERSHIP_ARCGIS_URL, timeout=15)
                 file.write(req.content)
             with open(source.cr_seasonal_ridership_csv_path, "wb") as file:
                 req = requests.get(CR_SEASONAL_RIDERSHIP_ARCGIS_URL)

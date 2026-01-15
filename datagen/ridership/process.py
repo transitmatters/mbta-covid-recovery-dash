@@ -127,7 +127,7 @@ def format_cr_data(path_to_ridershp_file: str, path_to_seasonal_ridership_file: 
     baselines = get_baseline_daily_boardings_by_cr_route(path_to_seasonal_ridership_file)
     ridership_by_route = format_ridership_csv(
         path_to_csv_file=path_to_ridershp_file,
-        date_key="service_date",
+        date_key="servicedate",
         route_key="line",
         count_key="estimated_boardings",
         route_ids_map=unofficial_cr_labels_map,
