@@ -34,6 +34,7 @@ unofficial_cr_labels_map = {
     "Haverhill": "CR-Haverhill",
     "Kingston": "CR-Kingston",
     "Fall.River/New.Bedford": "CR-NewBedford",
+    "Fall River/New Bedford": "CR-NewBedford",
 }
 
 
@@ -46,7 +47,11 @@ def format_ridership_csv(
 ):
     # read data, convert to datetime
     df = pd.read_csv(path_to_csv_file)
-    df[date_key] = pd.to_datetime(df[date_key])
+    df[date_key] = pd.to_datetime(df[date_key], errors="coerce")
+    df = df.dropna(subset=[date_key])
+
+    if df.empty:
+        return {}
 
     # add holidays
     cal = USFederalHolidayCalendar()

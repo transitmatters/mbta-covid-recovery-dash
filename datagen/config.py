@@ -22,26 +22,26 @@ GTFS_DATA_PATH = path.join(path.dirname(__file__), "gtfs", ".data")
 RIDERSHIP_BOX_URL = "https://massdot.app.box.com/s/21j0q5di9ewzl0abt6kdh5x8j8ok9964"
 RIDERSHIP_DATA_PATH = path.join(path.dirname(__file__), "ridership", ".data")
 
-CR_RIDERSHIP_ARCGIS_URL = "https://opendata.arcgis.com/api/v3/datasets/e2635c945f5b47a7923e0ee441b040c8_0/downloads/data?format=csv&spatialRefId=4326&where=1=1"
+CR_RIDERSHIP_ARCGIS_URL = "https://www.arcgis.com/sharing/rest/content/items/59b5c61e8e9f42f9a3745f7ad63d07d6/data?format=csv&spatialRefId=4326&where=1=1"
 CR_SEASONAL_RIDERSHIP_ARCGIS_URL = "https://opendata.arcgis.com/api/v3/datasets/9e8089a985f24bc6a1dbae1e69703808_0/downloads/data?format=csv&spatialRefId=4326&where=1=1"
 
 # Change to e.g. date(2021, 8, 8) to load ridership data already in datagen/ridership/.data
 # rather than attempting to fetch later data from the MassDOT Box endpoint.
-RIDERSHIP_TARGET_DATE = date(2026, 1, 13)
+RIDERSHIP_TARGET_DATE = date(2026, 4, 7)
 
 # Local file paths for manually downloaded ridership data
 # Set these to point to your manually downloaded files when Box is unavailable
 # e.g., "/path/to/Weekly_Bus_Ridership_by_Route_2025.02.22.xlsx"
-LOCAL_BUS_XLSX_PATH = "/Users/devin.matte/Downloads/MBTA Bus Weekly Ridership (1).xlsx"
+LOCAL_BUS_XLSX_PATH = "/Users/devin.matte/Downloads/MBTA Bus Weekly Ridership (2).xlsx"
 # e.g., "/path/to/2025.02.22 MBTA Gated Station Validations by line.csv"
-LOCAL_SUBWAY_CSV_PATH = "/Users/devin.matte/Downloads/2026.01.13 MBTA Gated Station Validations by line.csv"
+LOCAL_SUBWAY_CSV_PATH = "/Users/devin.matte/Downloads/2026.04.07 MBTA Gated Station Validations by line.csv"
 # e.g., date(2025, 2, 22) - date for the local files
-LOCAL_RIDERSHIP_DATE = date(2026, 1, 13)
+LOCAL_RIDERSHIP_DATE = date(2026, 4, 7)
 
 # Whether to prefer local files over Box downloads
 PREFER_LOCAL_FILES = True
 
-CUTOFF_DATE = date(2026, 1, 13)
+CUTOFF_DATE = date(2026, 4, 7)
 
 # Patterns to find several files in the MassDOT Box endpoint.
 RIDERSHIP_BUS_XLSX_REGEX = re.compile(r"Weekly_Bus_Ridership_by_Route_(\d{4})\.(\d{1,2})\.(\d{1,2})", re.I)

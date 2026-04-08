@@ -65,12 +65,32 @@ def get_service_exception_dates_for_service_id(service_id, calendar_date_dicts):
     return dates
 
 
+def _calendar_attributes_for_service_id(
+    service_id: str, calendar_attributes_by_id: dict
+) -> dict:
+    """
+    MBTA sometimes adds rows to calendar.txt before calendar_attributes.txt
+    includes the same service_id (e.g. special-event schedules). Fall back to
+    placeholders so the network can still be built.
+    """
+    if service_id in calendar_attributes_by_id:
+        return calendar_attributes_by_id[service_id]
+    return {
+        "service_description": "",
+        "service_schedule_name": service_id,
+        "service_schedule_type": "Unknown",
+        "service_schedule_typicality": "0",
+    }
+
+
 def link_services(calendar_dicts, calendar_attribute_dicts, calendar_date_dicts):
     services = []
     calendar_attributes_by_id = index_by(calendar_attribute_dicts, "service_id")
     for calendar_dict in calendar_dicts:
         service_id = calendar_dict["service_id"]
-        attribute_dict = calendar_attributes_by_id[service_id]
+        attribute_dict = _calendar_attributes_for_service_id(
+            service_id, calendar_attributes_by_id
+        )
         services.append(
             Service(
                 id=service_id,
