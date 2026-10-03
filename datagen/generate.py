@@ -140,7 +140,7 @@ def get_exemplar_service_levels_for_lookback_date(
         if (
             entry
             and sum(entry.service_levels) > 0
-            and not date in entry.exception_dates
+            and date not in entry.exception_dates
             and date.weekday() in matching_days_of_week
         ):
             return entry.service_levels
