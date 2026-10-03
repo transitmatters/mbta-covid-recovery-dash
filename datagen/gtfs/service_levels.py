@@ -71,6 +71,8 @@ def summarize_trips_by_date(line_id: str, trips: List[TripSummary]):
 
 
 def compute_service_levels_json(trips: List[TripSummary]):
+    # Some routes (e.g. rail replacement shuttles) have no line_id, so they can't be bucketed by line
+    trips = [t for t in trips if t.line is not None]
     trips_by_line_id = bucket_by(trips, lambda t: t.line.id)
     return {
         line_id: summarize_trips_by_date(line_id, trips_for_line_id)

@@ -48,8 +48,10 @@ class GtfsFeed:
     def service_levels_json_path(self):
         return self.child_by_name("service_levels.json")
 
-    @cached_property
+    @property
     def loader(self):
+        # Not cached: the loader holds every parsed row of the feed, so caching it on the
+        # feed (which generate.py keeps alive) leaks gigabytes of memory per feed.
         return GtfsLoader(root=self.gtfs_subdir_path)
 
 
