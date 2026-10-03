@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List
 from datetime import date, timedelta
 
 from gtfs.models import Service, ServiceExceptionType
