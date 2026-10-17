@@ -21,15 +21,22 @@ You can force some computations to re-run by selectively deleting files from the
 
 ## Setup
 
-To initialize a Python virtual environment and install Python and JavaScript dependencies, run:
+Python dependencies are managed with [uv](https://docs.astral.sh/uv/). Install it first, then initialize a Python virtual environment and install Python and JavaScript dependencies by running:
 
 ```
 make setup-env
 ```
 
+Python code is linted and formatted with [Ruff](https://docs.astral.sh/ruff/):
+
+```
+uv run ruff check .
+uv run ruff format .
+```
+
 ## Secrets
 
-The setup process creates a `datagen/secrets.py`. TransitMatters members have a `BOX_ACCESS_TOKEN` from a free [Box developer account](https://developer.box.com/guides/authentication/tokens/) which should be copied into this file. If you don't want to bother with this step, you can read cached ridership data from a specific date in by modifying `RIDERSHIP_TARGET_DATE` in `datagen/config.py`:
+The setup process creates a `datagen/secret_values.py`. TransitMatters members have a `BOX_ACCESS_TOKEN` from a free [Box developer account](https://developer.box.com/guides/authentication/tokens/) which should be copied into this file. If you don't want to bother with this step, you can read cached ridership data from a specific date in by modifying `RIDERSHIP_TARGET_DATE` in `datagen/config.py`:
 
 ```py
 RIDERSHIP_TARGET_DATE = date(2021, 8, 8)

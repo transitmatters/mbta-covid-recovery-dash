@@ -1,6 +1,6 @@
 from csv import DictReader
 from dataclasses import dataclass
-from datetime import datetime, date
+from datetime import date
 from functools import cached_property
 from os import path, mkdir
 from zipfile import BadZipFile, ZipFile

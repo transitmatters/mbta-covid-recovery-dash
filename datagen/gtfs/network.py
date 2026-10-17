@@ -65,9 +65,7 @@ def get_service_exception_dates_for_service_id(service_id, calendar_date_dicts):
     return dates
 
 
-def _calendar_attributes_for_service_id(
-    service_id: str, calendar_attributes_by_id: dict
-) -> dict:
+def _calendar_attributes_for_service_id(service_id: str, calendar_attributes_by_id: dict) -> dict:
     """
     MBTA sometimes adds rows to calendar.txt before calendar_attributes.txt
     includes the same service_id (e.g. special-event schedules). Fall back to
@@ -88,9 +86,7 @@ def link_services(calendar_dicts, calendar_attribute_dicts, calendar_date_dicts)
     calendar_attributes_by_id = index_by(calendar_attribute_dicts, "service_id")
     for calendar_dict in calendar_dicts:
         service_id = calendar_dict["service_id"]
-        attribute_dict = _calendar_attributes_for_service_id(
-            service_id, calendar_attributes_by_id
-        )
+        attribute_dict = _calendar_attributes_for_service_id(service_id, calendar_attributes_by_id)
         services.append(
             Service(
                 id=service_id,
@@ -247,7 +243,6 @@ def build_network_from_gtfs(loader: GtfsLoader):
     calendar_date_dicts = loader.load_calendar_dates()
     stop_dicts = loader.load_stops()
     stop_time_dicts = loader.load_stop_times()
-    transfer_dicts = loader.load_transfers()
     trip_dicts = loader.load_trips()
     route_dicts = loader.load_routes()
     route_pattern_dicts = loader.load_route_patterns()
@@ -269,7 +264,6 @@ def build_network_from_gtfs(loader: GtfsLoader):
     print("Linking stops...")
     stops = link_stops(stations_by_id, stop_dicts)
     stop_time_dicts_by_stop_id = bucket_by(stop_time_dicts, "stop_id")
-    transfer_dicts_by_from_stop_id = bucket_by(transfer_dicts, "from_stop_id")
     print("Linking stop times...")
     for stop in stops:
         stop_times_for_id = stop_time_dicts_by_stop_id.get(stop.id)
@@ -277,6 +271,8 @@ def build_network_from_gtfs(loader: GtfsLoader):
             # print(f"...for {stop.name} ({len(stop_times_for_id)})")
             link_stop_times(stop, stop_times_for_id, trips_by_id)
     # print("Linking transfers...")
+    # transfer_dicts = loader.load_transfers()
+    # transfer_dicts_by_from_stop_id = bucket_by(transfer_dicts, "from_stop_id")
     # for stop in stops:
     #     transfers_for_id = transfer_dicts_by_from_stop_id.get(stop.id)
     #     if transfers_for_id and len(transfers_for_id) > 0:

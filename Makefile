@@ -1,13 +1,13 @@
 setup-env:
-	poetry install
-	cp datagen/secrets.example.py datagen/secrets.py
+	uv sync
+	cp datagen/secret_values.example.py datagen/secret_values.py
 	npm install
 
 clean-python-env:
-	poetry env remove 3
+	rm -rf .venv
 
 update-data:
-	cd datagen; poetry run python3 -m generate
+	cd datagen; uv run python3 -m generate
 
 update:
 	make update-data

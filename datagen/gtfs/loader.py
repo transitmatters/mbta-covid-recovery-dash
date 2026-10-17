@@ -1,6 +1,5 @@
 from csv import DictReader
 from os import path
-from tqdm import tqdm
 
 
 class GtfsLoader:
