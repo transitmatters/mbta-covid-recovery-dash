@@ -52,6 +52,12 @@ To run the webapp locally with the data present in `data.json`, run:
 npm run dev
 ```
 
+To lint the webapp, run:
+
+```
+npm run lint
+```
+
 To rebuild `data.json` with the latest data, run:
 
 ```
