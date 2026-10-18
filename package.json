@@ -11,9 +11,9 @@
     "build-static": "BUILD_GH_PAGES=true next build && next export -o docs && touch ./docs/.nojekyll && echo recovery.transitmatters.org > ./docs/CNAME"
   },
   "dependencies": {
-    "@nivo/core": "^0.80.0",
-    "@nivo/line": "^0.80.0",
-    "@nivo/pie": "^0.80.0",
+    "@nivo/core": "^0.98.0",
+    "@nivo/line": "^0.98.0",
+    "@nivo/pie": "^0.98.0",
     "chart.js": "^2.9.4",
     "chartjs-color": "^2.4.1",
     "classnames": "^2.3.2",
