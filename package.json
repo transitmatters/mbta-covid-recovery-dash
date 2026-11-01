@@ -6,9 +6,10 @@
     "dev": "next dev -p 3500",
     "build": "next build",
     "start": "next start -p $PORT",
-    "lint": "next lint",
-    "storybook": "start-storybook -p 3501 -c .storybook",
-    "build-static": "BUILD_GH_PAGES=true next build && rm -rf docs && mv out docs && touch ./docs/.nojekyll && echo recovery.transitmatters.org > ./docs/CNAME"
+    "lint": "eslint .",
+    "storybook": "storybook dev -p 3501",
+    "build-static": "BUILD_GH_PAGES=true next build && rm -rf docs && mv out docs && touch ./docs/.nojekyll && echo recovery.transitmatters.org > ./docs/CNAME",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@ariakit/react": "^0.4.42",
@@ -26,20 +27,23 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@storybook/nextjs-vite": "^10.6.5",
     "@types/chart.js": "^2.9.37",
     "@types/heap": "^0.2.31",
     "@types/node": "^20.0.0",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
-    "@typescript-eslint/eslint-plugin": "^5.52.0",
-    "@typescript-eslint/parser": "^5.52.0",
-    "eslint": "^8.46.0",
-    "eslint-config-next": "~12.3.4",
-    "eslint-config-prettier": "^9.0.0",
-    "eslint-plugin-prettier": "^5.0.0",
-    "eslint-plugin-react": "^7.33.1",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.3",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.7",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.13.0",
     "prettier": "^3.0.1",
-    "tsconfig-paths": "^4.2.0"
+    "storybook": "^10.6.5",
+    "tsconfig-paths": "^4.2.0",
+    "vite": "^8.3.5"
   },
   "engines": {
     "node": ">=20.0.0",
