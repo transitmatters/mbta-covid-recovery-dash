@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import classNames from "classnames";
-import { useTabState, TabList, Tab } from "reakit/Tab";
+import { useTabStore, TabList, Tab } from "@ariakit/react";
 
 import styles from "./TabPicker.module.scss";
 
@@ -30,32 +30,30 @@ const TabPicker = <Value extends string>(props: Props<Value>) => {
         tabClassName,
         value,
     } = props;
-    const tabState = useTabState({ selectedId: getTabId(baseId, value) });
-
-    useEffect(() => {
-        const selectedElement = document.querySelector(`#${tabState.selectedId}`);
-        if (selectedElement) {
-            onSelectValue(selectedElement.getAttribute("data-value") as Value);
-        }
-    }, [tabState.selectedId]);
+    const tabStore = useTabStore({
+        defaultSelectedId: getTabId(baseId, value),
+        setSelectedId: (selectedId) => {
+            const item = items.find((item) => getTabId(baseId, item.value) === selectedId);
+            if (item) {
+                onSelectValue(item.value);
+            }
+        },
+    });
 
     return (
         <TabList
-            {...tabState}
+            store={tabStore}
             style={style}
             className={classNames(styles.tabList, className)}
             aria-label={ariaLabel}
-            as="div"
         >
             {items.map(({ value, label }) => {
                 return (
                     <Tab
-                        {...tabState}
                         id={getTabId(baseId, value)}
                         className={classNames(styles.tab, tabClassName)}
                         key={value}
-                        as="div"
-                        data-value={value}
+                        render={<div />}
                     >
                         <span>{label}</span>
                     </Tab>
