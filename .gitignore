@@ -184,3 +184,6 @@ datagen/secrets_values.py
 
 # ruff
 .ruff_cache/
+
+# storybook
+/storybook-static/

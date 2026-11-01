@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useDialogState, Dialog, DialogDisclosure } from "reakit/Dialog";
+import { useDialogStore, useStoreState, Dialog, DialogDisclosure } from "@ariakit/react";
 
 import styles from "./DataTable.module.scss";
 
@@ -17,7 +17,8 @@ type Props = {
 
 const DataTable = (props: Props) => {
     const { caption, columns } = props;
-    const dialog = useDialogState();
+    const dialog = useDialogStore();
+    const open = useStoreState(dialog, "open");
 
     const rows = useMemo(() => {
         const numRows = Math.max(...columns.map((c) => c.values.length));
@@ -35,11 +36,11 @@ const DataTable = (props: Props) => {
 
     return (
         <>
-            <DialogDisclosure {...dialog} as="button" className={styles.button}>
+            <DialogDisclosure store={dialog} className={styles.button}>
                 Show data table: {caption}
             </DialogDisclosure>
-            <Dialog {...dialog}>
-                {dialog.visible && (
+            <Dialog store={dialog} backdrop={false}>
+                {open && (
                     <>
                         <div className={styles.backdrop} />
                         <div className={styles.dialog}>

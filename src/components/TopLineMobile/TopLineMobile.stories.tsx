@@ -1,14 +1,16 @@
-import React from "react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { summaryLineData } from "storydata/summaryLineData";
 
 import TopLineMobile from "./TopLineMobile";
 
-export default {
+const meta = {
     title: "TopLineMobile",
     component: TopLineMobile,
-};
+} satisfies Meta<typeof TopLineMobile>;
 
-export const Default = () => {
-    return <TopLineMobile summaryData={summaryLineData} />;
+export default meta;
+
+export const Default: StoryObj<typeof meta> = {
+    args: { summaryData: summaryLineData },
 };

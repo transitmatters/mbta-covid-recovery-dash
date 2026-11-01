@@ -1,4 +1,4 @@
-import React from "react";
+import type { Meta, StoryObj } from "@storybook/nextjs-vite";
 
 import { summaryLineData } from "storydata/summaryLineData";
 
@@ -30,11 +30,13 @@ const line = {
     ],
 };
 
-export default {
+const meta = {
     title: "TopLine Chart",
     component: TopLineChart,
-};
+} satisfies Meta<typeof TopLineChart>;
 
-export const Default = () => {
-    return <TopLineChart sparklineData={line} pieData={pie} label="ridership" />;
+export default meta;
+
+export const Default: StoryObj<typeof meta> = {
+    args: { sparklineData: line, pieData: pie, label: "ridership" },
 };
