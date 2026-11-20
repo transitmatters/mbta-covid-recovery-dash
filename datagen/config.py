@@ -19,32 +19,42 @@ IGNORE_LINE_IDS = ["line-CapeFlyer", "line-Foxboro"]
 GTFS_ARCHIVE_URL = "https://cdn.mbta.com/archive/archived_feeds.txt"
 GTFS_DATA_PATH = path.join(path.dirname(__file__), "gtfs", ".data")
 
-RIDERSHIP_BOX_URL = "https://massdot.app.box.com/s/21j0q5di9ewzl0abt6kdh5x8j8ok9964"
 RIDERSHIP_DATA_PATH = path.join(path.dirname(__file__), "ridership", ".data")
 
 CR_RIDERSHIP_ARCGIS_URL = "https://www.arcgis.com/sharing/rest/content/items/59b5c61e8e9f42f9a3745f7ad63d07d6/data?format=csv&spatialRefId=4326&where=1=1"
 CR_SEASONAL_RIDERSHIP_ARCGIS_URL = "https://opendata.arcgis.com/api/v3/datasets/9e8089a985f24bc6a1dbae1e69703808_0/downloads/data?format=csv&spatialRefId=4326&where=1=1"
+# These datasets are large enough that ArcGIS Hub doesn't refresh its cached CSVs on its own.
+ARCGIS_UPDATE_CACHE_URLS = [
+    "https://hub.arcgis.com/api/download/v1/items/59b5c61e8e9f42f9a3745f7ad63d07d6/csv?redirect=false&layers=0&updateCache=true",
+    "https://hub.arcgis.com/api/download/v1/items/9e8089a985f24bc6a1dbae1e69703808/csv?redirect=false&layers=0&updateCache=true",
+]
 
-# Change to e.g. date(2021, 8, 8) to load ridership data already in datagen/ridership/.data
-# rather than attempting to fetch later data from the MassDOT Box endpoint.
-RIDERSHIP_TARGET_DATE = date(2026, 9, 29)
+# Public MBTA SharePoint folders holding the latest subway and bus ridership files.
+RIDERSHIP_SUBWAY_SHARE_URL = (
+    "https://mbta.sharepoint.com/:f:/s/PublicData/ElfNM8viGx5Out070Rg7tTABH1wLLEdwh69nIOb4J3Nt8w"
+)
+RIDERSHIP_BUS_SHARE_URL = "https://mbta.sharepoint.com/:f:/s/PublicData/Eh1G_O3dog9Eh_EfCqsJZ9EBb6BIgjP-ovWMwdLpwuDnjw"
 
-# Local file paths for manually downloaded ridership data
-# Set these to point to your manually downloaded files when Box is unavailable
-# e.g., "/path/to/Weekly_Bus_Ridership_by_Route_2025.02.22.xlsx"
-LOCAL_BUS_XLSX_PATH = "/Users/devinmatte/Downloads/MBTA Bus Weekly Ridership.xlsx"
+# Leave as None to download the newest ridership files from the MBTA's SharePoint. Set to e.g.
+# date(2021, 8, 8) to reuse ridership data already in datagen/ridership/.data instead.
+RIDERSHIP_TARGET_DATE = None
+
+# Local file paths for manually downloaded ridership data, used when PREFER_LOCAL_FILES is True
+# e.g., "/path/to/MBTA Bus Weekly Ridership.xlsx"
+LOCAL_BUS_XLSX_PATH = None
 # e.g., "/path/to/2025.02.22 MBTA Gated Station Validations by line.csv"
-LOCAL_SUBWAY_CSV_PATH = "/Users/devinmatte/Downloads/2026.09.29 MBTA Gated Station Validations by line.csv"
+LOCAL_SUBWAY_CSV_PATH = None
 # e.g., date(2025, 2, 22) - date for the local files
-LOCAL_RIDERSHIP_DATE = date(2026, 9, 29)
+LOCAL_RIDERSHIP_DATE = None
 
-# Whether to prefer local files over Box downloads
-PREFER_LOCAL_FILES = True
+# Whether to prefer local files over SharePoint downloads
+PREFER_LOCAL_FILES = False
 
-CUTOFF_DATE = date(2026, 9, 29)
+# Last date of service and ridership to include. Defaults to the ridership data's date when None.
+CUTOFF_DATE = None
 
-# Patterns to find several files in the MassDOT Box endpoint.
-RIDERSHIP_BUS_XLSX_REGEX = re.compile(r"Weekly_Bus_Ridership_by_Route_(\d{4})\.(\d{1,2})\.(\d{1,2})", re.I)
+# Patterns to find ridership files in the SharePoint folders.
+RIDERSHIP_BUS_XLSX_REGEX = re.compile(r"^MBTA Bus Weekly Ridership\.xlsx$", re.I)
 RIDERSHIP_SUBWAY_CSV_REGEX = re.compile(r"(\d{4})\.(\d{1,2})\.(\d{1,2}) MBTA Gated Station Validations by line", re.I)
 
 # Date ranges with service gaps that we paper over because of major holidays rather than doing

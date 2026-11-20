@@ -1,6 +1,5 @@
 setup-env:
 	uv sync
-	cp datagen/secret_values.example.py datagen/secret_values.py
 	npm install
 
 clean-python-env:
