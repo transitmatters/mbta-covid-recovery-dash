@@ -3,31 +3,6 @@ revision = 5
 requires-python = "==3.11.*"
 
 [[package]]
-name = "attrs"
-version = "26.1.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/9a/8e/82a0fe20a541c03148528be8cac2408564a6c9a0cc7e9171802bc1d26985/attrs-26.1.0.tar.gz", hash = "sha256:d03ceb89cb322a8fd706d4fb91940737b6642aa36998fe130a9bc96c985eff32", size = 952055, upload-time = "2026-03-19T14:22:25.026Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/64/b4/17d4b0b2a2dc85a6df63d1157e028ed19f90d4cd97c36717afef2bc2f395/attrs-26.1.0-py3-none-any.whl", hash = "sha256:c647aa4a12dfbad9333ca4e71fe62ddc36f4e63b2d260a37a8b83d2f043ac309", size = 67548, upload-time = "2026-03-19T14:22:23.645Z" },
-]
-
-[[package]]
-name = "boxsdk"
-version = "3.14.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "attrs" },
-    { name = "python-dateutil" },
-    { name = "requests" },
-    { name = "requests-toolbelt" },
-    { name = "urllib3" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/bf/d7/c1a95bb602d7f90a85a68d8e6f11954e50c255110d39e2167c7796252622/boxsdk-3.14.0.tar.gz", hash = "sha256:7918b1929368724662474fffa417fa0457a523d089b8185260efbedd28c4f9b1", size = 232630, upload-time = "2025-04-09T15:07:15.181Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/4d/5d/4e15511e0f4f2f9fbbf4646a8d0e138e5c53a3d428f1724e7dc3c8acf556/boxsdk-3.14.0-py2.py3-none-any.whl", hash = "sha256:0314e2f172b050e98489955f2e9001263de79c3dd751e6feee19f2195fdf7c01", size = 141329, upload-time = "2025-04-09T15:07:13.295Z" },
-]
-
-[[package]]
 name = "certifi"
 version = "2026.10.23"
 source = { registry = "https://pypi.org/simple" }
@@ -145,7 +120,6 @@ name = "mbta-covid-recovery-dash"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
-    { name = "boxsdk" },
     { name = "numpy" },
     { name = "openpyxl" },
     { name = "pandas" },
@@ -162,7 +136,6 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "boxsdk", specifier = ">=3.7.2,<4" },
     { name = "numpy", specifier = ">=1.24.3,<2" },
     { name = "openpyxl", specifier = "==3.1.2" },
     { name = "pandas", specifier = ">=1.5.3,<2" },
@@ -330,18 +303,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz", hash = "sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed", size = 142856, upload-time = "2026-05-14T19:25:27.735Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl", hash = "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0", size = 73075, upload-time = "2026-05-14T19:25:26.443Z" },
-]
-
-[[package]]
-name = "requests-toolbelt"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/f3/61/d7545dafb7ac2230c70d38d31cbfe4cc64f7144dc41f6e4e4b78ecd9f5bb/requests-toolbelt-1.0.0.tar.gz", hash = "sha256:7681a0a3d047012b5bdc0ee37d7f8f07ebe76ab08caeccfc3921ce23c88d5bc6", size = 206888, upload-time = "2023-05-01T04:11:33.229Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3f/51/d4db610ef29373b879047326cbf6fa98b6c1969d6f6dc423279de2b1be2c/requests_toolbelt-1.0.0-py2.py3-none-any.whl", hash = "sha256:cccfdd665f0a24fcf4726e690f65639d272bb0637b9b92dfd91a5568ccf6bd06", size = 54481, upload-time = "2023-05-01T04:11:28.427Z" },
 ]
 
 [[package]]

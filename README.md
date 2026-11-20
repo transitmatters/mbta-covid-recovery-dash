@@ -6,7 +6,7 @@
 The MBTA Covid Recovery Dashboard is a project by the [TransitMatters Labs](https://transitmatters.org/transitmatters-labs) team to track changes in MBTA service levels and ridership during the Covid-19 pandemic. It draws data from the following sources:
 
 - The [MBTA GTFS feed archive](https://cdn.mbta.com/archive/archived_feeds.txt)
-- Some [public data on ridership](https://massdot.app.box.com/s/21j0q5di9ewzl0abt6kdh5x8j8ok9964) updated regularly by [MassDOT OPMI](https://www.mass.gov/transportation-performance)
+- Some [public data on ridership](https://mbta.sharepoint.com/:f:/s/PublicData/ElfNM8viGx5Out070Rg7tTABH1wLLEdwh69nIOb4J3Nt8w) updated regularly by [MassDOT OPMI](https://www.mass.gov/transportation-performance)
 
 The root of this repo is a Next.js webapp, but inside the `datagen/` directory is Python code to read and aggregate data from the sources mentioned above. That file updates `data.json`, which is bundled by Next.js into a static site that lives in the `docs/` directory. We host that static site on [recovery.transitmatters.org](https://recovery.transitmatters.org).
 
@@ -34,9 +34,9 @@ uv run ruff check .
 uv run ruff format .
 ```
 
-## Secrets
+## Ridership data
 
-The setup process creates a `datagen/secret_values.py`. TransitMatters members have a `BOX_ACCESS_TOKEN` from a free [Box developer account](https://developer.box.com/guides/authentication/tokens/) which should be copied into this file. If you don't want to bother with this step, you can read cached ridership data from a specific date in by modifying `RIDERSHIP_TARGET_DATE` in `datagen/config.py`:
+`make update-data` downloads the newest subway and bus ridership files from the MBTA's public SharePoint folders, and commuter rail ridership from ArcGIS. No credentials are needed. To reuse cached ridership data from a specific date instead, set `RIDERSHIP_TARGET_DATE` in `datagen/config.py`:
 
 ```py
 RIDERSHIP_TARGET_DATE = date(2021, 8, 8)
